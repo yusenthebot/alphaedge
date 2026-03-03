@@ -19,8 +19,10 @@ npm run dev
 
 ```bash
 cd src/backend
+python3.13 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload
+uvicorn main:app --reload --port 8000
 # → http://localhost:8000
 ```
 
