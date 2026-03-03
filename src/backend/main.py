@@ -164,6 +164,25 @@ def get_signal(ticker: str):
     return SignalResponse(**signals[0])
 
 
+@app.get("/api/history/{ticker}")
+def get_history(ticker: str, days: int = 7):
+    """Return OHLC history for sparkline charts."""
+    try:
+        import yfinance as yf
+        t = yf.Ticker(ticker.upper())
+        hist = t.history(period=f"{days}d", interval="1d")
+        points = []
+        for ts, row in hist.iterrows():
+            points.append({
+                "date": ts.strftime("%m/%d"),
+                "close": round(float(row["Close"]), 2),
+                "volume": int(row["Volume"]),
+            })
+        return {"ticker": ticker.upper(), "data": points}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/api/refresh")
 def force_refresh(tickers: Optional[str] = None):
     """Force cache refresh (admin use)."""
