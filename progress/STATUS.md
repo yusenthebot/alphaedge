@@ -1,7 +1,7 @@
 # AlphaEdge — Project Status
-**Updated**: 2026-03-03 18:31 EST
+**Updated**: 2026-03-03 21:00 EST
 **Location**: ~/Projects/alphaedge/
-**Stage**: 🔨 Day 1 — Pipeline + Setup
+**Stage**: ✅ Day 1+2 Done — Pipeline + Signal Engine Complete
 
 ---
 
@@ -18,8 +18,8 @@ AI-powered market intelligence dashboard combining Chinese financial news (金�
 
 | Day | Focus | Agent | Status |
 |-----|-------|-------|--------|
-| 1 | Data pipeline + signal schema | A+B | 🔨 In Progress |
-| 2 | Signal engine + backtesting | B | ⏳ Pending |
+| 1 | Data pipeline + signal schema | A+B | ✅ Done |
+| 2 | Signal engine + backtesting | B | ✅ Done |
 | 3-4 | Frontend dashboard | C | ⏳ Pending |
 | 4-5 | Backend API + Auth | D | ⏳ Pending |
 | 6 | Stripe + landing page | C+D | ⏳ Pending |
@@ -33,13 +33,18 @@ AI-powered market intelligence dashboard combining Chinese financial news (金�
 - [x] Git repo created
 - [x] Documentation structure created
 - [x] Agent tasks defined
+- [x] Unified data collector (Jin10 + Yahoo Finance + sentiment → merged dict)
+- [x] Signal aggregator (weighted BUY/HOLD/SELL engine)
+- [x] Backtester (30-day historical signal simulation + win rate)
+- [x] CLI entry point (`python src/pipeline/run.py NVDA TSLA AAPL`)
+- [x] Unit tests (14/14 passing)
 
 ---
 
 ## 🔨 In Progress
 
-- [ ] Agent A: Data pipeline (Jin10 + stocks + sentiment unified)
-- [ ] Agent B: Signal engine (weighting + JSON schema)
+- [ ] Frontend dashboard (Next.js)
+- [ ] Backend API (FastAPI)
 
 ---
 
