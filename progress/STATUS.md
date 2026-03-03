@@ -1,7 +1,7 @@
 # AlphaEdge — Project Status
-**Updated**: 2026-03-03 21:00 EST
+**Updated**: 2026-03-03 22:00 EST
 **Location**: ~/Projects/alphaedge/
-**Stage**: ✅ Day 1+2 Done — Pipeline + Signal Engine Complete
+**Stage**: ✅ Day 1+2+3 Done — Pipeline + Signals + Frontend + Backend Skeleton
 
 ---
 
@@ -20,8 +20,8 @@ AI-powered market intelligence dashboard combining Chinese financial news (金�
 |-----|-------|-------|--------|
 | 1 | Data pipeline + signal schema | A+B | ✅ Done |
 | 2 | Signal engine + backtesting | B | ✅ Done |
-| 3-4 | Frontend dashboard | C | ⏳ Pending |
-| 4-5 | Backend API + Auth | D | ⏳ Pending |
+| 3 | Frontend dashboard + Backend skeleton | C+D | ✅ Done |
+| 4-5 | Backend API + Auth + Integration | D | ⏳ Pending |
 | 6 | Stripe + landing page | C+D | ⏳ Pending |
 | 7 | Deploy + launch prep | E | ⏳ Pending |
 
@@ -38,13 +38,19 @@ AI-powered market intelligence dashboard combining Chinese financial news (金�
 - [x] Backtester (30-day historical signal simulation + win rate)
 - [x] CLI entry point (`python src/pipeline/run.py NVDA TSLA AAPL`)
 - [x] Unit tests (14/14 passing)
+- [x] Next.js 16 frontend (TypeScript + Tailwind v4 + shadcn/ui)
+- [x] Landing page (`/`) — hero, 3 feature cards, pricing tiers (Free/$29/$79)
+- [x] Signal dashboard (`/dashboard`) — live signal cards, 60s auto-refresh, Signal of Day highlight
+- [x] Signal of the Day page (`/signal-of-the-day`) — public SEO page with full analysis
+- [x] Mock API route (`/api/signals`) — realistic Jin10 data for 5 tickers
+- [x] FastAPI backend skeleton (`src/backend/main.py`) — health + signals endpoints
+- [x] Project README.md with quick start guide
 
 ---
 
 ## 🔨 In Progress
 
-- [ ] Frontend dashboard (Next.js)
-- [ ] Backend API (FastAPI)
+- [ ] Backend API integration with signal engine
 
 ---
 
@@ -117,13 +123,13 @@ AI-powered market intelligence dashboard combining Chinese financial news (金�
 
 ---
 
-## 🌐 Pages (planned)
+## 🌐 Pages
 
 ```
-/                    Landing page
-/dashboard           Main signal dashboard (auth required)
-/dashboard/[ticker]  Signal detail + news feed
-/signal-of-the-day   Public page (SEO + virality)
-/pricing             Plans
-/api/signals         REST API (Elite tier)
+/                    Landing page                    ✅ Built
+/dashboard           Main signal dashboard            ✅ Built (mock data)
+/signal-of-the-day   Public page (SEO + virality)     ✅ Built
+/dashboard/[ticker]  Signal detail + news feed         ⏳ Planned
+/pricing             Plans                             ⏳ Planned
+/api/signals         Mock API (Next.js route handler)  ✅ Built
 ```
