@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Newspaper, BarChart3, Bell, Zap, Check } from "lucide-react";
+import { LivePreview } from "@/components/LivePreview";
+import { MarketStatus } from "@/components/MarketStatus";
 
 const FEATURES = [
   {
@@ -116,15 +118,28 @@ export default function LandingPage() {
                 size="lg"
                 className="bg-[#22C55E] text-black hover:bg-[#22C55E]/90"
               >
-                Start Free Trial
+                Open Dashboard
               </Button>
             </Link>
             <Link href="/signal-of-the-day">
               <Button size="lg" variant="outline" className="border-white/20 text-white">
-                See Today&apos;s Signal
+                Signal of the Day
               </Button>
             </Link>
           </div>
+          <div className="pt-2 flex justify-center">
+            <MarketStatus />
+          </div>
+        </div>
+      </section>
+
+      {/* Live signals preview */}
+      <section className="px-6 pb-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-[#444]">
+            Live Signals — Updated Every 5 Minutes
+          </p>
+          <LivePreview />
         </div>
       </section>
 

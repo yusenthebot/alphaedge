@@ -1,0 +1,90 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+interface MiniSignal {
+  ticker: string;
+  signal: "BUY" | "HOLD" | "SELL";
+  strength: number;
+  price: number;
+  change: number;
+}
+
+const SIGNAL_COLOR = {
+  BUY:  { text: "#22C55E", bg: "rgba(34,197,94,0.12)", border: "rgba(34,197,94,0.3)" },
+  HOLD: { text: "#F59E0B", bg: "rgba(245,158,11,0.12)", border: "rgba(245,158,11,0.3)" },
+  SELL: { text: "#EF4444", bg: "rgba(239,68,68,0.12)", border: "rgba(239,68,68,0.3)" },
+};
+
+export function LivePreview() {
+  const [signals, setSignals] = useState<MiniSignal[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY")
+      .then((r) => r.json())
+      .then((d) => {
+        setSignals(
+          (d.signals ?? []).map((s: { ticker: string; signal: string; strength: number; price: number; change: number }) => ({
+            ticker: s.ticker,
+            signal: s.signal,
+            strength: s.strength,
+            price: s.price,
+            change: s.change,
+          }))
+        );
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center gap-3">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="h-20 w-28 animate-pulse rounded-xl bg-[#15151B]" />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-wrap justify-center gap-3">
+      {signals.map((s) => {
+        const cfg = SIGNAL_COLOR[s.signal];
+        const isPos = s.change >= 0;
+        return (
+          <div
+            key={s.ticker}
+            className="flex w-28 flex-col gap-1 rounded-xl px-4 py-3 transition-transform hover:scale-105"
+            style={{ background: cfg.bg, border: `1px solid ${cfg.border}` }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-bold text-white">{s.ticker}</span>
+              <span
+                className="rounded px-1.5 py-0.5 text-[9px] font-black tracking-wider"
+                style={{ color: cfg.text, background: cfg.bg }}
+              >
+                {s.signal}
+              </span>
+            </div>
+            <div className="text-xs font-semibold text-white">${s.price.toFixed(0)}</div>
+            <div
+              className="text-[10px] font-medium"
+              style={{ color: isPos ? "#22C55E" : "#EF4444" }}
+            >
+              {isPos ? "+" : ""}{s.change.toFixed(1)}%
+            </div>
+            {/* strength bar */}
+            <div className="mt-1 h-1 w-full rounded-full bg-[#2A2A35]">
+              <div
+                className="h-full rounded-full"
+                style={{ width: `${s.strength}%`, background: cfg.text }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
