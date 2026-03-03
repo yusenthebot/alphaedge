@@ -2,6 +2,8 @@
 AlphaEdge FastAPI Backend
 - /api/signals: real-time signals (cached 5 min)
 - /api/signals/{ticker}: single ticker
+- /api/signals/{ticker}/history: signal history from SQLite
+- /api/news: Jin10 live headlines
 - /api/health: status
 - Background scheduler refreshes cache every 5 min
 """
@@ -20,9 +22,11 @@ from pydantic import BaseModel
 _src = os.path.join(os.path.dirname(__file__), "..")
 sys.path.insert(0, _src)
 sys.path.insert(0, os.path.join(_src, "pipeline"))  # for jin10.py etc.
+sys.path.insert(0, os.path.dirname(__file__))       # for signal_store.py
 
 from pipeline.unified_collector import collect_all
 from signals.aggregator import generate_signals
+from signal_store import init_db, log_signal, get_history, get_all_latest
 
 
 def _generate_signals_for_tickers(tickers: list[str]) -> list[dict]:
@@ -48,13 +52,16 @@ def _generate_signals_for_tickers(tickers: list[str]) -> list[dict]:
     return result
 
 # ── App ──────────────────────────────────────────────────────────────
-app = FastAPI(title="AlphaEdge API", version="0.2.0")
+app = FastAPI(title="AlphaEdge API", version="0.3.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Init DB at startup ──────────────────────────────────────────────
+init_db()
 
 # ── Signal cache ─────────────────────────────────────────────────────
 WATCHLIST = ["NVDA", "TSLA", "AAPL", "BABA", "SPY", "MSFT", "AMD", "META"]
@@ -73,6 +80,12 @@ def _refresh_cache(tickers: list[str] = WATCHLIST):
         with _cache_lock:
             _cache = {s["ticker"]: s for s in signals}
             _cache_ts = time.time()
+        # Log each signal to SQLite history
+        for s in signals:
+            try:
+                log_signal(s)
+            except Exception as e:
+                print(f"[store] log error for {s.get('ticker')}: {e}")
         print(f"[cache] refreshed {len(signals)} signals at {datetime.now().strftime('%H:%M:%S')}")
     except Exception as e:
         print(f"[cache] refresh error: {e}")
@@ -164,8 +177,17 @@ def get_signal(ticker: str):
     return SignalResponse(**signals[0])
 
 
+@app.get("/api/signals/{ticker}/history")
+def get_signal_history(ticker: str, limit: int = 20):
+    """Return historical signal records for a ticker."""
+    ticker = ticker.upper()
+    limit = min(max(1, limit), 100)  # clamp 1-100
+    records = get_history(ticker, limit=limit)
+    return {"ticker": ticker, "history": records, "count": len(records)}
+
+
 @app.get("/api/history/{ticker}")
-def get_history(ticker: str, days: int = 7):
+def get_price_history(ticker: str, days: int = 7):
     """Return OHLC history for sparkline charts."""
     try:
         import yfinance as yf
@@ -181,6 +203,31 @@ def get_history(ticker: str, days: int = 7):
         return {"ticker": ticker.upper(), "data": points}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/news")
+def get_news():
+    """Return last 30 Jin10 headlines, newest first."""
+    try:
+        from jin10 import fetch_flash_news, parse_flash
+    except ImportError as e:
+        raise HTTPException(status_code=500, detail=f"jin10 module not available: {e}")
+
+    raw_items = fetch_flash_news(max_items=50)
+    parsed = []
+    for item in raw_items:
+        p = parse_flash(item)
+        if p:
+            parsed.append({
+                "text": p["text"],
+                "created_at": p["time"].isoformat(),
+                "time_str": p["time_str"],
+                "is_important": p["important"],
+            })
+
+    # Sort newest first, limit to 30
+    parsed.sort(key=lambda x: x["created_at"], reverse=True)
+    return {"news": parsed[:30], "count": min(len(parsed), 30)}
 
 
 @app.post("/api/refresh")
