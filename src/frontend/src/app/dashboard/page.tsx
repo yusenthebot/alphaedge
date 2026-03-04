@@ -667,7 +667,10 @@ export default function DashboardPage() {
             whiteSpace: 'nowrap',
             animation: 'tickerScroll 30s linear infinite',
           }}>
-            {'MSFT ▲1.35% BUY ◆ NVDA ▼1.22% HOLD ◆ AAPL ▲0.80% HOLD ◆ AMD ▼2.89% HOLD ◆ META ▲0.23% HOLD ◆ TSLA ▼2.70% HOLD ◆ SPY ▼0.88% HOLD ◆ '.repeat(3)}
+            {(signals.length > 0
+              ? signals.map(s => `${s.ticker} ${s.change >= 0 ? '▲' : '▼'}${Math.abs(s.change).toFixed(2)}% ${s.signal} ◆ `).join('')
+              : 'MSFT ▲1.35% BUY ◆ NVDA ▼1.22% HOLD ◆ AAPL ▲0.80% HOLD ◆ AMD ▼2.89% HOLD ◆ '
+            ).repeat(3)}
           </div>
         </div>
 

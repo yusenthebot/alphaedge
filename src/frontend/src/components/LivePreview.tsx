@@ -19,25 +19,40 @@ const SIGNAL_COLOR = {
 export function LivePreview() {
   const [signals, setSignals] = useState<MiniSignal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY", { signal: controller.signal })
-      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-      .then((d) => {
-        setSignals(
-          (d.signals ?? []).map((s: { ticker: string; signal: string; strength: number; price: number; change: number }) => ({
-            ticker: s.ticker,
-            signal: s.signal,
-            strength: s.strength,
-            price: s.price,
-            change: s.change,
-          }))
-        );
-      })
-      .catch((err) => { if (err.name !== "AbortError") console.error(err); })
-      .finally(() => setLoading(false));
-    return () => controller.abort();
+    let retryTimer: ReturnType<typeof setTimeout>;
+
+    function doFetch() {
+      setError(false);
+      setLoading(true);
+      fetch("/api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY", { signal: controller.signal })
+        .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+        .then((d) => {
+          setSignals(
+            (d.signals ?? []).map((s: { ticker: string; signal: string; strength: number; price: number; change: number }) => ({
+              ticker: s.ticker,
+              signal: s.signal,
+              strength: s.strength,
+              price: s.price,
+              change: s.change,
+            }))
+          );
+        })
+        .catch((err) => {
+          if (err.name !== "AbortError") {
+            console.error(err);
+            setError(true);
+            retryTimer = setTimeout(doFetch, 5000);
+          }
+        })
+        .finally(() => setLoading(false));
+    }
+
+    doFetch();
+    return () => { controller.abort(); clearTimeout(retryTimer); };
   }, []);
 
   if (loading) {
@@ -48,6 +63,10 @@ export function LivePreview() {
         ))}
       </div>
     );
+  }
+
+  if (error) {
+    return <div className="text-center text-xs text-[#FF3131] py-4">Signal fetch failed — retrying…</div>;
   }
 
   return (

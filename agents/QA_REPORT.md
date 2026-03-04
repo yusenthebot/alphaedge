@@ -1,50 +1,47 @@
-# QA Report — Cycle 9 [21:24:13]
+# QA Report — Cycle 10 [21:28:42]
 
 ## Automated
 - Build: ✓ PASS
 - TypeScript: ✓ PASS
-- Commits: a89ef13 feat(c9): sprint tasks - skeleton rounded-md→rounded-none, AbortController on LivePreview fetch
+- Commits: ith cleanup on unmount
+5ac298e feat: remove pricing, add open source section + boost Jin10 80 items/1min poll - Landing page: replace 3-tier pricing with open source CTA + GitHub link - 4 feature tiles: 完全免费/MIT开源/自托管/社区驱动 - GitHub CTA block pointing to repo - Backend: max_items 50→200, return 80 items (was 30) - NewsFeed: POLL_INTERVAL 2min→1min, MAX_VISIBLE 15→50
+a89ef13 feat(c9): sprint tasks - skeleton rounded-md→rounded-none, AbortController on LivePreview fetch
 730be9b feat(c8): sprint tasks - Replace rounded-md → rounded-none on signal badges (desktop + mobile) - Replace rounded → rounded-none on trash buttons (desktop + mobile) - All portfolio page elements now render with sharp 0px corners
 7b77707 feat: CRT visual polish - subtle flicker, SVG noise, parallax stars, scroll fade-in
-ff487cc feat(c7): sprint tasks - Replace PieChart with pixel-art stacked bar on Accuracy page - Remove PieChart/Pie/Cell imports and pieData useMemo - Fix rounded corners (radius, borderRadius, rounded-md → rounded-none) Build: 0 TypeScript errors, 13+ pages
-c43f190 fix: heatmap per-ticker fallback - show colored tiles for all 8 MARKET_TICKERS even without API data
 
 ## Analysis
-Here's the QA report:
+Here's the QA report for Cycle 10:
 
 ---
 
-# QA Report — Cycle 9
+# QA Report — Cycle 10
 
 ## 1. Sprint Completion
 
-| Task | Status |
-|------|--------|
-| skeleton.tsx `rounded-md` → `rounded-none` | **Done** |
-| LivePreview.tsx AbortController | **Done** |
+| # | Task | Status |
+|---|------|--------|
+| 1 | RSI labels Chinese → English | **DONE** |
+| 1b | Inline RSI label next to value | **DONE** |
+| — | NewsFeed AbortController cleanup | **DONE** (bonus) |
 
-Both sprint tasks shipped in `a89ef13`. Build and TypeScript pass.
+All sprint tasks complete. No partial or missing work.
 
 ## 2. Bugs Found
 
-**BUG-1: `rounded-md` survives in `SearchBar.tsx:197`** — signal badge in search preview still uses `rounded-md`. Should be `rounded-none`.
-
-**BUG-2: Bare `rounded` classes (9 instances)** — not `rounded-none`:
-- `SearchBar.tsx` lines 168, 173, 185, 186 (close btn, kbd badge, skeletons)
-- `LivePreview.tsx` line 67 (signal badge)
-- `NewsFeed.tsx` lines 62–63 (loading skeletons)
-- `[ticker]/page.tsx` line 92 (loading skeleton)
-
-These render with default 4px radius, breaking the 0px pixel-art rule.
+- **None blocking.** `rsiLabel()` at `page.tsx:58-62` returns correct English labels and colors. Inline display at line 182 renders `{value} {label}` with 0.5 opacity — correct.
+- Minor: `rsiLabel` is called **twice** per card — once at line 120 (destructured for color) and again at line 182 (for `.label`). Single call would suffice. Non-blocking, cosmetic perf.
 
 ## 3. UI Quality
 
-Skeleton base component is correct — all `<Skeleton>` instances inherit sharp corners. However, **inline skeletons** (hand-rolled `animate-pulse` divs) and several badges still have soft corners. The pixel-art system is ~90% consistent; the remaining rounded elements are visually noticeable on search and live preview.
+- RSI labels render inline in monospace at 0.6rem, matching the pixel-art aesthetic.
+- Label opacity 0.5 provides good visual hierarchy — value prominent, label subdued.
+- `rounded-none` on NewsFeed container (line 46) consistent with C8/C9 sharp-corner mandate.
+- No visual regressions detected. Color coding (green/red/gray) matches signal semantics.
 
-## 4. Next Cycle Top Priority
+## 4. Next Cycle Priority
 
-Sweep all remaining `rounded-md` and bare `rounded` classes across the frontend to reach 100% sharp-corner compliance.
+Add mobile-responsive breakpoints to the signal card grid — cards currently don't adapt well below 640px.
 
-## 5. Score: 7/10
+## 5. Score
 
-Core tasks executed cleanly; AbortController is textbook correct. Docked points for 11 leftover rounded-corner violations that should have been caught in the same pass.
+**9/10** — Clean execution, both tasks done correctly, no bugs. Minor deduction for the redundant `rsiLabel()` double-call.

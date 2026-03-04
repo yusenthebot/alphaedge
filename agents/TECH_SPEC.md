@@ -1,34 +1,26 @@
-# Tech — Cycle 10 [21:26:07]
+# Tech — Cycle 11 [21:30:38]
 
-## Tech Priority: AbortController on NewsFeed fetch
+## Tech Priority: LivePreview silent failure → blank state
 
-**File:** `src/frontend/src/components/NewsFeed.tsx`
+**File:** `src/frontend/src/components/LivePreview.tsx`
 
-**Issue:** `fetchNews` has no `AbortController` — if the component unmounts mid-fetch (e.g. page navigation), React will attempt `setState` on an unmounted component causing a memory leak. The recent c9 commit added `AbortController` to `LivePreview` for the same reason, but `NewsFeed` was missed. Its 60s polling interval makes in-flight requests during unmount likely.
+**Issue:** When the API fetch fails (network error, 5xx), the `.catch()` at line 38 swallows the error. `loading` becomes `false`, `signals` stays `[]`, and users see an empty div — no cards, no error message, no retry option.
 
-**Fix:** Wire an `AbortController` into the `useEffect`, pass its signal to `fetch`, and ignore `AbortError` in the catch block:
+**Fix:** Add `error` state. On catch, set it. Render a retry button when errored:
 
 ```tsx
-useEffect(() => {
-  const ctrl = new AbortController();
-  const run = async () => {
-    try {
-      const res = await fetch("/api/news", { signal: ctrl.signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setNews(data.news ?? []);
-      setLastUpdated(new Date());
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") return;
-      console.error("news fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  run();
-  const iv = setInterval(run, POLL_INTERVAL);
-  return () => { ctrl.abort(); clearInterval(iv); };
-}, []);
+const [error, setError] = useState(false);
+// in .catch():
+.catch((err) => { if (err.name !== "AbortError") { console.error(err); setError(true); } })
+// after loading check:
+if (error) return (
+  <div className="flex justify-center">
+    <button onClick={() => { setError(false); setLoading(true); /* re-fetch */ }}
+      className="text-xs text-[var(--pixel-muted)] hover:text-[var(--pixel-text)]">
+      Failed to load signals — tap to retry
+    </button>
+  </div>
+);
 ```
 
-**Test:** `npm run build` — zero TS errors; navigate away from dashboard during loading to confirm no React warnings in console.
+**Test:** Kill backend (`Ctrl+C`), reload landing page → should show retry message instead of blank space. Click retry after restarting backend → cards appear.

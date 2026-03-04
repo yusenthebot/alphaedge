@@ -1,3 +1,6 @@
+## Cycle 10 [21:28:42]
+c0ad3f4 feat(c10): sprint tasks - RSI labels: Chinese → English (OVERSOLD/OVERBOUGHT/NEUTRAL) + inline display - NewsFeed: add AbortController to fetch with cleanup on unmount
+
 ## Cycle 9 [21:24:13]
 a89ef13 feat(c9): sprint tasks - skeleton rounded-md→rounded-none, AbortController on LivePreview fetch
 
@@ -10,5 +13,4 @@ ff487cc feat(c7): sprint tasks - Replace PieChart with pixel-art stacked bar on 
 ## Cycle 6 [21:07:24]
 335ae03 fix: heatmap always show fallback tiles when no API data (was waiting on loading flag)
 
-## Cycle 5 [20:59:52]
-5a0d8d9 feat(c5): sprint tasks - Remove dead rounded-2xl from Portfolio Add Position modal - Remove dead rounded-lg fro
+## Cycle 5 [20
