@@ -81,7 +81,7 @@ export default function MarketOverview() {
 
   // Map signals by ticker for quick lookup
   const signalMap = new Map(signals.map((s) => [s.ticker, s]));
-  const useFallback = !loading && signals.length === 0;
+  const useFallback = signals.length === 0; // show fallback immediately, including during load
 
   return (
     <div className="mb-6">
