@@ -56,9 +56,9 @@ function timeAgo(dateString: string) {
 }
 
 function rsiLabel(rsi: number) {
-  if (rsi < 30) return { label: "超卖", color: "#22C55E" };
-  if (rsi > 70) return { label: "超买", color: "#EF4444" };
-  return { label: "中性", color: "#A0A0A0" };
+  if (rsi < 30) return { label: "OVERSOLD", color: "#22C55E" };
+  if (rsi > 70) return { label: "OVERBOUGHT", color: "#EF4444" };
+  return { label: "NEUTRAL", color: "#A0A0A0" };
 }
 
 function loadWatchlist(): string[] {
@@ -179,7 +179,7 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <span className="pixel-label">RSI</span>
-                <span className="font-mono text-[0.6rem] font-semibold" style={{ color: rsiColor }}>{signal.sources.rsi}</span>
+                <span className="font-mono text-[0.6rem] font-semibold" style={{ color: rsiColor }}>{signal.sources.rsi} <span style={{opacity:0.5}}>{rsiLabel(signal.sources.rsi).label}</span></span>
               </div>
               <MacdBadge macd={signal.sources.macd} />
               <div className="pixel-label">

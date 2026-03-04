@@ -17,14 +17,15 @@ export default function NewsFeed() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchNews = useCallback(async () => {
+  const fetchNews = useCallback(async (signal?: AbortSignal) => {
     try {
-      const res = await fetch("/api/news");
+      const res = await fetch("/api/news", { signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setNews(data.news ?? []);
       setLastUpdated(new Date());
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       console.error("news fetch error:", err);
     } finally {
       setLoading(false);
@@ -32,9 +33,13 @@ export default function NewsFeed() {
   }, []);
 
   useEffect(() => {
-    fetchNews();
-    const iv = setInterval(fetchNews, POLL_INTERVAL);
-    return () => clearInterval(iv);
+    const controller = new AbortController();
+    fetchNews(controller.signal);
+    const iv = setInterval(() => fetchNews(controller.signal), POLL_INTERVAL);
+    return () => {
+      controller.abort();
+      clearInterval(iv);
+    };
   }, [fetchNews]);
 
   return (
