@@ -486,3 +486,104 @@ nav a:hover, header a:hover {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ════════════════════════════════════════════════════════════
+   VISUAL EFFECTS SYSTEM v2 — Hover Glow · Chroma · Glitch · Reveal
+   ════════════════════════════════════════════════════════════ */
+
+/* ── 1. Hover Glow Cards ───────────────────────────────────── */
+.pixel-hover-glow {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  cursor: pointer;
+}
+.pixel-hover-glow:hover {
+  transform: translateY(-4px) translateZ(0);
+  box-shadow:
+    0 8px 24px rgba(0,212,255,0.2),
+    0 0 0 1px rgba(0,212,255,0.35),
+    inset 0 0 20px rgba(0,212,255,0.03);
+  border-color: var(--pixel-border) !important;
+}
+.pixel-hover-glow-buy:hover {
+  box-shadow:
+    0 8px 24px rgba(0,255,136,0.22),
+    0 0 0 1px rgba(0,255,136,0.38),
+    inset 0 0 16px rgba(0,255,136,0.04);
+  border-color: var(--pixel-buy) !important;
+}
+.pixel-hover-glow-sell:hover {
+  box-shadow:
+    0 8px 24px rgba(255,49,49,0.22),
+    0 0 0 1px rgba(255,49,49,0.38),
+    inset 0 0 16px rgba(255,49,49,0.04);
+  border-color: var(--pixel-sell) !important;
+}
+.pixel-hover-glow-hold:hover {
+  box-shadow:
+    0 8px 24px rgba(255,184,0,0.22),
+    0 0 0 1px rgba(255,184,0,0.38),
+    inset 0 0 16px rgba(255,184,0,0.04);
+  border-color: var(--pixel-hold) !important;
+}
+
+/* ── 2. Chromatic Aberration Badges ───────────────────────── */
+@keyframes chromaShift {
+  0%   { text-shadow: 0 0 transparent; filter: brightness(1); }
+  20%  { text-shadow: -2px 0 #FF3131, 2px 0 #00D4FF; filter: brightness(1.25); }
+  40%  { text-shadow: 1px 0 #00FF88, -1px 0 #7B61FF; filter: brightness(1.15); }
+  60%  { text-shadow: -1.5px 0 #FF3131, 1.5px 0 #00D4FF; filter: brightness(1.2); }
+  80%  { text-shadow: 0.5px 0 #00FF88, -0.5px 0 #00D4FF; filter: brightness(1.1); }
+  100% { text-shadow: 0 0 transparent; filter: brightness(1); }
+}
+.chroma-badge {
+  transition: filter 0.15s ease;
+  position: relative;
+}
+.chroma-badge:hover {
+  animation: chromaShift 0.45s ease forwards;
+}
+
+/* ── 3. Signal Glitch Entrance ─────────────────────────────── */
+@keyframes signalGlitch {
+  0%   { opacity: 0; clip-path: inset(0 0 100% 0); transform: translateX(0); }
+  8%   { opacity: 1; clip-path: inset(30% 0 35% 0); transform: translateX(5px); filter: hue-rotate(30deg); }
+  16%  { clip-path: inset(0 0 0 0); transform: translateX(-3px); filter: none; }
+  24%  { clip-path: inset(55% 0 8% 0); transform: translateX(4px); filter: hue-rotate(-20deg); }
+  32%  { clip-path: inset(0 0 0 0); transform: translateX(0); filter: none; }
+  48%  { clip-path: inset(15% 0 60% 0); transform: translateX(-2px); filter: hue-rotate(10deg); }
+  60%  { clip-path: inset(0 0 0 0); transform: translateX(0); opacity: 1; filter: none; }
+  100% { clip-path: none; transform: translateX(0); opacity: 1; filter: none; }
+}
+.glitch-enter {
+  animation: signalGlitch 0.6s steps(1, end) forwards;
+}
+.glitch-enter-delay-1 { animation-delay: 0.08s; opacity: 0; }
+.glitch-enter-delay-2 { animation-delay: 0.16s; opacity: 0; }
+.glitch-enter-delay-3 { animation-delay: 0.24s; opacity: 0; }
+.glitch-enter-delay-4 { animation-delay: 0.32s; opacity: 0; }
+
+/* ── 4. Scroll Reveal Variants ─────────────────────────────── */
+.scroll-reveal-up,
+.scroll-reveal-left,
+.scroll-reveal-right {
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.scroll-reveal-up    { transform: translateY(28px); }
+.scroll-reveal-left  { transform: translateX(-28px); }
+.scroll-reveal-right { transform: translateX(28px); }
+.scroll-reveal-up.revealed,
+.scroll-reveal-left.revealed,
+.scroll-reveal-right.revealed {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+/* Stagger children transitions */
+.stagger-children > *:nth-child(1) { transition-delay: 0.04s; }
+.stagger-children > *:nth-child(2) { transition-delay: 0.09s; }
+.stagger-children > *:nth-child(3) { transition-delay: 0.14s; }
+.stagger-children > *:nth-child(4) { transition-delay: 0.19s; }
+.stagger-children > *:nth-child(5) { transition-delay: 0.24s; }
+.stagger-children > *:nth-child(6) { transition-delay: 0.29s; }
+.stagger-children > *:nth-child(7) { transition-delay: 0.34s; }
+.stagger-children > *:nth-child(8) { transition-delay: 0.39s; }
