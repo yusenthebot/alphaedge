@@ -529,7 +529,7 @@ export default function PortfolioPage() {
                       <div className={`text-right text-sm font-medium ${pnlColor}`}>{formatPct(pos.pnlPercent)}</div>
                       <div className="flex justify-center">
                         <span
-                          className="rounded-md px-2 py-0.5 text-[10px] font-bold"
+                          className="rounded-none px-2 py-0.5 text-[10px] font-bold"
                           style={{ backgroundColor: signalCfg.bg + "20", color: signalCfg.bg }}
                         >
                           {pos.signal}
@@ -538,7 +538,7 @@ export default function PortfolioPage() {
                       <div className="flex justify-end">
                         <button
                           onClick={() => removePosition(idx)}
-                          className="rounded p-1 text-[#333] opacity-0 transition hover:bg-[#FF3131]/10 hover:text-[#FF3131] group-hover:opacity-100"
+                          className="rounded-none p-1 text-[#333] opacity-0 transition hover:bg-[#FF3131]/10 hover:text-[#FF3131] group-hover:opacity-100"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -551,7 +551,7 @@ export default function PortfolioPage() {
                         <div className="flex items-center gap-2">
                           <Link href={`/ticker/${pos.ticker}`} className="font-bold text-[var(--pixel-text)]">{pos.ticker}</Link>
                           <span
-                            className="rounded-md px-1.5 py-0.5 text-[10px] font-bold"
+                            className="rounded-none px-1.5 py-0.5 text-[10px] font-bold"
                             style={{ backgroundColor: signalCfg.bg + "20", color: signalCfg.bg }}
                           >
                             {pos.signal}
@@ -559,7 +559,7 @@ export default function PortfolioPage() {
                         </div>
                         <button
                           onClick={() => removePosition(idx)}
-                          className="rounded p-1 text-[#444] transition hover:text-[#FF3131]"
+                          className="rounded-none p-1 text-[#444] transition hover:text-[#FF3131]"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
