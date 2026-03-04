@@ -12,14 +12,12 @@ import {
   Tooltip,
   CartesianGrid,
   ReferenceLine,
-  RadialBarChart,
-  RadialBar,
-  PolarAngleAxis,
   LineChart,
   Line,
 } from "recharts";
 import { ArrowLeft, TrendingUp, TrendingDown, RefreshCw, Activity } from "lucide-react";
 import Link from "next/link";
+import { SignalStrengthBar, PixelProgress } from "@/components/PixelProgress";
 
 // ── Types ──────────────────────────────────────────────────────────
 interface HistoryPoint {
@@ -72,27 +70,6 @@ function DarkTooltip({ active, payload, label }: { active?: boolean; payload?: A
           </span>
         </div>
       ))}
-    </div>
-  );
-}
-
-// ── Gauge ──────────────────────────────────────────────────────────
-function Gauge({ value, max = 100, color, label, sublabel }: { value: number; max?: number; color: string; label: string; sublabel?: string }) {
-  const data = [{ value, fill: color }];
-  return (
-    <div className="flex flex-col items-center gap-1">
-      <div className="relative h-20 w-20">
-        <RadialBarChart width={80} height={80} cx={40} cy={40} innerRadius={26} outerRadius={38}
-          startAngle={90} endAngle={-270} data={data}>
-          <PolarAngleAxis type="number" domain={[0, max]} tick={false} />
-          <RadialBar dataKey="value" cornerRadius={5} background={{ fill: "#1C1C24" }} />
-        </RadialBarChart>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-sm font-bold text-[var(--pixel-text)]">{value}</span>
-          {sublabel && <span className="text-[9px] text-[#444]">{sublabel}</span>}
-        </div>
-      </div>
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-[#666]">{label}</span>
     </div>
   );
 }
@@ -249,9 +226,9 @@ export default function TickerPage() {
               </div>
             </div>
 
-            {/* Strength ring */}
-            <div className="shrink-0">
-              <Gauge value={signal.strength} color={cfg.color} label="Strength" sublabel="/ 100" />
+            {/* Strength bar */}
+            <div className="shrink-0 w-32">
+              <SignalStrengthBar value={signal.strength} signal={signal.signal} />
             </div>
           </div>
         </div>
@@ -322,35 +299,41 @@ export default function TickerPage() {
         <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-5">
           <div className="mb-4 text-sm font-bold text-[var(--pixel-text)]">Signal Breakdown</div>
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-            <Gauge
+            <PixelProgress
               value={Math.round(signal.sources.jin10_sentiment * 100)}
-              color={signal.sources.jin10_sentiment > 0 ? "#00FF41" : "#FF3131"}
+              color={signal.sources.jin10_sentiment > 0 ? "green" : "red"}
               label="Jin10"
-              sublabel="%"
+              blocks={16}
             />
-            <Gauge
+            <PixelProgress
               value={signal.sources.rsi}
-              color={signal.sources.rsi < 30 ? "#00FF41" : signal.sources.rsi > 70 ? "#FF3131" : "#8B5CF6"}
+              color={signal.sources.rsi < 30 ? "green" : signal.sources.rsi > 70 ? "red" : "cyan"}
               label="RSI"
+              blocks={16}
             />
-            <div className="flex flex-col items-center gap-1">
+            <div className="flex flex-col gap-1">
+              <span
+                className="pixel-label"
+                style={{ fontSize: "0.5rem", color: "var(--pixel-text-off)" }}
+              >
+                MACD
+              </span>
               <div
-                className="flex h-20 w-20 items-center justify-center rounded-full text-sm font-bold"
+                className="flex h-8 items-center justify-center text-sm font-bold"
                 style={{
                   background: macdIsBull ? "rgba(34,197,94,0.1)" : macdIsBear ? "rgba(239,68,68,0.1)" : "rgba(160,160,160,0.1)",
-                  border: `2px solid ${macdIsBull ? "#00FF4155" : macdIsBear ? "#FF313155" : "#55555555"}`,
+                  border: `1px solid ${macdIsBull ? "#00FF4155" : macdIsBear ? "#FF313155" : "#55555555"}`,
                   color: macdIsBull ? "#00FF41" : macdIsBear ? "#FF3131" : "#A0A0A0",
                 }}
               >
                 {signal.sources.macd}
               </div>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#666]">MACD</span>
             </div>
-            <Gauge
+            <PixelProgress
               value={Math.round(signal.confidence * 100)}
-              color={cfg.color}
+              color={signal.signal === "BUY" ? "green" : signal.signal === "SELL" ? "red" : "amber"}
               label="Confidence"
-              sublabel="%"
+              blocks={16}
             />
           </div>
         </div>
