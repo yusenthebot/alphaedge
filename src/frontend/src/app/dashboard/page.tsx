@@ -7,9 +7,6 @@ import {
   AreaChart,
   Area,
   Tooltip,
-  RadialBarChart,
-  RadialBar,
-  PolarAngleAxis,
 } from "recharts";
 import { TrendingUp, TrendingDown, Zap, RefreshCw, Clock, Plus, X, ChevronDown, Bell, Search, Briefcase, BarChart3 } from "lucide-react";
 import type { Signal } from "@/types/signal";
@@ -88,59 +85,6 @@ function saveWatchlist(list: string[]) {
   } catch {}
 }
 
-// ── RSI Gauge ────────────────────────────────────────────────────
-function RSIGauge({ rsi }: { rsi: number }) {
-  const { color } = rsiLabel(rsi);
-  const data = [{ value: rsi, fill: color }];
-  return (
-    <div className="relative flex h-16 w-16 items-center justify-center">
-      <RadialBarChart
-        width={64}
-        height={64}
-        cx={32}
-        cy={32}
-        innerRadius={22}
-        outerRadius={30}
-        startAngle={180}
-        endAngle={-180}
-        data={data}
-      >
-        <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-        <RadialBar dataKey="value" cornerRadius={0} background={{ fill: "#0B160B" }} />
-      </RadialBarChart>
-      <span className="absolute text-xs font-mono font-bold" style={{ color }}>{rsi}</span>
-    </div>
-  );
-}
-
-// ── Strength Ring ────────────────────────────────────────────────
-function StrengthRing({ strength, signal }: { strength: number; signal: string }) {
-  const cfg = SIGNAL_CONFIG[signal as keyof typeof SIGNAL_CONFIG];
-  const data = [{ value: strength, fill: cfg?.bg ?? "#22C55E" }];
-  return (
-    <div className="relative flex h-20 w-20 items-center justify-center">
-      <RadialBarChart
-        width={80}
-        height={80}
-        cx={40}
-        cy={40}
-        innerRadius={28}
-        outerRadius={38}
-        startAngle={90}
-        endAngle={-270}
-        data={data}
-      >
-        <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-        <RadialBar dataKey="value" cornerRadius={0} background={{ fill: "#0B160B" }} />
-      </RadialBarChart>
-      <div className="absolute text-center">
-        <div className="text-sm font-mono font-bold" style={{ color: cfg?.bg }}>{strength}</div>
-        <div className="text-[9px] font-mono" style={{ color: "var(--pixel-text-muted)" }}>/ 100</div>
-      </div>
-    </div>
-  );
-}
-
 // ── Sparkline ────────────────────────────────────────────────────
 function Sparkline({ data, color }: { data: HistoryPoint[]; color: string }) {
   if (!data || data.length < 2) {
@@ -196,7 +140,7 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
   const cfg = SIGNAL_CONFIG[signal.signal];
   const isPos = signal.change >= 0;
   const sparkColor = isPos ? "#00FF41" : "#FF3131";
-  const { label: rsiLbl, color: rsiColor } = rsiLabel(signal.sources.rsi);
+  const { color: rsiColor } = rsiLabel(signal.sources.rsi);
 
   return (
     <div className="group relative">
@@ -248,11 +192,11 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
 
           {/* ── RSI + MACD row ── */}
           <div className="mb-3 flex items-center gap-3">
-            <RSIGauge rsi={signal.sources.rsi} />
+            <SignalStrengthBar value={signal.strength || 50} signal={signal.signal} />
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <span className="pixel-label">RSI</span>
-                <span className="font-mono text-[0.6rem] font-semibold" style={{ color: rsiColor }}>{rsiLbl}</span>
+                <span className="font-mono text-[0.6rem] font-semibold" style={{ color: rsiColor }}>{signal.sources.rsi}</span>
               </div>
               <MacdBadge macd={signal.sources.macd} />
               <div className="pixel-label">
@@ -328,7 +272,7 @@ function TopSignal({ signal }: { signal: SignalWithHistory }) {
       </div>
 
       <div className="flex items-center gap-6">
-        <StrengthRing strength={signal.strength} signal={signal.signal} />
+        <SignalStrengthBar value={signal.strength} signal={signal.signal} className="w-24" />
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <span className="pixel-title text-xl" style={{ color: cfg.bg }}>{signal.ticker}</span>
@@ -717,6 +661,26 @@ export default function DashboardPage() {
       <SearchBar open={searchOpen} onClose={() => setSearchOpen(false)} />
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+        {/* ── Live Ticker Tape ── */}
+        <div style={{
+          overflow: 'hidden',
+          borderBottom: '1px solid var(--pixel-border)',
+          background: 'var(--pixel-surface)',
+          padding: '4px 0',
+          fontFamily: 'var(--font-pixel)',
+          fontSize: '8px',
+          color: 'var(--pixel-text)',
+          marginBottom: '1rem',
+        }}>
+          <div style={{
+            display: 'inline-block',
+            whiteSpace: 'nowrap',
+            animation: 'tickerScroll 30s linear infinite',
+          }}>
+            {'MSFT ▲1.35% BUY ◆ NVDA ▼1.22% HOLD ◆ AAPL ▲0.80% HOLD ◆ AMD ▼2.89% HOLD ◆ META ▲0.23% HOLD ◆ TSLA ▼2.70% HOLD ◆ SPY ▼0.88% HOLD ◆ '.repeat(3)}
+          </div>
+        </div>
+
         {/* ── Summary bar ── */}
         {!loading && signals.length > 0 && <SummaryBar signals={signals} />}
 

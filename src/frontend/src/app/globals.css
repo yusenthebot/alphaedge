@@ -242,6 +242,10 @@ body::after {
 /* ─────────────────────────────────────────
    Keyframe Animations
 ───────────────────────────────────────── */
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-33.33%); }
+}
 @keyframes blink {
   50% { opacity: 0; }
 }
