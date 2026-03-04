@@ -1,11 +1,15 @@
-# Design — Cycle 11 [21:29:39]
+# Design — Cycle 12 [21:34:33]
 
-## Task 1: Dynamic ticker tape (replace hardcoded text)
-File: `src/frontend/src/app/dashboard/page.tsx:670`
-Change: Replace the hardcoded string `'MSFT ▲1.35% BUY ◆ NVDA ▼1.22% HOLD ◆ ...'` with a dynamic string built from the `signals` state: `signals.map(s => \`${s.ticker} ${s.change >= 0 ? '▲' : '▼'}${Math.abs(s.change).toFixed(2)}% ${s.signal}\`).join(' ◆ ')` repeated for seamless scroll.
-Why: The ticker tape is frozen mock data that never reflects actual signal state.
+Now I have a clear picture. Here are my 2 picks:
 
-## Task 2: Pixel-stepped summary mini bars
-File: `src/frontend/src/app/dashboard/page.tsx:231`
-Change: On the inner `<div>` fill bar (line 232), replace `background: color` with `background: repeating-linear-gradient(90deg, ${color} 0 3px, transparent 3px 4px)` and add `imageRendering: 'pixelated'`.
-Why: Smooth fill bars break the CRT pixel-art aesthetic — stepped blocks match the rest of the dashboard.
+---
+
+## Task 1: Scanline overlay on signal cards
+**File:** `src/frontend/src/app/dashboard/page.tsx`
+**Change:** In `SignalCard` (line 146), add a CSS `::after` pseudo-element via an inline overlay div inside the card `<div>`: insert `<div className="pointer-events-none absolute inset-0" style={{ background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px)' }} />` as the first child of the card, and add `relative overflow-hidden` to the card's className.
+**Why:** Reinforces the CRT aesthetic — every card gets subtle horizontal scanlines like a retro monitor, which is currently missing from the signal cards.
+
+## Task 2: Pixelated box-shadow on SummaryBar stat boxes
+**File:** `src/frontend/src/app/dashboard/page.tsx`
+**Change:** In `SummaryBar` (line 222), on the stat `<div>`, add to the existing inline style: `boxShadow: \`4px 4px 0px ${color}33, inset 0 0 12px ${color}11\`` — a hard-offset shadow (no blur = pixel-perfect) plus faint inner glow.
+**Why:** The 3 summary stat boxes currently look flat; a hard drop-shadow + inner glow gives them the chunky CRT-panel depth the rest of the dashboard has.

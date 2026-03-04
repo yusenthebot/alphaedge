@@ -1,26 +1,23 @@
-# Tech — Cycle 11 [21:30:38]
+# Tech — Cycle 12 [21:35:31]
 
-## Tech Priority: LivePreview silent failure → blank state
+## Tech Priority: SearchBar fetch abort on unmount
 
-**File:** `src/frontend/src/components/LivePreview.tsx`
+**File:** `src/frontend/src/components/SearchBar.tsx`
+**Issue:** `fetchPreview` (line 87–99) fires a `fetch()` inside a `setTimeout` with no `AbortController`. When the search modal closes or the component unmounts, in-flight requests continue and call `setPreview`/`setLoadingPreview` on an unmounted component — causing React state-update-after-unmount warnings and a minor memory leak.
 
-**Issue:** When the API fetch fails (network error, 5xx), the `.catch()` at line 38 swallows the error. `loading` becomes `false`, `signals` stays `[]`, and users see an empty div — no cards, no error message, no retry option.
-
-**Fix:** Add `error` state. On catch, set it. Render a retry button when errored:
+**Fix:** Create an `AbortController` in the `useEffect` cleanup scope. Pass its `signal` to `fetch`. Abort on unmount/close:
 
 ```tsx
-const [error, setError] = useState(false);
-// in .catch():
-.catch((err) => { if (err.name !== "AbortError") { console.error(err); setError(true); } })
-// after loading check:
-if (error) return (
-  <div className="flex justify-center">
-    <button onClick={() => { setError(false); setLoading(true); /* re-fetch */ }}
-      className="text-xs text-[var(--pixel-muted)] hover:text-[var(--pixel-text)]">
-      Failed to load signals — tap to retry
-    </button>
-  </div>
-);
+// Add ref at component level
+const abortRef = useRef<AbortController | null>(null);
+
+// In fetchPreview, before fetch:
+abortRef.current?.abort();
+abortRef.current = new AbortController();
+const res = await fetch(`/api/signals?tickers=${ticker}`, { signal: abortRef.current.signal });
+
+// In the open useEffect cleanup (or a dedicated useEffect):
+return () => { abortRef.current?.abort(); };
 ```
 
-**Test:** Kill backend (`Ctrl+C`), reload landing page → should show retry message instead of blank space. Click retry after restarting backend → cards appear.
+**Test:** Open SearchBar, type a ticker, immediately press Escape — no console warnings about unmounted state updates.

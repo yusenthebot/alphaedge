@@ -1,47 +1,42 @@
-# QA Report — Cycle 10 [21:28:42]
+# QA Report — Cycle 11 [21:33:44]
 
 ## Automated
 - Build: ✓ PASS
 - TypeScript: ✓ PASS
-- Commits: ith cleanup on unmount
+- Commits: sh (OVERSOLD/OVERBOUGHT/NEUTRAL) + inline display - NewsFeed: add AbortController to fetch with cleanup on unmount
 5ac298e feat: remove pricing, add open source section + boost Jin10 80 items/1min poll - Landing page: replace 3-tier pricing with open source CTA + GitHub link - 4 feature tiles: 完全免费/MIT开源/自托管/社区驱动 - GitHub CTA block pointing to repo - Backend: max_items 50→200, return 80 items (was 30) - NewsFeed: POLL_INTERVAL 2min→1min, MAX_VISIBLE 15→50
 a89ef13 feat(c9): sprint tasks - skeleton rounded-md→rounded-none, AbortController on LivePreview fetch
 730be9b feat(c8): sprint tasks - Replace rounded-md → rounded-none on signal badges (desktop + mobile) - Replace rounded → rounded-none on trash buttons (desktop + mobile) - All portfolio page elements now render with sharp 0px corners
-7b77707 feat: CRT visual polish - subtle flicker, SVG noise, parallax stars, scroll fade-in
 
 ## Analysis
-Here's the QA report for Cycle 10:
+Here is the QA report for Cycle 11:
 
 ---
 
-# QA Report — Cycle 10
+# QA Report — Cycle 11
 
 ## 1. Sprint Completion
 
-| # | Task | Status |
-|---|------|--------|
-| 1 | RSI labels Chinese → English | **DONE** |
-| 1b | Inline RSI label next to value | **DONE** |
-| — | NewsFeed AbortController cleanup | **DONE** (bonus) |
+| Task | Status |
+|---|---|
+| LivePreview error state + 5s auto-retry | **DONE** |
+| Dynamic ticker tape from signals state | **DONE** |
 
-All sprint tasks complete. No partial or missing work.
+Both sprint tasks shipped and build passes. Error state renders red failure text with automatic 5s retry via `setTimeout`. Ticker tape dynamically maps `signals` array with fallback to hardcoded placeholder when empty.
 
 ## 2. Bugs Found
 
-- **None blocking.** `rsiLabel()` at `page.tsx:58-62` returns correct English labels and colors. Inline display at line 182 renders `{value} {label}` with 0.5 opacity — correct.
-- Minor: `rsiLabel` is called **twice** per card — once at line 120 (destructured for color) and again at line 182 (for `.label`). Single call would suffice. Non-blocking, cosmetic perf.
+- **`LivePreview.tsx:86`** — Signal badge uses `rounded` instead of `rounded-none`. Violates the sharp-corner pixel-art convention enforced across cycles 8-9. All other elements in this component correctly use `rounded-none` (lines 62, 80, 100, 102). This is a regression introduced in the new C11 code.
+- **`LivePreview.tsx:55`** — AbortController created once in `useEffect([], [])` but `doFetch` is called again on retry. The retried fetch reuses the same controller — if the component unmounts mid-retry the abort still works, but a second manual retry after abort would fail silently since the controller is already aborted. Low severity but worth noting.
 
 ## 3. UI Quality
 
-- RSI labels render inline in monospace at 0.6rem, matching the pixel-art aesthetic.
-- Label opacity 0.5 provides good visual hierarchy — value prominent, label subdued.
-- `rounded-none` on NewsFeed container (line 46) consistent with C8/C9 sharp-corner mandate.
-- No visual regressions detected. Color coding (green/red/gray) matches signal semantics.
+Skeleton loaders and signal cards all render with sharp 0px corners — consistent with pixel-art theme. Ticker tape animation (`tickerScroll 30s`) loops cleanly with `.repeat(3)`. The one `rounded` on the signal badge pill (line 86) is the only visual inconsistency.
 
 ## 4. Next Cycle Priority
 
-Add mobile-responsive breakpoints to the signal card grid — cards currently don't adapt well below 640px.
+Fix `rounded` -> `rounded-none` on `LivePreview.tsx:86` and audit any other new components for stray border-radius values.
 
-## 5. Score
+## 5. Score: 8/10
 
-**9/10** — Clean execution, both tasks done correctly, no bugs. Minor deduction for the redundant `rsiLabel()` double-call.
+Both tasks delivered cleanly with passing build/TS. Docked for the `rounded` regression and the minor AbortController reuse concern.
