@@ -34,7 +34,7 @@ const SIGNAL_CONFIG = {
 } as const;
 
 const FILTER_COLORS: Record<SignalFilter, string> = {
-  ALL: "#00AA2B",
+  ALL: "#00D4FF",
   BUY: "#00FF41",
   HOLD: "#FFB800",
   SELL: "#FF3131",
@@ -328,7 +328,7 @@ function SortDropdown({ value, onChange }: { value: SortMode; onChange: (v: Sort
         <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <div className="absolute right-0 top-full z-20 mt-1 min-w-[160px] border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] py-1" style={{ boxShadow: "4px 4px 0px rgba(0,255,65,0.1)" }}>
+        <div className="absolute right-0 top-full z-20 mt-1 min-w-[160px] border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] py-1" style={{ boxShadow: "4px 4px 0px rgba(0,212,255,0.1)" }}>
           {(Object.keys(SORT_LABELS) as SortMode[]).map((mode) => (
             <button
               key={mode}

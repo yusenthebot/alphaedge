@@ -1,10 +1,1 @@
-# Engineer — Cycle 14 [21:48:10]
-Build: PASS
-Last commit: fa26acc feat(c14): sprint tasks - RSI OVERSOLD color: #00FF41 → #00FF88 (matches --pixel-buy) - SearchBar signal badge: removed rounded-md for pixel-sharp corners
-Output excerpt: Done. Committed `fa26acc` with both cycle 14 tasks:
-
-1. **RSI OVERSOLD color** — `dashboard/page.tsx:59`: `#00FF41` → `#00FF88` to match `--pixel-buy`
-2. **SearchBar badge** — `SearchBar.tsx:218`: removed `rounded-md` for pixel-sharp corners
-
-Build passes cleanly.
-
+Sort dropdown shadow rgba(0,255,65,0.1)→rgba(0,212,255,0.1) and ALL filter tab color #00AA2B→#00D4FF to match cyan theme.
