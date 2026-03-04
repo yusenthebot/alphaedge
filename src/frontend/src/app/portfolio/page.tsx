@@ -314,7 +314,7 @@ export default function PortfolioPage() {
         {/* ── Add Position Modal ── */}
         {addingPosition && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="w-full max-w-sm rounded-2xl border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-6">
+            <div className="w-full max-w-sm border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-6">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-sm font-bold text-[var(--pixel-text)]">Add Position</h3>
                 <button
