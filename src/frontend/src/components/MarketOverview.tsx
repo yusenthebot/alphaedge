@@ -24,14 +24,14 @@ const SIGNAL_COLORS: Record<string, string> = {
 };
 
 const FALLBACK_HEATMAP: { symbol: string; change: number }[] = [
-  { symbol: "AAPL", change: 0.8 },
-  { symbol: "MSFT", change: 1.35 },
-  { symbol: "NVDA", change: -1.22 },
-  { symbol: "GOOGL", change: 0.4 },
-  { symbol: "META", change: 0.23 },
-  { symbol: "TSLA", change: -2.7 },
-  { symbol: "AMD", change: -2.89 },
-  { symbol: "SPY", change: -0.88 },
+  { symbol: "SPY",  change: -0.88 },
+  { symbol: "QQQ",  change: -1.22 },
+  { symbol: "DIA",  change: -0.45 },
+  { symbol: "IWM",  change: -1.05 },
+  { symbol: "XLK",  change: -1.55 },
+  { symbol: "XLF",  change:  0.32 },
+  { symbol: "XLE",  change:  1.14 },
+  { symbol: "XLV",  change:  0.21 },
 ];
 
 function tileColor(change: number): string {
@@ -131,14 +131,27 @@ export default function MarketOverview() {
               const sig = signalMap.get(ticker);
               const isHovered = hoveredTicker === ticker;
 
-              if (loading || !sig) {
+              if (!sig) {
+                // No API data for this ticker — use fallback mock tile
+                const fb = FALLBACK_HEATMAP.find(f => f.symbol === ticker) ?? { symbol: ticker, change: 0 };
+                const isPos = fb.change >= 0;
                 return (
                   <div
                     key={ticker}
-                    className="animate-pulse rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-3"
+                    className="relative cursor-default rounded-none p-3"
+                    style={{
+                      background: tileBg(fb.change),
+                      border: '1px solid ' + tileBorder(fb.change),
+                      fontFamily: 'var(--font-pixel)',
+                      fontSize: '8px',
+                    }}
                   >
-                    <div className="mb-1.5 h-3 w-12 bg-[#2A2A35]" />
-                    <div className="h-5 w-16 bg-[#2A2A35]" />
+                    <div className="flex items-start justify-between">
+                      <div className="font-bold" style={{ color: 'var(--pixel-text)' }}>{fb.symbol}</div>
+                      <div className="font-bold" style={{ color: isPos ? 'var(--pixel-buy)' : 'var(--pixel-sell)' }}>
+                        {isPos ? '+' : ''}{fb.change.toFixed(2)}%
+                      </div>
+                    </div>
                   </div>
                 );
               }
