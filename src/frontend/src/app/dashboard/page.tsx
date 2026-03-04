@@ -8,6 +8,7 @@ import NewsFeed from "@/components/NewsFeed";
 import SearchBar from "@/components/SearchBar";
 import MarketOverview from "@/components/MarketOverview";
 import { SignalStrengthBar } from "@/components/PixelProgress";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 // ── Types ──────────────────────────────────────────────────────────
 interface HistoryPoint {
@@ -120,7 +121,7 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
   const { color: rsiColor } = rsiLabel(signal.sources.rsi);
 
   return (
-    <div className="group relative" style={{ position: 'relative' }}>
+    <div className={`group relative pixel-hover-glow pixel-hover-glow-${signal.signal.toLowerCase()}`} style={{ position: 'relative' }}>
       {/* ── BUY pulse rings ── */}
       {signal.signal === 'BUY' && (signal.strength || 0) > 70 && (
         <>
@@ -152,7 +153,7 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
               <div className="flex items-center gap-2">
                 <span className="pixel-title text-[0.65rem] tracking-wide" style={{ color: cfg.bg }}>{signal.ticker}</span>
                 <span
-                  className={`border-2 px-2 py-0.5 font-mono text-[0.5rem] font-bold tracking-widest uppercase${signal.signal === 'SELL' ? ' glitch-sell' : ''}`}
+                  className={`chroma-badge border-2 px-2 py-0.5 font-mono text-[0.5rem] font-bold tracking-widest uppercase${signal.signal === 'SELL' ? ' glitch-sell' : ''}`}
                   style={{ background: cfg.bg + "14", color: cfg.bg, borderColor: cfg.bg + "88", boxShadow: `0 0 6px ${cfg.bg}44` }}
                 >
                   {signal.signal}
@@ -214,6 +215,7 @@ function SummaryBar({ signals }: { signals: Signal[] }) {
   const total = signals.length || 1;
 
   return (
+    <ScrollReveal direction="up" stagger>
     <div className="mb-6 grid grid-cols-3 gap-3">
       {[
         { label: "BUY",  count: buy,  color: "#00FF41", pct: Math.round(buy  / total * 100) },
@@ -237,6 +239,7 @@ function SummaryBar({ signals }: { signals: Signal[] }) {
         </div>
       ))}
     </div>
+    </ScrollReveal>
   );
 }
 

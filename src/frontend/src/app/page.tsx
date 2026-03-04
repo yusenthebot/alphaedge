@@ -5,6 +5,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Newspaper, BarChart3, Bell, Zap, TrendingUp, RefreshCw } from "lucide-react";
 import { LivePreview } from "@/components/LivePreview";
 import { MarketStatus } from "@/components/MarketStatus";
+import { GlitchSection } from "@/components/GlitchSection";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 function MatrixRain() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -695,6 +697,7 @@ export default function LandingPage() {
 
       {/* ── Stats row ── */}
       <section className="scroll-fade border-t-2 border-b-2 border-[var(--pixel-border-dim)] px-6 py-8">
+        <ScrollReveal direction="up" stagger>
         <div className="mx-auto grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4">
           {STATS.map((s) => (
             <div
@@ -711,6 +714,7 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
+        </ScrollReveal>
       </section>
 
       {/* ── Live signals preview ── */}
@@ -738,11 +742,12 @@ export default function LandingPage() {
             <h2 className="pixel-title text-[0.5rem]">Your Unfair Advantage</h2>
             <div className="flex-1 h-px bg-[var(--pixel-border-dim)]" />
           </div>
+          <ScrollReveal stagger>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="group border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-6 transition-all duration-150 hover:border-[var(--pixel-border-mid)] hover:shadow-[0_0_8px_rgba(0,212,255,0.15)]"
+                className="pixel-hover-glow group border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-6 transition-all duration-150 hover:border-[var(--pixel-border-mid)] hover:shadow-[0_0_8px_rgba(0,212,255,0.15)]"
               >
                 <div className="mb-4 flex items-start justify-between">
                   <div
@@ -760,6 +765,7 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -776,6 +782,7 @@ export default function LandingPage() {
           </p>
 
           {/* Feature grid */}
+          <ScrollReveal direction="right" stagger>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4 mb-12">
             {OPEN_SOURCE_FEATURES.map((f) => (
               <div
@@ -791,6 +798,7 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+          </ScrollReveal>
 
           {/* GitHub CTA */}
           <div
@@ -828,6 +836,7 @@ export default function LandingPage() {
       <section className="scroll-fade border-t-2 border-[var(--pixel-border-dim)] px-6 py-20">
         <div className="mx-auto max-w-3xl space-y-8">
           {/* Header */}
+          <GlitchSection delay={200}>
           <div className="text-center space-y-2">
             <div className="flex items-center justify-center gap-3">
               <Newspaper className="h-4 w-4" style={{ color: "var(--pixel-border)" }} />
@@ -846,6 +855,7 @@ export default function LandingPage() {
               REAL-TIME CHINESE MARKET INTELLIGENCE — AUTO CURATED
             </p>
           </div>
+          </GlitchSection>
 
           <Jin10Digest />
         </div>
