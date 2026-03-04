@@ -35,6 +35,7 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
   const [preview, setPreview] = useState<Signal | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Load recent searches on mount
   useEffect(() => {
@@ -75,6 +76,22 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open, onClose]);
 
+  // Cleanup: abort in-flight fetch and clear debounce on unmount or close
+  useEffect(() => {
+    if (!open) {
+      abortRef.current?.abort();
+      abortRef.current = null;
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
+    return () => {
+      abortRef.current?.abort();
+      abortRef.current = null;
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    };
+  }, [open]);
+
   // Debounced preview fetch
   const fetchPreview = useCallback((ticker: string) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -85,13 +102,17 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
     }
     setLoadingPreview(true);
     debounceRef.current = setTimeout(async () => {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
       try {
-        const res = await fetch(`/api/signals?tickers=${ticker}`);
+        const res = await fetch(`/api/signals?tickers=${ticker}`, { signal: controller.signal });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         const sig = data.signals?.[0] ?? null;
         setPreview(sig);
-      } catch {
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
         setPreview(null);
       } finally {
         setLoadingPreview(false);

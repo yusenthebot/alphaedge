@@ -143,8 +143,9 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
 
       <Link href={`/ticker/${signal.ticker}`}>
         <div
-          className={`border-2 bg-[var(--pixel-surface)] p-5 transition-all duration-150 hover:bg-[var(--pixel-surface-2)] ${cfg.border} ${cfg.glow}`}
+          className={`relative overflow-hidden border-2 bg-[var(--pixel-surface)] p-5 transition-all duration-150 hover:bg-[var(--pixel-surface-2)] ${cfg.border} ${cfg.glow}`}
         >
+          <div className="pointer-events-none absolute inset-0 z-10 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.03)_2px,rgba(0,0,0,0.03)_4px)]" />
           {/* ── Top row: ticker + price + signal badge ── */}
           <div className="mb-3 flex items-start justify-between">
             <div>
