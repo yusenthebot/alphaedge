@@ -21,7 +21,8 @@ export function LivePreview() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY")
+    const controller = new AbortController();
+    fetch("/api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY", { signal: controller.signal })
       .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then((d) => {
         setSignals(
@@ -34,8 +35,9 @@ export function LivePreview() {
           }))
         );
       })
-      .catch(() => {})
+      .catch((err) => { if (err.name !== "AbortError") console.error(err); })
       .finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   if (loading) {
