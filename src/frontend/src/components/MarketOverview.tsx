@@ -43,13 +43,14 @@ function tileColor(change: number): string {
 }
 
 function tileBg(change: number): string {
-  const color = tileColor(change);
-  return color + "18";
+  if (change > 2) return '#003D00';
+  if (change > 0) return '#001A00';
+  if (change < -2) return '#3D0000';
+  return '#1A0000';
 }
 
 function tileBorder(change: number): string {
-  const color = tileColor(change);
-  return color + "30";
+  return change > 0 ? 'var(--pixel-buy)' : 'var(--pixel-sell)';
 }
 
 export default function MarketOverview() {
@@ -96,7 +97,7 @@ export default function MarketOverview() {
       </div>
 
       {/* Heatmap grid: 2 rows × 4 cols */}
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" style={{ minHeight: '120px' }}>
         {useFallback
           ? FALLBACK_HEATMAP.map((item) => {
               const color = tileColor(item.change);
@@ -104,19 +105,21 @@ export default function MarketOverview() {
               return (
                 <div
                   key={item.symbol}
-                  className="relative cursor-default rounded-none border p-3"
+                  className="relative cursor-default rounded-none p-3"
                   style={{
                     background: tileBg(item.change),
-                    borderColor: tileBorder(item.change),
+                    border: '1px solid ' + tileBorder(item.change),
+                    fontFamily: 'var(--font-pixel)',
+                    fontSize: '8px',
                   }}
                 >
                   <div className="flex items-start justify-between">
-                    <div className="text-xs font-bold" style={{ color: 'var(--pixel-text)', fontFamily: 'var(--font-pixel)', fontSize: '8px' }}>
+                    <div className="font-bold" style={{ color: 'var(--pixel-text)' }}>
                       {item.symbol}
                     </div>
                     <div
-                      className="text-xs font-bold"
-                      style={{ color, fontFamily: 'var(--font-pixel)', fontSize: '8px' }}
+                      className="font-bold"
+                      style={{ color: item.change > 0 ? 'var(--pixel-buy)' : 'var(--pixel-sell)' }}
                     >
                       {isPos ? '+' : ''}{item.change.toFixed(2)}%
                     </div>
@@ -149,10 +152,10 @@ export default function MarketOverview() {
               return (
                 <div
                   key={ticker}
-                  className="relative cursor-default rounded-none border p-3 transition-all duration-200"
+                  className="relative cursor-default rounded-none p-3 transition-all duration-200"
                   style={{
                     background: tileBg(change),
-                    borderColor: tileBorder(change),
+                    border: '1px solid ' + tileBorder(change),
                   }}
                   onMouseEnter={() => setHoveredTicker(ticker)}
                   onMouseLeave={() => setHoveredTicker(null)}

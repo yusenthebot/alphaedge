@@ -2,12 +2,6 @@
 
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  Tooltip,
-} from "recharts";
 import { TrendingUp, TrendingDown, Zap, RefreshCw, Clock, Plus, X, ChevronDown, Bell, Search, Briefcase, BarChart3 } from "lucide-react";
 import type { Signal } from "@/types/signal";
 import NewsFeed from "@/components/NewsFeed";
@@ -85,52 +79,35 @@ function saveWatchlist(list: string[]) {
   } catch {}
 }
 
-// ── Sparkline ────────────────────────────────────────────────────
-function Sparkline({ data, color }: { data: HistoryPoint[]; color: string }) {
+// ── ASCII Sparkline ──────────────────────────────────────────────
+function AsciiSparkline({ data, color }: { data: HistoryPoint[]; color: string }) {
+  const bars = ['\u2581','\u2582','\u2583','\u2584','\u2585','\u2586','\u2587','\u2588'];
   if (!data || data.length < 2) {
-    return <div className="h-14 w-full animate-pulse rounded bg-[#1C1C24]" />;
+    return <span style={{ fontFamily: 'monospace', color, fontSize: '10px', letterSpacing: '1px' }}>{'\u2584'.repeat(7)}</span>;
   }
-  return (
-    <ResponsiveContainer width="100%" height={56}>
-      <AreaChart data={data} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
-        <defs>
-          <linearGradient id={`grad-${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%"  stopColor={color} stopOpacity={0.3} />
-            <stop offset="95%" stopColor={color} stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <Area
-          type="monotone"
-          dataKey="close"
-          stroke={color}
-          strokeWidth={1.5}
-          fill={`url(#grad-${color.replace("#", "")})`}
-          dot={false}
-          activeDot={{ r: 3, fill: color }}
-        />
-        <Tooltip
-          contentStyle={{ background: "var(--pixel-surface)", border: "1px solid var(--pixel-border-dim)", borderRadius: 0, fontSize: 10, fontFamily: "var(--font-mono)" }}
-          labelStyle={{ color: "var(--pixel-text-muted)" }}
-          formatter={(v) => [`$${Number(v).toFixed(2)}`, ""]}
-        />
-      </AreaChart>
-    </ResponsiveContainer>
-  );
+  const spark = data.slice(-7).map(h => h.close);
+  const min = Math.min(...spark);
+  const max = Math.max(...spark);
+  const sparkline = spark.map(v => bars[Math.round((v - min) / (max - min || 1) * 7)] || '\u2584').join('');
+  return <span style={{ fontFamily: 'monospace', color, fontSize: '10px', letterSpacing: '1px' }}>{sparkline}</span>;
 }
 
 // ── MACD Badge ───────────────────────────────────────────────────
 function MacdBadge({ macd }: { macd: string }) {
-  const isBull = macd === "金叉";
-  const isBear = macd === "死叉";
+  const isBull = macd === "金叉" || macd.toLowerCase().includes("bull");
+  const isBear = macd === "死叉" || macd.toLowerCase().includes("bear");
+  const label = isBull ? "MACD \u25B2" : isBear ? "MACD \u25BC" : "MACD \u2500";
+  const color = isBull ? "#00FF41" : isBear ? "#FF3131" : "#FFB800";
   return (
     <span
-      className={`border-2 px-1.5 py-0.5 font-mono text-[0.5rem] font-semibold uppercase tracking-widest ${
-        isBull ? "border-[#00FF41]/50 text-[#00FF41] bg-[#00FF41]/08"
-        : isBear ? "border-[#FF3131]/50 text-[#FF3131] bg-[#FF3131]/08"
-        : "border-[var(--pixel-border-dim)] text-[var(--pixel-text-off)]"
-      }`}
+      className="border-2 px-1.5 py-0.5 font-mono text-[0.5rem] font-semibold uppercase tracking-widest"
+      style={{
+        borderColor: color + '80',
+        color,
+        background: color + '14',
+      }}
     >
-      MACD {macd}
+      {label}
     </span>
   );
 }
@@ -143,7 +120,14 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
   const { color: rsiColor } = rsiLabel(signal.sources.rsi);
 
   return (
-    <div className="group relative">
+    <div className="group relative" style={{ position: 'relative' }}>
+      {/* ── BUY pulse rings ── */}
+      {signal.signal === 'BUY' && (signal.strength || 0) > 70 && (
+        <>
+          <div className="signal-pulse-ring" style={{ borderColor: 'var(--pixel-buy)' }} />
+          <div className="signal-pulse-ring signal-pulse-ring-2" style={{ borderColor: 'var(--pixel-buy)' }} />
+        </>
+      )}
       {/* ── Remove button (hover-only) ── */}
       <button
         onClick={(e) => {
@@ -167,7 +151,7 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
               <div className="flex items-center gap-2">
                 <span className="pixel-title text-[0.65rem] tracking-wide" style={{ color: cfg.bg }}>{signal.ticker}</span>
                 <span
-                  className="border-2 px-2 py-0.5 font-mono text-[0.5rem] font-bold tracking-widest uppercase"
+                  className={`border-2 px-2 py-0.5 font-mono text-[0.5rem] font-bold tracking-widest uppercase${signal.signal === 'SELL' ? ' glitch-sell' : ''}`}
                   style={{ background: cfg.bg + "14", color: cfg.bg, borderColor: cfg.bg + "88", boxShadow: `0 0 6px ${cfg.bg}44` }}
                 >
                   {signal.signal}
@@ -185,9 +169,9 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
             <SignalStrengthBar value={signal.strength} signal={signal.signal} className="w-20" />
           </div>
 
-          {/* ── Sparkline ── */}
+          {/* ── ASCII Sparkline ── */}
           <div className="mb-3">
-            <Sparkline data={signal.history ?? []} color={sparkColor} />
+            <AsciiSparkline data={signal.history ?? []} color={sparkColor} />
           </div>
 
           {/* ── RSI + MACD row ── */}
@@ -286,8 +270,8 @@ function TopSignal({ signal }: { signal: SignalWithHistory }) {
             </span>
           </div>
           <div className="mt-1 pixel-label">${signal.price.toFixed(2)} · CONF {Math.round(signal.confidence * 100)}%</div>
-          <div className="mt-2 h-8 w-full">
-            <Sparkline data={signal.history ?? []} color={cfg.bg} />
+          <div className="mt-2">
+            <AsciiSparkline data={signal.history ?? []} color={cfg.bg} />
           </div>
         </div>
       </div>
