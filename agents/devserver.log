@@ -1,0 +1,219 @@
+
+> frontend@0.1.0 dev
+> next dev --port 3001
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://10.0.0.69:3001
+
+✓ Starting...
+✓ Ready in 505ms
+ GET /dashboard 200 in 615ms (compile: 512ms, render: 103ms)
+ GET /api/signals?tickers=SPY,QQQ,DIA,IWM,XLK,XLF,XLE,XLV 200 in 81ms (compile: 35ms, render: 46ms)
+ GET /api/news 200 in 83ms (compile: 51ms, render: 31ms)
+ GET /api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY,MSFT,AMD,META 200 in 89ms (compile: 69ms, render: 20ms)
+[api/alerts] backend error: Error: Backend returned 404
+    at GET (src/app/api/alerts/route.ts:12:13)
+  10 |
+  11 |     if (!res.ok) {
+> 12 |       throw new Error(`Backend returned ${res.status}`);
+     |             ^
+  13 |     }
+  14 |
+  15 |     const data = await res.json();
+ GET /api/alerts 503 in 150ms (compile: 65ms, render: 85ms)
+ GET /api/history/SPY 200 in 399ms (compile: 389ms, render: 10ms)
+ GET /api/history/AAPL 200 in 399ms (compile: 389ms, render: 10ms)
+ GET /api/history/MSFT 200 in 399ms (compile: 389ms, render: 11ms)
+ GET /api/history/BABA 200 in 400ms (compile: 389ms, render: 11ms)
+ GET /api/history/NVDA 200 in 402ms (compile: 390ms, render: 12ms)
+ GET /api/history/TSLA 200 in 402ms (compile: 389ms, render: 13ms)
+ GET /api/history/META 200 in 5ms (compile: 3ms, render: 1861µs)
+ GET /api/history/AMD 200 in 6ms (compile: 1824µs, render: 4ms)
+ GET /accuracy 200 in 53ms (compile: 46ms, render: 7ms)
+[api/accuracy] backend error: Error: Backend returned 404
+    at GET (src/app/api/accuracy/route.ts:12:13)
+  10 |
+  11 |     if (!res.ok) {
+> 12 |       throw new Error(`Backend returned ${res.status}`);
+     |             ^
+  13 |     }
+  14 |
+  15 |     const data = await res.json();
+ GET /api/accuracy 503 in 55ms (compile: 17ms, render: 38ms)
+[api/accuracy] backend error: Error: Backend returned 404
+    at GET (src/app/api/accuracy/route.ts:12:13)
+  10 |
+  11 |     if (!res.ok) {
+> 12 |       throw new Error(`Backend returned ${res.status}`);
+     |             ^
+  13 |     }
+  14 |
+  15 |     const data = await res.json();
+ GET /api/accuracy 503 in 45ms (compile: 881µs, render: 44ms)
+ GET /api/signals?tickers=SPY,QQQ,DIA,IWM,XLK,XLF,XLE,XLV 200 in 6ms (compile: 2ms, render: 4ms)
+ GET /api/news 200 in 11ms (compile: 7ms, render: 4ms)
+ GET /api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY,MSFT,AMD,META 200 in 8ms (compile: 4ms, render: 3ms)
+ GET /api/signals?tickers=SPY,QQQ,DIA,IWM,XLK,XLF,XLE,XLV 200 in 5ms (compile: 4ms, render: 1817µs)
+ GET /api/news 200 in 7ms (compile: 5ms, render: 1736µs)
+ GET /api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY,MSFT,AMD,META 200 in 3ms (compile: 1516µs, render: 1490µs)
+[api/alerts] backend error: Error: Backend returned 404
+    at GET (src/app/api/alerts/route.ts:12:13)
+  10 |
+  11 |     if (!res.ok) {
+> 12 |       throw new Error(`Backend returned ${res.status}`);
+     |             ^
+  13 |     }
+  14 |
+  15 |     const data = await res.json();
+ GET /api/alerts 503 in 73ms (compile: 12ms, render: 61ms)
+ GET /api/history/NVDA 200 in 4ms (compile: 3ms, render: 1467µs)
+ GET /api/history/TSLA 200 in 6ms (compile: 5ms, render: 1131µs)
+ GET /api/history/AAPL 200 in 4ms (compile: 3ms, render: 974µs)
+ GET /api/history/BABA 200 in 3ms (compile: 2ms, render: 935µs)
+ GET /api/history/SPY 200 in 3ms (compile: 2ms, render: 1055µs)
+ GET /api/history/MSFT 200 in 3ms (compile: 2ms, render: 1020µs)
+ GET /api/history/AMD 200 in 3ms (compile: 3ms, render: 910µs)
+ GET /api/history/META 200 in 4ms (compile: 3ms, render: 1089µs)
+[api/alerts] backend error: Error: Backend returned 404
+    at GET (src/app/api/alerts/route.ts:12:13)
+  10 |
+  11 |     if (!res.ok) {
+> 12 |       throw new Error(`Backend returned ${res.status}`);
+     |             ^
+  13 |     }
+  14 |
+  15 |     const data = await res.json();
+ GET /api/alerts 503 in 35ms (compile: 1046µs, render: 34ms)
+ GET /api/history/NVDA 200 in 3ms (compile: 1276µs, render: 1447µs)
+ GET /api/history/TSLA 200 in 5ms (compile: 3ms, render: 1339µs)
+ GET /api/history/AAPL 200 in 7ms (compile: 6ms, render: 1181µs)
+ GET /api/history/BABA 200 in 2ms (compile: 997µs, render: 1276µs)
+ GET /api/history/SPY 200 in 4ms (compile: 3ms, render: 1077µs)
+ GET /api/history/MSFT 200 in 3ms (compile: 2ms, render: 1017µs)
+ GET /api/history/AMD 200 in 2ms (compile: 771µs, render: 1551µs)
+ GET /api/history/META 200 in 4ms (compile: 3ms, render: 1215µs)
+ GET /alerts 200 in 56ms (compile: 44ms, render: 12ms)
+[api/alerts] backend error: Error: Backend returned 404
+    at GET (src/app/api/alerts/route.ts:12:13)
+  10 |
+  11 |     if (!res.ok) {
+> 12 |       throw new Error(`Backend returned ${res.status}`);
+     |             ^
+  13 |     }
+  14 |
+  15 |     const data = await res.json();
+ GET /api/alerts 503 in 50ms (compile: 1491µs, render: 48ms)
+[api/alerts] backend error: Error: Backend returned 404
+    at GET (src/app/api/alerts/route.ts:12:13)
+  10 |
+  11 |     if (!res.ok) {
+> 12 |       throw new Error(`Backend returned ${res.status}`);
+     |             ^
+  13 |     }
+  14 |
+  15 |     const data = await res.json();
+ GET /api/alerts 503 in 33ms (compile: 1241µs, render: 32ms)
+ GET /dashboard 200 in 20ms (compile: 5ms, render: 15ms)
+ GET /api/signals?tickers=SPY,QQQ,DIA,IWM,XLK,XLF,XLE,XLV 200 in 7ms (compile: 4ms, render: 3ms)
+ GET /api/news 200 in 10ms (compile: 8ms, render: 2ms)
+ GET /api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY,MSFT,AMD,META 200 in 11ms (compile: 10ms, render: 1309µs)
+ GET /api/signals?tickers=SPY,QQQ,DIA,IWM,XLK,XLF,XLE,XLV 200 in 3ms (compile: 1330µs, render: 1821µs)
+[api/alerts] backend error: Error: Backend returned 404
+    at GET (src/app/api/alerts/route.ts:12:13)
+  10 |
+  11 |     if (!res.ok) {
+> 12 |       throw new Error(`Backend returned ${res.status}`);
+     |             ^
+  13 |     }
+  14 |
+  15 |     const data = await res.json();
+ GET /api/alerts 503 in 64ms (compile: 9ms, render: 55ms)
+ GET /api/news 200 in 52ms (compile: 51ms, render: 1655µs)
+ GET /api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY,MSFT,AMD,META 200 in 6ms (compile: 4ms, render: 1517µs)
+ GET /api/history/NVDA 200 in 4ms (compile: 3ms, render: 1496µs)
+ GET /api/history/TSLA 200 in 6ms (compile: 5ms, render: 1397µs)
+ GET /api/history/AAPL 200 in 3ms (compile: 1585µs, render: 1677µs)
+ GET /api/history/BABA 200 in 5ms (compile: 4ms, render: 1371µs)
+ GET /api/history/SPY 200 in 7ms (compile: 5ms, render: 1623µs)
+ GET /api/history/MSFT 200 in 3ms (compile: 1284µs, render: 1694µs)
+ GET /api/history/AMD 200 in 3ms (compile: 1307µs, render: 1209µs)
+ GET /api/history/META 200 in 4ms (compile: 3ms, render: 899µs)
+[api/alerts] backend error: Error: Backend returned 404
+    at GET (src/app/api/alerts/route.ts:12:13)
+  10 |
+  11 |     if (!res.ok) {
+> 12 |       throw new Error(`Backend returned ${res.status}`);
+     |             ^
+  13 |     }
+  14 |
+  15 |     const data = await res.json();
+ GET /api/alerts 503 in 44ms (compile: 4ms, render: 40ms)
+ GET /api/history/NVDA 200 in 39ms (compile: 37ms, render: 1393µs)
+ GET /api/history/TSLA 200 in 8ms (compile: 6ms, render: 1179µs)
+ GET /api/history/AAPL 200 in 2ms (compile: 1056µs, render: 1171µs)
+ GET /api/history/BABA 200 in 3ms (compile: 959µs, render: 1569µs)
+ GET /api/history/SPY 200 in 4ms (compile: 3ms, render: 847µs)
+ GET /api/history/MSFT 200 in 7ms (compile: 4ms, render: 3ms)
+ GET /api/history/AMD 200 in 6ms (compile: 5ms, render: 1262µs)
+ GET /api/history/META 200 in 1781µs (compile: 640µs, render: 1141µs)
+ GET /api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY,MSFT,AMD,META 200 in 24ms (compile: 6ms, render: 18ms)
+ GET /api/history/NVDA 200 in 106ms (compile: 6ms, render: 100ms)
+ GET /api/history/AMD 200 in 82ms (compile: 630µs, render: 81ms)
+ GET /api/history/BABA 200 in 194ms (compile: 9ms, render: 184ms)
+ GET /api/history/TSLA 200 in 215ms (compile: 9ms, render: 205ms)
+ GET /api/history/MSFT 200 in 196ms (compile: 4ms, render: 191ms)
+ GET /api/history/SPY 200 in 219ms (compile: 6ms, render: 214ms)
+ GET /api/history/AAPL 200 in 237ms (compile: 5ms, render: 232ms)
+ GET /api/history/META 200 in 79ms (compile: 617µs, render: 78ms)
+ GET /api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY,MSFT,AMD,META 200 in 30ms (compile: 27ms, render: 4ms)
+ GET /api/news 200 in 45ms (compile: 18ms, render: 27ms)
+ GET /api/signals?tickers=SPY,QQQ,DIA,IWM,XLK,XLF,XLE,XLV 200 in 48ms (compile: 5ms, render: 43ms)
+ GET /api/history/NVDA 200 in 10ms (compile: 6ms, render: 4ms)
+ GET /api/history/TSLA 200 in 12ms (compile: 10ms, render: 1919µs)
+ GET /api/history/AAPL 200 in 14ms (compile: 13ms, render: 1722µs)
+ GET /api/history/BABA 200 in 7ms (compile: 4ms, render: 3ms)
+ GET /api/history/SPY 200 in 6ms (compile: 4ms, render: 1659µs)
+ GET /api/history/MSFT 200 in 8ms (compile: 6ms, render: 1441µs)
+ GET /api/history/AMD 200 in 2ms (compile: 713µs, render: 1338µs)
+ GET /api/history/META 200 in 4ms (compile: 2ms, render: 1327µs)
+ GET /api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY,MSFT,AMD,META 200 in 8ms (compile: 3ms, render: 5ms)
+ GET /api/history/NVDA 200 in 12ms (compile: 8ms, render: 3ms)
+ GET /api/history/TSLA 200 in 15ms (compile: 13ms, render: 2ms)
+ GET /api/history/AAPL 200 in 8ms (compile: 7ms, render: 1373µs)
+ GET /api/history/BABA 200 in 5ms (compile: 4ms, render: 1215µs)
+ GET /api/history/SPY 200 in 4ms (compile: 3ms, render: 1187µs)
+ GET /api/history/MSFT 200 in 3ms (compile: 2ms, render: 963µs)
+ GET /api/history/AMD 200 in 1736µs (compile: 654µs, render: 1082µs)
+ GET /api/history/META 200 in 3ms (compile: 1868µs, render: 897µs)
+ GET /dashboard 200 in 56ms (compile: 5ms, render: 52ms)
+ GET /api/signals?tickers=SPY,QQQ,DIA,IWM,XLK,XLF,XLE,XLV 200 in 8ms (compile: 6ms, render: 2ms)
+ GET /api/news 200 in 6ms (compile: 4ms, render: 1280µs)
+ GET /api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY,MSFT,AMD,META 200 in 8ms (compile: 7ms, render: 1695µs)
+[api/alerts] backend error: Error: Backend returned 404
+    at GET (src/app/api/alerts/route.ts:12:13)
+  10 |
+  11 |     if (!res.ok) {
+> 12 |       throw new Error(`Backend returned ${res.status}`);
+     |             ^
+  13 |     }
+  14 |
+  15 |     const data = await res.json();
+ GET /api/alerts 503 in 57ms (compile: 6ms, render: 51ms)
+ GET /api/history/NVDA 200 in 6ms (compile: 5ms, render: 1464µs)
+ GET /api/history/TSLA 200 in 8ms (compile: 7ms, render: 1207µs)
+ GET /api/history/AAPL 200 in 7ms (compile: 6ms, render: 1185µs)
+ GET /api/history/BABA 200 in 8ms (compile: 7ms, render: 879µs)
+ GET /api/history/SPY 200 in 9ms (compile: 8ms, render: 911µs)
+ GET /api/history/MSFT 200 in 10ms (compile: 10ms, render: 805µs)
+ GET /api/history/AMD 200 in 2ms (compile: 636µs, render: 1413µs)
+ GET /api/history/META 200 in 3ms (compile: 2ms, render: 916µs)
+ GET /api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY,MSFT,AMD,META 200 in 12ms (compile: 5ms, render: 7ms)
+ GET /api/history/NVDA 200 in 12ms (compile: 8ms, render: 5ms)
+ GET /api/history/TSLA 200 in 15ms (compile: 13ms, render: 3ms)
+ GET /api/history/AAPL 200 in 22ms (compile: 19ms, render: 2ms)
+ GET /api/history/BABA 200 in 8ms (compile: 6ms, render: 1874µs)
+ GET /api/history/SPY 200 in 6ms (compile: 5ms, render: 1661µs)
+ GET /api/history/MSFT 200 in 5ms (compile: 4ms, render: 1509µs)
+ GET /api/history/AMD 200 in 2ms (compile: 867µs, render: 1459µs)
+ GET /api/history/META 200 in 4ms (compile: 3ms, render: 1239µs)

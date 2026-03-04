@@ -16,6 +16,7 @@ import type { Signal } from "@/types/signal";
 import NewsFeed from "@/components/NewsFeed";
 import SearchBar from "@/components/SearchBar";
 import MarketOverview from "@/components/MarketOverview";
+import { SignalStrengthBar } from "@/components/PixelProgress";
 
 // ── Types ──────────────────────────────────────────────────────────
 interface HistoryPoint {
@@ -236,8 +237,8 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
                 </span>
               </div>
             </div>
-            {/* Strength ring */}
-            <StrengthRing strength={signal.strength} signal={signal.signal} />
+            {/* Strength bar */}
+            <SignalStrengthBar value={signal.strength} signal={signal.signal} className="w-20" />
           </div>
 
           {/* ── Sparkline ── */}
@@ -455,6 +456,7 @@ export default function DashboardPage() {
     async function checkAlerts() {
       try {
         const res = await fetch("/api/alerts");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         const alerts = data.alerts ?? [];
         setHasHighAlerts(alerts.some((a: { severity: string }) => a.severity === "high"));
@@ -473,6 +475,7 @@ export default function DashboardPage() {
   const fetchHistory = useCallback(async (ticker: string): Promise<HistoryPoint[]> => {
     try {
       const res = await fetch(`/api/history/${ticker}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       return data.data ?? [];
     } catch {
@@ -484,6 +487,7 @@ export default function DashboardPage() {
     if (manual) setRefreshing(true);
     try {
       const res = await fetch(`/api/signals?tickers=${tickers.join(",")}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       const sigs: Signal[] = data.signals ?? [];
 

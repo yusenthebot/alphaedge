@@ -140,6 +140,8 @@ export default function TickerPage() {
         fetch(`/api/history/${ticker}?days=30`),
         fetch(`/api/signals?tickers=${ticker}`),
       ]);
+      if (!histRes.ok) throw new Error(`HTTP ${histRes.status}`);
+      if (!sigRes.ok) throw new Error(`HTTP ${sigRes.status}`);
       const histData = await histRes.json();
       const sigData = await sigRes.json();
 

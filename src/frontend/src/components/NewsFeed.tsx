@@ -20,6 +20,7 @@ export default function NewsFeed() {
   const fetchNews = useCallback(async () => {
     try {
       const res = await fetch("/api/news");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setNews(data.news ?? []);
       setLastUpdated(new Date());

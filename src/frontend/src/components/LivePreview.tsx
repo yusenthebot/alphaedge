@@ -22,7 +22,7 @@ export function LivePreview() {
 
   useEffect(() => {
     fetch("/api/signals?tickers=NVDA,TSLA,AAPL,BABA,SPY")
-      .then((r) => r.json())
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then((d) => {
         setSignals(
           (d.signals ?? []).map((s: { ticker: string; signal: string; strength: number; price: number; change: number }) => ({

@@ -50,6 +50,7 @@ export default function MarketOverview() {
   const fetchMarketData = useCallback(async () => {
     try {
       const res = await fetch(`/api/signals?tickers=${MARKET_TICKERS.join(",")}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setSignals(data.signals ?? []);
       setLastUpdated(new Date());

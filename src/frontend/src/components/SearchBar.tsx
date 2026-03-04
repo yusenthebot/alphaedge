@@ -87,6 +87,7 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
     debounceRef.current = setTimeout(async () => {
       try {
         const res = await fetch(`/api/signals?tickers=${ticker}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         const sig = data.signals?.[0] ?? null;
         setPreview(sig);
