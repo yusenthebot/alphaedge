@@ -1,11 +1,13 @@
-# Design — Cycle 13 [21:40:21]
+# Design — Cycle 14 [21:45:44]
 
-## Task 1: Fix RSI color mismatch (dashboard vs ticker detail)
-**File:** `src/frontend/src/app/dashboard/page.tsx` (lines 58–62, `rsiLabel()`)
-**Change:** Replace `#22C55E` → `#00FF41` and `#EF4444` → `#FF3131` in `rsiLabel()` to use the project's CRT palette (`--pixel-buy` / `--pixel-sell`) instead of Tailwind defaults.
-**Why:** Dashboard RSI colors clash with the pixel art theme used everywhere else (ticker detail page already uses `#00FF41`/`#FF3131`).
+Here are two concrete improvements:
 
-## Task 2: Increase scanline opacity on signal cards
-**File:** `src/frontend/src/app/dashboard/page.tsx` (line ~148, scanline overlay div)
-**Change:** In the `repeating-linear-gradient`, change `rgba(0,0,0,0.03)` → `rgba(0,0,0,0.06)` to match the scanline intensity in `globals.css`.
-**Why:** At 0.03 the CRT scanlines are invisible on cards, breaking the retro terminal look that the rest of the app achieves at 0.06.
+## Task 1: Fix rounded badge in SearchBar (breaks pixel aesthetic)
+**File:** `src/frontend/src/components/SearchBar.tsx:218`
+**Change:** Replace `rounded-md` with nothing (remove it) — the signal badge in the search preview uses a soft border-radius, which clashes with the hard-edged CRT pixel look every other badge in the app uses.
+**Why:** Every dashboard signal badge uses square corners with `border-2`; this is the only badge with `rounded-md`, breaking visual consistency.
+
+## Task 2: Add pixel-label class to RSI/MACD column for tighter hierarchy
+**File:** `src/frontend/src/app/dashboard/page.tsx:179-189`
+**Change:** On the `<div className="mb-3 flex items-center gap-3">` wrapper (line 179), add `justify-between` and move the confidence badge (`CONF`) onto the same row as RSI/MACD by pulling it out of the nested `space-y-1.5` div and placing it right-aligned — currently all three indicators (RSI, MACD, CONF) stack vertically wasting horizontal space in the card.
+**Why:** Cards are narrow; putting CONF right-aligned on the RSI row uses whitespace better and reduces card height, fitting more content above the fold.
