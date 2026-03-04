@@ -1,11 +1,11 @@
-# Design — Cycle 4 [20:48:41]
+# Design — Cycle 8 [21:15:59]
 
-## Task 1: Fix invisible heatmap timestamp
-File: `src/frontend/src/components/MarketOverview.tsx`
-Change: Line 92 — replace `text-[#333]` with `text-[var(--pixel-text-muted)]`
-Why: `#333` on the dark CRT background is effectively invisible; should use the design system's muted text token.
+## Task 1: Kill remaining rounded corners on portfolio signal badges & buttons
+File: `src/frontend/src/app/portfolio/page.tsx`
+Change: Replace `rounded-md` → `rounded-none` on signal badges (lines 532, 554) and `rounded` → `rounded-none` on trash buttons (lines 541, 562).
+Why: Four elements still use soft corners, breaking the hard-edge pixel-art CRT aesthetic everywhere else.
 
-## Task 2: Replace Chinese MACD labels with English
-File: `src/frontend/src/app/dashboard/page.tsx`
-Change: Lines 123–134 in `MacdBadge` — replace `macd === "金叉"` / `"死叉"` checks with a mapping that displays `BULLISH` / `BEARISH`, and line 133 render `{englishLabel}` instead of raw `{macd}`. Also update `rsiLabel` (lines 64–68) to return `"Oversold"` / `"Overbought"` / `"Neutral"` since those strings could leak if the function is reused.
-Why: Chinese-language indicators break the English CRT terminal aesthetic and confuse non-Chinese-reading users.
+## Task 2: Kill rounded corners on search result signal badges & skeleton
+File: `src/frontend/src/components/SearchBar.tsx` (line 197) and `src/frontend/src/components/ui/skeleton.tsx` (line 7)
+Change: Replace `rounded-md` → `rounded-none` in both files.
+Why: Search result badges and loading skeletons still render with soft corners, inconsistent with the global `border-radius: 0px !important` intent.

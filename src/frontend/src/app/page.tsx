@@ -39,6 +39,71 @@ function MatrixRain() {
   return <canvas ref={canvasRef} style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:0.4, pointerEvents:'none' }} />
 }
 
+function ParallaxStars() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')!
+    let mouseX = 0, mouseY = 0
+    let raf: number
+
+    canvas.width = canvas.offsetWidth
+    canvas.height = canvas.offsetHeight
+    const W = canvas.width, H = canvas.height
+
+    // 4 layers: [count, speed, size, opacity]
+    const layers = [
+      { stars: [] as {x:number,y:number}[], speed: 0.2, size: 1,   alpha: 0.3 },
+      { stars: [] as {x:number,y:number}[], speed: 0.5, size: 1.5, alpha: 0.5 },
+      { stars: [] as {x:number,y:number}[], speed: 1.0, size: 2,   alpha: 0.6 },
+      { stars: [] as {x:number,y:number}[], speed: 1.8, size: 2.5, alpha: 0.8 },
+    ]
+    const counts = [80, 50, 25, 10]
+    layers.forEach((l, i) => {
+      for (let n = 0; n < counts[i]; n++) {
+        l.stars.push({ x: Math.random() * W, y: Math.random() * H })
+      }
+    })
+
+    const onMouseMove = (e: MouseEvent) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2
+    }
+    window.addEventListener('mousemove', onMouseMove)
+
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H)
+      layers.forEach(l => {
+        ctx.fillStyle = `rgba(0, 255, 65, ${l.alpha})`
+        const ox = mouseX * l.speed * 12
+        const oy = mouseY * l.speed * 8
+        l.stars.forEach(s => {
+          ctx.fillRect(
+            Math.round(s.x + ox),
+            Math.round(s.y + oy),
+            l.size, l.size
+          )
+        })
+      })
+      raf = requestAnimationFrame(draw)
+    }
+    draw()
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('mousemove', onMouseMove) }
+  }, [])
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'absolute', inset: 0,
+        width: '100%', height: '100%',
+        opacity: 0.35,
+        pointerEvents: 'none',
+      }}
+    />
+  )
+}
+
 function BootSequence({ onDone }: { onDone: () => void }) {
   const lines = [
     'ALPHAEDGE v2.0 INITIALIZING...',
@@ -148,6 +213,18 @@ export default function LandingPage() {
   const [booting, setBooting] = useState(true)
   const handleBootDone = useCallback(() => setBooting(false), [])
 
+  useEffect(() => {
+    if (booting) return
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible')
+      }),
+      { threshold: 0.15 }
+    )
+    document.querySelectorAll('.scroll-fade').forEach(el => observer.observe(el))
+    return () => observer.disconnect()
+  }, [booting])
+
   return (
     <div className="min-h-screen bg-[var(--pixel-bg)] text-[var(--pixel-text)]">
       {booting && <BootSequence onDone={handleBootDone} />}
@@ -182,6 +259,7 @@ export default function LandingPage() {
 
       {/* ── Hero ── */}
       <section className="relative overflow-hidden px-6 py-24 text-center">
+        <ParallaxStars />
         <MatrixRain />
         {/* Background grid */}
         <div
@@ -251,7 +329,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Stats row ── */}
-      <section className="border-t-2 border-b-2 border-[var(--pixel-border-dim)] px-6 py-8">
+      <section className="scroll-fade border-t-2 border-b-2 border-[var(--pixel-border-dim)] px-6 py-8">
         <div className="mx-auto grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4">
           {STATS.map((s) => (
             <div
@@ -288,7 +366,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Features ── */}
-      <section className="border-t-2 border-[var(--pixel-border-dim)] px-6 py-20">
+      <section className="scroll-fade border-t-2 border-[var(--pixel-border-dim)] px-6 py-20">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 flex items-center gap-3">
             <span className="text-[var(--pixel-border-mid)] font-mono text-[0.6rem]">══</span>
@@ -321,7 +399,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Pricing ── */}
-      <section className="border-t-2 border-[var(--pixel-border-dim)] px-6 py-20">
+      <section className="scroll-fade border-t-2 border-[var(--pixel-border-dim)] px-6 py-20">
         <div className="mx-auto max-w-6xl">
           <div className="mb-4 flex items-center gap-3">
             <span className="text-[var(--pixel-border-mid)] font-mono text-[0.6rem]">══</span>
@@ -384,7 +462,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t-2 border-[var(--pixel-border-dim)] px-6 py-8">
+      <footer className="scroll-fade border-t-2 border-[var(--pixel-border-dim)] px-6 py-8">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-[var(--pixel-buy)]" />

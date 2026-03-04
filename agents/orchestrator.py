@@ -200,6 +200,7 @@ Steps:
 2. Run: cd {FRONTEND} && npm run build 2>&1 | tail -5
 3. Fix any TypeScript errors
 4. Run: cd {PROJECT} && git add -A && git commit -m "feat(c{cycle}): sprint tasks"
+5. Run: cd {PROJECT} && git push origin main
 5. Write one line summary to {ROOT}/ENGINEER_OUTPUT.md
 """)
 
@@ -282,6 +283,11 @@ Format as markdown. Under 250 words.""", "QA")
 {report}
 """
     write("QA_REPORT.md", report_full)
+
+    # Push to GitHub after every cycle
+    log(f"[QA] Pushing to GitHub...", "◈")
+    rc_push, push_out, push_err = shell("git push origin main 2>&1", cwd=PROJECT, timeout=30)
+    log(f"[QA] Push: {'✓ OK' if rc_push == 0 else '✗ ' + push_err[:80]}", "✓" if rc_push == 0 else "✗")
 
     # Update changelog
     existing = read("CHANGELOG.md")

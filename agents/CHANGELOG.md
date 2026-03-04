@@ -1,15 +1,14 @@
+## Cycle 7 [21:14:36]
+ff487cc feat(c7): sprint tasks - Replace PieChart with pixel-art stacked bar on Accuracy page - Remove PieChart/Pie/Cell imports and pieData useMemo - Fix rounded corners (radius, borderRadius, rounded-md → rounded-none) Build: 0 TypeScript errors, 13+ pages
+
+## Cycle 6 [21:07:24]
+335ae03 fix: heatmap always show fallback tiles when no API data (was waiting on loading flag)
+
+## Cycle 5 [20:59:52]
+5a0d8d9 feat(c5): sprint tasks - Remove dead rounded-2xl from Portfolio Add Position modal - Remove dead rounded-lg from TabsList, rounded-md from TabsTrigger - Both overridden by global border-radius: 0px !important rule Build: 0 TypeScript errors, 13+ pages
+
+## Cycle 4 [20:53:26]
+f455b61 feat(c4): sprint tasks - Fix invisible heatmap timestamp color (text-[#333] → var(--pixel-text-muted)) - Add AbortController to ticker page fetches with cleanup on unmount/ticker change - Fix Refresh button onClick to not pass MouseEvent as AbortSignal Build: 0 TypeScript errors, 13/13 pages
+
 ## Cycle 3 [20:47:53]
-0e654f1 feat(c3): sprint tasks - Fix manual-refresh missing AbortSignal: store AbortController in ref,   abort stale requests on rapid clicks or watchlist changes - Remove duplicate SignalStrengthBar from signal cards RSI/MACD row   (top-row strength bar at line 185 already displays it) Build: 0 TypeScript errors, 13/13 pages
-
-## Cycle 2 [20:42:19]
-2e1a68d feat: pixel animations - matrix rain, boot sequence, CSS effects - FEATURE-01: MatrixRain canvas component on landing hero section - FEATURE-02: All CSS animations (priceUp/Down, tickerScroll,   signalPulseRing, glitchText, bootType, scanlineIntensify,   dataStream, numberCount) added to globals.css - FEATURE-05: BootSequence typing overlay on landing page (2.8s)
-
-## Cycle 1 [20:36:05]
-23047b7 feat(c1): sprint tasks - Add res.ok guards to all 11 unsafe fetch calls across 7 files   (ticker page, dashboard, alerts, NewsFeed, MarketOverview, SearchBar, LivePreview) - Replace StrengthRing with SignalStrengthBar pixel progress bar in dashboard SignalCard
-
-# Changelog
-
-## [Bootstrap] - Initial pixel art UI
-- Full CRT terminal aesthetic
-- Press Start 2P font
-- Neon g
+0e654f1 feat(c3): sprint tasks - Fix manual-refresh m

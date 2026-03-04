@@ -1,47 +1,43 @@
-# QA Report — Cycle 3 [20:47:53]
+# QA Report — Cycle 7 [21:14:36]
 
 ## Automated
 - Build: ✓ PASS
 - TypeScript: ✓ PASS
-- Commits: tton.tsx: pixel art buttons with glow effects + signal variants - components/ui/card.tsx: sharp-edge panels with pixel borders - components/ui/badge.tsx: pixel badges for BUY/HOLD/SELL with neon glow - components/PixelBorder.tsx: corner bracket component - components/PixelProgress.tsx: segmented block progress bar - components/PixelText.tsx: pixel font text + TypewriterText + TerminalLine - dashboard/page.tsx: full pixel overhaul (header, cards, filters, summary bar) - page.tsx (landing): complete pixel art rewrite with grid bg + stats row - alerts/page.tsx: pixel filter tabs, alert cards, empty state - signal-of-the-day, ticker, portfolio, accuracy: color palette updated - NewsFeed, MarketOverview, SearchBar, MarketStatus, LivePreview: pixel colors Build: 0 TypeScript errors, 13/13 pages
+- Commits: : 0 TypeScript errors, 13+ pages
+c43f190 fix: heatmap per-ticker fallback - show colored tiles for all 8 MARKET_TICKERS even without API data
+335ae03 fix: heatmap always show fallback tiles when no API data (was waiting on loading flag)
+7f3ed27 feat(c6): sprint tasks - Replace RadialBarChart Gauge with PixelProgress/SignalStrengthBar on ticker detail page - Remove Gauge component, RadialBarChart/RadialBar/PolarAngleAxis imports - Signal Breakdown uses PixelProgress bars instead of circular gauges Build: 0 TypeScript errors, 13+ pages
+5a0d8d9 feat(c5): sprint tasks - Remove dead rounded-2xl from Portfolio Add Position modal - Remove dead rounded-lg from TabsList, rounded-md from TabsTrigger - Both overridden by global border-radius: 0px !important rule Build: 0 TypeScript errors, 13+ pages
 
 ## Analysis
 Here's the QA report:
 
 ---
 
-# QA Report — Cycle 3
+# QA Report — Cycle 7
 
-**Build:** PASS | **TypeScript:** PASS (0 errors) | **Pages:** 13/13
+## Sprint Completion
+- **Task 1** (Replace PieChart with pixel-art stacked bar): **DONE** — `PieChart`/`Pie`/`Cell` imports removed, `pieData` useMemo deleted. Horizontal stacked `<div>` bar with BUY (#00ff41), HOLD (#FFB800), SELL (#FF3131) segments renders correctly. Percentage labels conditionally shown (>=5%). Commit `ff487cc`.
+- **Task 2** (Fix rounded corners on Accuracy page): **DONE** — All three bar `radius` props set to `[0,0,0,0]`. SignalBadge and legend blocks use `rounded-none`. No `rounded-md`/`rounded-lg`/`borderRadius` remains in accuracy/page.tsx.
+
+**2/2 tasks complete.**
+
+## Bugs Found
+1. **SearchBar.tsx:197** — Signal badge uses `rounded-md`; breaks pixel-art consistency in search dropdown.
+2. **skeleton.tsx:7** — Base Skeleton component uses `rounded-md`; affects all loading states app-wide.
+3. **portfolio/page.tsx:532,554** — Signal badges use `rounded-md`; inconsistent with Accuracy page fix.
+
+*All three are pre-existing, not regressions from this cycle.*
+
+## UI Quality
+Pixel-art theme fully consistent on Accuracy page. Stacked bar is sharp-edged, correctly proportioned, and handles empty states. Previous cycle work (PixelProgress, SignalStrengthBar) still intact. No visual regressions.
+
+## Next Cycle Priority
+Sweep remaining `rounded-md` instances (SearchBar, Skeleton, Portfolio badges) to achieve full pixel-art consistency across the app.
+
+## Score: 9/10
+Both tasks cleanly executed with zero TypeScript errors. Deducted 1 point for the pre-existing `rounded-md` stragglers that should be caught in a follow-up pass.
 
 ---
 
-## 1. Sprint Completion
-
-| Task | Status |
-|------|--------|
-| Task 1: Fix manual-refresh missing AbortSignal | **DONE** |
-| Task 2: Remove duplicate SignalStrengthBar | **DONE** |
-
-**2/2 tasks completed.** Both C2 bugs (BUG-1, BUG-2) resolved.
-
-## 2. Bugs Found
-
-**None blocking.** Both fixes verified in source:
-
-- `manualRefreshRef` (line 379) stores AbortController. Rapid clicks abort prior requests (line 636). Watchlist cleanup also aborts stale manual fetches (line 466). AbortError silently caught (line 450).
-- Duplicate `SignalStrengthBar` removed from RSI/MACD row. Two remaining instances are correct: card header (line 185) and "Strongest Signal Today" panel (line 274) — distinct UI sections.
-
-**Minor note:** Polling reuses same `controller.signal` across `setInterval` ticks (line 463). Abort on cleanup cancels in-flight polls — correct behavior.
-
-## 3. UI Quality
-
-Pixel art aesthetic **consistent** across dashboard. No visual regressions. Signal cards now render one strength bar each — cleaner layout. CRT theme intact: neon colors, monospace fonts, pixel borders, glow shadows all present.
-
-## 4. Next Cycle Priority
-
-Add loading skeletons, error toasts, and empty-watchlist handling to harden the dashboard for real-world usage.
-
-## 5. Score: 9/10
-
-Clean sprint — both tasks shipped with proper edge-case handling (abort on rapid clicks, cleanup on unmount). Docked 1 point: no automated tests cover the new abort logic.
+Would you like me to save this to `agents/QA_REPORT.md`? (I need write permission to that file.)
