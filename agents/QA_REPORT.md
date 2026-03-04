@@ -1,41 +1,47 @@
-# QA Report — Cycle 2 [20:42:19]
+# QA Report — Cycle 3 [20:47:53]
 
 ## Automated
 - Build: ✓ PASS
 - TypeScript: ✓ PASS
-- Commits: rity (HIGH/MEDIUM) - /alerts page: filterable activity feed (ALL/HIGH/MEDIUM/BUY/SELL) - Alert cards: OLD → NEW signal with colored badges - Red dot in dashboard header when HIGH alerts exist - 2-min auto-poll Agent C (Search + Market Heatmap): - SearchBar.tsx: Cmd+K command palette, any ticker search - Recent searches (localStorage, max 5) - MarketOverview.tsx: color-coded heatmap for 8 major ETFs - SPY, QQQ, DIA, IWM + sector ETFs (XLK, XLF, XLE, XLV) - Hover shows full signal info - Both added to dashboard Agent D (Signal Accuracy): - signal_store.py: compute_win_rate(), signal distribution stats - GET /api/accuracy, /api/accuracy/{ticker} - /accuracy page: stats row, stacked bar chart, stability scores - Sortable signal history table - Accuracy link in dashboard TypeScript: 0 errors ✅
+- Commits: tton.tsx: pixel art buttons with glow effects + signal variants - components/ui/card.tsx: sharp-edge panels with pixel borders - components/ui/badge.tsx: pixel badges for BUY/HOLD/SELL with neon glow - components/PixelBorder.tsx: corner bracket component - components/PixelProgress.tsx: segmented block progress bar - components/PixelText.tsx: pixel font text + TypewriterText + TerminalLine - dashboard/page.tsx: full pixel overhaul (header, cards, filters, summary bar) - page.tsx (landing): complete pixel art rewrite with grid bg + stats row - alerts/page.tsx: pixel filter tabs, alert cards, empty state - signal-of-the-day, ticker, portfolio, accuracy: color palette updated - NewsFeed, MarketOverview, SearchBar, MarketStatus, LivePreview: pixel colors Build: 0 TypeScript errors, 13/13 pages
 
 ## Analysis
 Here's the QA report:
 
 ---
 
-# QA Report — Cycle 2
+# QA Report — Cycle 3
+
+**Build:** PASS | **TypeScript:** PASS (0 errors) | **Pages:** 13/13
+
+---
 
 ## 1. Sprint Completion
 
 | Task | Status |
 |------|--------|
-| AbortController on dashboard fetches | **DONE** |
+| Task 1: Fix manual-refresh missing AbortSignal | **DONE** |
+| Task 2: Remove duplicate SignalStrengthBar | **DONE** |
 
-Single-task sprint, fully delivered. `fetchHistory` and `fetchSignals` accept `AbortSignal`, passed to all `fetch()` calls. Cleanup aborts on watchlist change/unmount. AbortError suppressed correctly via `instanceof DOMException` checks. Commit `11e6948` matches spec.
+**2/2 tasks completed.** Both C2 bugs (BUG-1, BUG-2) resolved.
 
 ## 2. Bugs Found
 
-**BUG-1 (Medium): Manual refresh skips AbortSignal**
-`dashboard/page.tsx:634` — `fetchSignals(watchlist, true)` omits the third `signal` param. If watchlist changes mid-refresh, the stale request won't cancel. Every other call site (lines 462, 463) passes `controller.signal`.
+**None blocking.** Both fixes verified in source:
 
-**BUG-2 (Low): Duplicate SignalStrengthBar in SignalCard**
-`dashboard/page.tsx:185` renders a `SignalStrengthBar` in the top-right, then line 195 renders a second identical bar below the sparkline. Likely leftover from the C1 refactor that replaced `StrengthRing`. One should be removed.
+- `manualRefreshRef` (line 379) stores AbortController. Rapid clicks abort prior requests (line 636). Watchlist cleanup also aborts stale manual fetches (line 466). AbortError silently caught (line 450).
+- Duplicate `SignalStrengthBar` removed from RSI/MACD row. Two remaining instances are correct: card header (line 185) and "Strongest Signal Today" panel (line 274) — distinct UI sections.
+
+**Minor note:** Polling reuses same `controller.signal` across `setInterval` ticks (line 463). Abort on cleanup cancels in-flight polls — correct behavior.
 
 ## 3. UI Quality
 
-Pixel art system is **consistent**. Neon palette (`#00FF41` / `#FFB800` / `#FF3131`) used correctly across signal badges, filter tabs, summary bar, sparklines, and strength bars. CRT styling (borders, glow shadows, `--pixel-*` vars) intact. No visual regressions. Chinese locale labels (金叉/死叉, RSI) render fine but note i18n gap if expanding.
+Pixel art aesthetic **consistent** across dashboard. No visual regressions. Signal cards now render one strength bar each — cleaner layout. CRT theme intact: neon colors, monospace fonts, pixel borders, glow shadows all present.
 
 ## 4. Next Cycle Priority
 
-Fix the manual-refresh AbortSignal gap (BUG-1) and remove the duplicate strength bar (BUG-2) — both are one-line fixes.
+Add loading skeletons, error toasts, and empty-watchlist handling to harden the dashboard for real-world usage.
 
-## 5. Score: 8/10
+## 5. Score: 9/10
 
-Core task executed cleanly with proper AbortError handling. Docked for the refresh button oversight and leftover duplicate component.
+Clean sprint — both tasks shipped with proper edge-case handling (abort on rapid clicks, cleanup on unmount). Docked 1 point: no automated tests cover the new abort logic.

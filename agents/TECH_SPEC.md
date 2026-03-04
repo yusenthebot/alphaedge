@@ -1,23 +1,16 @@
-# Tech — Cycle 3 [20:44:17]
+# Tech — Cycle 4 [20:50:06]
 
-Confirmed both bugs. Here's the priority:
+## Tech Priority: AbortController missing on ticker page fetches
 
-## Tech Priority: Fix manual-refresh missing AbortSignal (BUG-1)
+**File:** `src/frontend/src/app/ticker/[ticker]/page.tsx` (~line 137–164)
 
-**File:** `src/frontend/src/app/dashboard/page.tsx:634`
+**Issue:** `fetchData` has no `AbortController` — navigating away or changing ticker mid-flight causes state updates on an unmounted component (memory leak + potential React warnings). The function also isn't wrapped in `useCallback`, and the exhaustive-deps lint rule is suppressed to hide it. Dashboard already uses the correct pattern (line 441).
 
-**Issue:** The manual refresh button calls `fetchSignals(watchlist, true)` without passing the AbortController's signal. If the user changes their watchlist while a manual refresh is in-flight, the stale request won't cancel — it will resolve and overwrite the new watchlist's data with stale results. Every other call site (lines 462–463) correctly passes `controller.signal`.
-
-**Fix:** Store the AbortController in a `useRef` so the refresh button can access the current signal:
-```ts
-const controllerRef = useRef<AbortController>();
-// In the useEffect: controllerRef.current = controller;
-// Line 634: fetchSignals(watchlist, true, controllerRef.current?.signal)
-```
+**Fix:** Create `AbortController` in the `useEffect`, pass `signal` to both `fetch` calls, abort in cleanup. Wrap `fetchData` in `useCallback` and remove the lint suppression.
 
 **Test:** 
-1. Add 5+ tickers, click Refresh, immediately remove a ticker
-2. Verify the response doesn't re-add the removed ticker's card
-3. Check console: no fetch errors or stale state writes
+1. Navigate to `/ticker/AAPL`, immediately click back — no console warnings.  
+2. Rapid ticker switches produce no stale data flashes.  
+3. Build still passes (`npm run build`).
 
-**Bonus (1-line):** Also remove duplicate `SignalStrengthBar` at line 185 (BUG-2 from QA report) — leftover from the C1 StrengthRing refactor.
+Want me to implement this fix?

@@ -89,7 +89,7 @@ export default function MarketOverview() {
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-black uppercase tracking-widest text-[var(--pixel-text-muted)]">Market Heatmap</h2>
         {lastUpdated && (
-          <span className="flex items-center gap-1 text-[10px] text-[#333]">
+          <span className="flex items-center gap-1 text-[10px] text-[var(--pixel-text-muted)]">
             <Clock className="h-3 w-3" />
             {lastUpdated.toLocaleTimeString()}
           </span>

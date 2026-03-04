@@ -134,11 +134,11 @@ export default function TickerPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const fetchData = async () => {
+  const fetchData = async (signal?: AbortSignal) => {
     try {
       const [histRes, sigRes] = await Promise.all([
-        fetch(`/api/history/${ticker}?days=30`),
-        fetch(`/api/signals?tickers=${ticker}`),
+        fetch(`/api/history/${ticker}?days=30`, { signal }),
+        fetch(`/api/signals?tickers=${ticker}`, { signal }),
       ]);
       if (!histRes.ok) throw new Error(`HTTP ${histRes.status}`);
       if (!sigRes.ok) throw new Error(`HTTP ${sigRes.status}`);
@@ -151,7 +151,8 @@ export default function TickerPage() {
       const s = sigData.signals?.[0];
       if (s) setSignal(s);
       else setError(true);
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setError(true);
     } finally {
       setLoading(false);
@@ -159,7 +160,10 @@ export default function TickerPage() {
   };
 
   useEffect(() => {
-    if (ticker) fetchData();
+    if (!ticker) return;
+    const controller = new AbortController();
+    fetchData(controller.signal);
+    return () => controller.abort();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticker]);
 
@@ -205,7 +209,7 @@ export default function TickerPage() {
             Dashboard
           </Link>
           <button
-            onClick={fetchData}
+            onClick={() => fetchData()}
             className="flex items-center gap-1.5 rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-3 py-1.5 text-xs text-[#666] transition hover:text-[var(--pixel-text)]"
           >
             <RefreshCw className="h-3 w-3" />
