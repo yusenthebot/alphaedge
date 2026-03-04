@@ -1,8 +1,67 @@
+'use client'
+
 import Link from "next/link";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Newspaper, BarChart3, Bell, Zap, Check, TrendingUp } from "lucide-react";
 import { LivePreview } from "@/components/LivePreview";
 import { MarketStatus } from "@/components/MarketStatus";
+
+function MatrixRain() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')!
+    canvas.width = canvas.offsetWidth
+    canvas.height = canvas.offsetHeight
+    const cols = Math.floor(canvas.width / 16)
+    const drops = Array(cols).fill(0).map(() => Math.random() * -50)
+    const chars = '01アイウエオABCDEF▲▼◆█░▓'
+    let raf: number
+    const draw = () => {
+      ctx.fillStyle = 'rgba(6,10,6,0.1)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.fillStyle = '#00FF41'
+      ctx.font = '12px monospace'
+      drops.forEach((y, i) => {
+        const char = chars[Math.floor(Math.random() * chars.length)]
+        ctx.globalAlpha = Math.random() * 0.8 + 0.2
+        ctx.fillText(char, i * 16, y * 16)
+        drops[i] = y > canvas.height / 16 + Math.random() * 20 ? 0 : y + 1
+      })
+      ctx.globalAlpha = 1
+      raf = requestAnimationFrame(draw)
+    }
+    draw()
+    return () => cancelAnimationFrame(raf)
+  }, [])
+  return <canvas ref={canvasRef} style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:0.4, pointerEvents:'none' }} />
+}
+
+function BootSequence({ onDone }: { onDone: () => void }) {
+  const lines = [
+    'ALPHAEDGE v2.0 INITIALIZING...',
+    'LOADING MARKET DATA FEEDS...',
+    'CONNECTING TO SIGNAL ENGINE...',
+    'CALIBRATING RSI THRESHOLDS...',
+    'MARKET CONNECTION ESTABLISHED.',
+    '> READY'
+  ]
+  useEffect(() => {
+    const t = setTimeout(onDone, 2800)
+    return () => clearTimeout(t)
+  }, [onDone])
+  return (
+    <div style={{ position:'fixed', inset:0, background:'var(--pixel-bg)', zIndex:9999, display:'flex', flexDirection:'column', justifyContent:'center', padding:'2rem', fontFamily:'var(--font-pixel)', fontSize:'10px', color:'var(--pixel-buy)' }}>
+      {lines.map((line, i) => (
+        <div key={i} className="boot-line" style={{ animationDelay: `${i * 0.4}s`, marginBottom:'12px', animationFillMode:'both' }}>
+          {line}
+        </div>
+      ))}
+    </div>
+  )
+}
 
 const FEATURES = [
   {
@@ -86,8 +145,12 @@ const STATS = [
 ];
 
 export default function LandingPage() {
+  const [booting, setBooting] = useState(true)
+  const handleBootDone = useCallback(() => setBooting(false), [])
+
   return (
     <div className="min-h-screen bg-[var(--pixel-bg)] text-[var(--pixel-text)]">
+      {booting && <BootSequence onDone={handleBootDone} />}
 
       {/* ── Nav ── */}
       <nav className="border-b-2 border-[var(--pixel-border-dim)] px-6 py-4">
@@ -119,6 +182,7 @@ export default function LandingPage() {
 
       {/* ── Hero ── */}
       <section className="relative overflow-hidden px-6 py-24 text-center">
+        <MatrixRain />
         {/* Background grid */}
         <div
           aria-hidden

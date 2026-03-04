@@ -1,13 +1,20 @@
-# Tech — Cycle 1 [20:31:21]
+# Tech — Cycle 2 [20:39:12]
 
-## Tech Priority: Add `res.ok` checks to all fetch calls
+## Tech Priority: AbortController for dashboard fetch race conditions
 
-**File:** `src/frontend/src/app/ticker/[ticker]/page.tsx:139-144`  
-**Issue:** All API fetches (`ticker`, `dashboard`, `alerts`, `LivePreview`, `MarketOverview`, `NewsFeed`) parse JSON without checking HTTP status. A 500/404 response silently fails or produces garbage state — users see blank pages with no explanation.  
-**Fix:** Add `if (!res.ok) throw new Error(...)` before every `.json()` call. The ticker page is the worst offender (2 parallel fetches, zero validation). Cascade the same pattern to dashboard, alerts, and components.  
-**Test:** 
-1. Stop the FastAPI backend, load `/ticker/AAPL` — should show a clear error message instead of a blank/broken page.  
-2. Restart backend, confirm normal flow still works.  
-3. `npm run build` — zero TS errors.
+**File:** `src/frontend/src/app/dashboard/page.tsx:513-518`
 
-Want me to implement this fix across all affected files?
+**Issue:** When the watchlist changes, `fetchSignals` is called but the previous in-flight request isn't cancelled. Rapid watchlist edits (add/remove tickers) trigger overlapping fetches that resolve out-of-order, causing stale data to overwrite fresh data. The `Promise.all` for history (line 495-500) amplifies this — each watchlist change fires N+1 requests with no abort.
+
+**Fix:** Add `AbortController` to the polling `useEffect`. Pass `signal` to every `fetch` call. Abort on cleanup:
+```ts
+useEffect(() => {
+  const ac = new AbortController();
+  setLoading(true);
+  fetchSignals(watchlist, false, ac.signal);
+  const iv = setInterval(() => fetchSignals(watchlist, false, ac.signal), POLL_INTERVAL);
+  return () => { ac.abort(); clearInterval(iv); };
+}, [watchlist, fetchSignals]);
+```
+
+**Test:** Add 3 tickers rapidly — verify only the final watchlist's data renders, no console errors.

@@ -472,21 +472,22 @@ export default function DashboardPage() {
     }
   }, [addingTicker]);
 
-  const fetchHistory = useCallback(async (ticker: string): Promise<HistoryPoint[]> => {
+  const fetchHistory = useCallback(async (ticker: string, signal?: AbortSignal): Promise<HistoryPoint[]> => {
     try {
-      const res = await fetch(`/api/history/${ticker}`);
+      const res = await fetch(`/api/history/${ticker}`, { signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       return data.data ?? [];
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return [];
       return [];
     }
   }, []);
 
-  const fetchSignals = useCallback(async (tickers: string[], manual = false) => {
+  const fetchSignals = useCallback(async (tickers: string[], manual = false, signal?: AbortSignal) => {
     if (manual) setRefreshing(true);
     try {
-      const res = await fetch(`/api/signals?tickers=${tickers.join(",")}`);
+      const res = await fetch(`/api/signals?tickers=${tickers.join(",")}`, { signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       const sigs: Signal[] = data.signals ?? [];
@@ -495,13 +496,14 @@ export default function DashboardPage() {
       const withHistory: SignalWithHistory[] = await Promise.all(
         sigs.map(async (s) => ({
           ...s,
-          history: await fetchHistory(s.ticker),
+          history: await fetchHistory(s.ticker, signal),
         }))
       );
 
       setSignals(withHistory);
       setLastUpdate(new Date());
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       console.error("fetch error:", err);
     } finally {
       setLoading(false);
@@ -511,10 +513,14 @@ export default function DashboardPage() {
 
   // Fetch signals whenever watchlist changes
   useEffect(() => {
+    const controller = new AbortController();
     setLoading(true);
-    fetchSignals(watchlist);
-    const iv = setInterval(() => fetchSignals(watchlist), POLL_INTERVAL);
-    return () => clearInterval(iv);
+    fetchSignals(watchlist, false, controller.signal);
+    const iv = setInterval(() => fetchSignals(watchlist, false, controller.signal), POLL_INTERVAL);
+    return () => {
+      controller.abort();
+      clearInterval(iv);
+    };
   }, [watchlist, fetchSignals]);
 
   // ── Watchlist management ──

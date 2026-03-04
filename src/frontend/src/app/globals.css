@@ -293,6 +293,106 @@ body::after {
 .pixel-flicker    { animation: pixel-flicker 8s ease-in-out infinite; }
 .glitch:hover     { animation: glitch 0.4s steps(2) forwards; }
 
+/* ── Price Flash ── */
+@keyframes priceUp {
+  0%, 100% { color: var(--pixel-text); text-shadow: none; }
+  20% { color: var(--pixel-buy); text-shadow: 0 0 16px var(--pixel-buy); }
+}
+@keyframes priceDown {
+  0%, 100% { color: var(--pixel-text); text-shadow: none; }
+  20% { color: var(--pixel-sell); text-shadow: 0 0 16px var(--pixel-sell); }
+}
+.price-flash-up { animation: priceUp 0.8s ease-out; }
+.price-flash-down { animation: priceDown 0.8s ease-out; }
+
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-33.33%); }
+}
+
+/* ── Signal Pulse Ring ── */
+@keyframes signalPulseRing {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+.signal-pulse-ring {
+  position: absolute;
+  inset: -4px;
+  border: 2px solid var(--pixel-buy);
+  animation: signalPulseRing 1.2s ease-out infinite;
+  pointer-events: none;
+}
+.signal-pulse-ring-2 {
+  animation-delay: 0.4s;
+}
+.signal-pulse-ring-3 {
+  animation-delay: 0.8s;
+}
+
+/* ── Glitch SELL ── */
+@keyframes glitchText {
+  0%, 90%, 100% { clip-path: none; transform: none; color: var(--pixel-sell); }
+  91% { clip-path: polygon(0 15%, 100% 15%, 100% 30%, 0 30%); transform: translateX(-2px); color: #ff0000; }
+  93% { clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%); transform: translateX(2px); color: #ff6666; }
+  95% { clip-path: none; transform: none; }
+}
+.glitch-sell {
+  animation: glitchText 3s infinite;
+  position: relative;
+}
+
+/* ── Boot Typing ── */
+@keyframes bootType {
+  from { width: 0; }
+  to { width: 100%; }
+}
+.boot-line {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--pixel-buy);
+  animation: bootType 0.8s steps(40, end) forwards;
+}
+
+/* ── Scanline Intensify ── */
+@keyframes scanlineIntensify {
+  0%, 100% { opacity: 0.03; }
+  50% { opacity: 0.08; }
+}
+.pixel-panel:hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,255,65,0.06) 2px,
+    rgba(0,255,65,0.06) 4px
+  );
+  pointer-events: none;
+  animation: scanlineIntensify 0.3s ease;
+}
+
+/* ── Data Stream ── */
+@keyframes dataStream {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.news-item-enter {
+  animation: dataStream 0.4s ease-out forwards;
+}
+
+/* ── Number Count ── */
+@keyframes numberCount {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.number-animate {
+  animation: numberCount 0.3s ease-out;
+}
+
 /* ─────────────────────────────────────────
    Corner Brackets (decorative)
 ───────────────────────────────────────── */
