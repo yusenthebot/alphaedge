@@ -215,7 +215,7 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
                 <div className="flex items-center gap-3">
                   <span className="text-lg font-black text-[var(--pixel-text)]">{preview.ticker}</span>
                   <span
-                    className="rounded-md px-2 py-0.5 text-xs font-black tracking-widest"
+                    className="px-2 py-0.5 text-xs font-black tracking-widest"
                     style={{
                       background: (SIGNAL_COLORS[preview.signal] ?? "#A0A0A0") + "22",
                       color: SIGNAL_COLORS[preview.signal] ?? "#A0A0A0",
