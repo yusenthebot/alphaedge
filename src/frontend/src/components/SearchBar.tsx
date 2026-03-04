@@ -186,12 +186,12 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
           {query && (
             <button
               onClick={() => { setQuery(""); setPreview(null); }}
-              className="rounded p-0.5 text-[var(--pixel-text-muted)] transition hover:text-[var(--pixel-text)]"
+              className="rounded-none p-0.5 text-[var(--pixel-text-muted)] transition hover:text-[var(--pixel-text)]"
             >
               <X className="h-4 w-4" />
             </button>
           )}
-          <kbd className="hidden rounded border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] px-1.5 py-0.5 text-[10px] text-[#555] sm:inline">
+          <kbd className="hidden rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] px-1.5 py-0.5 text-[10px] text-[#555] sm:inline">
             ESC
           </kbd>
         </div>
@@ -203,8 +203,8 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 animate-pulse rounded-none bg-[#2A2A35]" />
                 <div className="space-y-1.5">
-                  <div className="h-4 w-24 animate-pulse rounded bg-[#2A2A35]" />
-                  <div className="h-3 w-32 animate-pulse rounded bg-[#2A2A35]" />
+                  <div className="h-4 w-24 animate-pulse rounded-none bg-[#2A2A35]" />
+                  <div className="h-3 w-32 animate-pulse rounded-none bg-[#2A2A35]" />
                 </div>
               </div>
             ) : preview ? (
@@ -260,7 +260,7 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
                 <button
                   key={ticker}
                   onClick={() => navigateToTicker(ticker)}
-                  className="group/chip flex items-center gap-1.5 rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--pixel-text-off)] transition hover:border-[#00FF41]/30 hover:bg-[var(--pixel-surface-2)] hover:text-[var(--pixel-text)]"
+                  className="group/chip flex items-center gap-1.5 rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--pixel-text-off)] transition hover:border-[#00D4FF]/30 hover:bg-[var(--pixel-surface-2)] hover:text-[var(--pixel-text)]"
                 >
                   {ticker}
                   <span

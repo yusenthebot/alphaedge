@@ -1,13 +1,13 @@
-# Sprint — Cycle 15 [21:52:18]
+# Sprint — Cycle 16 [21:57:27]
 
-# SPRINT 15
+# SPRINT 16
 
-## Task 1: Fix sort dropdown shadow using stale green
-File: `src/frontend/src/app/dashboard/page.tsx:331`
-Change: Replace `boxShadow: "4px 4px 0px rgba(0,255,65,0.1)"` with `boxShadow: "4px 4px 0px rgba(0,212,255,0.1)"`
-Done when: Sort dropdown shadow uses cyan `rgba(0,212,255,0.1)` instead of green `rgba(0,255,65,0.1)`.
+## Task 1: SearchBar skeleton loaders and dropdown use pixel-sharp corners
+File: `src/frontend/src/components/SearchBar.tsx`
+Change: Lines 189, 194, 206, 207 — replace `rounded` with `rounded-none` on skeleton loader divs. Line 263 — change `hover:border-[#00FF41]/30` to `hover:border-[#00D4FF]/30` on the dropdown container.
+Done when: All skeleton placeholders and the search dropdown render with sharp corners (no border-radius), and dropdown hover border uses cyan `#00D4FF` instead of green `#00FF41`.
 
-## Task 2: Fix ALL filter tab using stale green
-File: `src/frontend/src/app/dashboard/page.tsx`
-Change: Find the "ALL" filter tab/button styling that still uses the old green theme color (`#00FF41` or `rgba(0,255,65,...)`) and update it to the cyan theme equivalent (`#00D4FF` or `rgba(0,212,255,...)`).
-Done when: The ALL filter tab's colors (background, border, glow, or shadow) use cyan theme values instead of legacy green.
+## Task 2: SearchBar dropdown item hover uses stale green highlight
+File: `src/frontend/src/components/SearchBar.tsx`
+Change: Find any `hover:bg-[#00FF41]` or `hover:border-[#00FF41]` references on dropdown result items and replace the green `#00FF41` with cyan `#00D4FF` to match the current theme. Check lines in the dropdown results mapping section.
+Done when: Hovering over search dropdown items shows cyan-themed highlights, no green `#00FF41` references remain in the file.

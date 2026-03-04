@@ -1,58 +1,46 @@
-# QA Report — Cycle 14 [21:49:25]
+# QA Report — Cycle 15 [21:54:09]
 
 ## Automated
 - Build: ✓ PASS
 - TypeScript: ✓ PASS
-- Commits: reactor, hover jets, sensor array
-046edcd feat(c13): sprint tasks - RSI colors: #22C55E→#00FF41 (--pixel-buy), #EF4444→#FF3131 (--pixel-sell)
-577acd6 feat(c12): sprint tasks - SearchBar: AbortController on fetch + cleanup on unmount/close - SignalCard: scanline overlay via repeating-linear-gradient
-0cf780e feat: RPG dialog system in hero - pixel character + typewriter intro - 5-line dialog sequence: ANALYST & SYSTEM characters - PixelChar component: 8x12 box-shadow pixel art sprites (trader + robot) - RPGDialog: typewriter effect (38ms/char), click-to-advance, skip-typing - Progress dots + speaker name tag + corner brackets - Final CTA: PRESS START button with blink animation - Replaced verbose hero text with minimal title + dialog box - Remove pricing imports (Check, Button, TrendingUp)
+- Commits: #00FF41 → #00FF88 (matches --pixel-buy) - SearchBar signal badge: removed rounded-md for pixel-sharp corners
+5e95a72 feat: sci-fi cyan/blue theme + robot pixel characters THEME OVERHAUL: - bg: #060A06 → #020812 (deep space navy) - border/primary: #00FF41 → #00D4FF (cyan phosphor) - text: green → ice blue #A8DCFF - surface: dark green → dark navy - buy signal: #00FF41 → #00FF88 (keeps green semantic) - accent: #00FFFF → #7B61FF (purple for contrast) - all glows: green rgba → cyan rgba - CRT scanlines: green tint → cyan tint - Matrix rain: green chars → cyan chars - Parallax stars: green dots → cyan dots ROBOT CHARACTERS: - analyst: humanoid bot — steel frame, cyan visor, data screen chest, arm joints - system: mainframe bot — wide chassis, purple/cyan core reactor, hover jets, sensor array
 
 ## Analysis
-Here's the QA report:
+Both C15 tasks verified. Now let me check the residual green `rgba(0,255,65,...)` references for the bug report.
 
 ---
 
-# QA Report — Cycle 14
+# QA Report — Cycle 15
 
 ## 1. Sprint Completion
 
-| # | Task | Status |
-|---|------|--------|
-| 1 | RSI OVERSOLD color `#00FF41` → `#00FF88` | **DONE** |
-| 2 | SearchBar signal badge: remove `rounded-md` | **DONE** |
+| Task | Status |
+|------|--------|
+| **Task 1:** Sort dropdown shadow `rgba(0,255,65,0.1)` → `rgba(0,212,255,0.1)` | **DONE** — verified at `dashboard/page.tsx:331` |
+| **Task 2:** ALL filter tab `#00AA2B` → `#00D4FF` | **DONE** — verified at `dashboard/page.tsx:37` |
 
-Both tasks delivered in commit `fa26acc`. Build: PASS. TypeScript: PASS.
+**2/2 tasks complete.** Commit `8d1e6eb`. Build PASS.
 
 ## 2. Bugs Found
 
-**BUG: Hardcoded `#00FF41` persists across 8+ files**
+**Stale green `rgba(0,255,65,...)` still present in 4 files** — leftover from the theme migration in `5e95a72`:
 
-The RSI label is fixed, but `#00FF41` (old buy green) is still hardcoded in signal config objects throughout the app:
+- `PixelProgress.tsx:21-22` — empty bar + glow still use green rgba
+- `PixelText.tsx:18,46,103` — text shadows and drop shadows still green
+- `badge.tsx:24-25,28-29` — default & buy badge shadows/bg still green
+- `dashboard/page.tsx:31` — `SIGNAL_CONFIG.BUY` glow uses green rgba (this one is arguably intentional since BUY = green semantic, but the glow leaks into non-buy contexts)
 
-- `dashboard/page.tsx:31,38,219` — SIGNAL_CONFIG.BUY, FILTER_COLORS, SummaryBar
-- `SearchBar.tsx:156` — SIGNAL_COLORS.BUY
-- `MarketOverview.tsx:21,38` — SIGNAL_COLORS, tileColor()
-- `LivePreview.tsx:14` — SIGNAL_COLOR.BUY
-- `portfolio/page.tsx:57,122` — SIGNAL_CONFIG, getSignalSuggestion()
-- `ticker/[ticker]/page.tsx:50` — SIG.BUY
-- `alerts/page.tsx:22,154` — SIGNAL_COLORS, FILTER_STYLES
-- `accuracy/page.tsx:34,46` — SIGNAL_COLORS, stabilityColor()
-
-**Severity:** Medium-visual. OVERSOLD badge is now `#00FF88` but every other BUY-signal element renders `#00FF41`. The dashboard has two competing greens side by side.
+**Severity:** Low-Medium. These are visual inconsistencies — cyan theme pages flash green glows on badges and progress bars.
 
 ## 3. UI Quality
 
-Pixel-sharp corners on SearchBar badge — correct. No regressions from `rounded-md` removal. The dual-green inconsistency (`#00FF41` vs `#00FF88`) is the main visual issue; users see a brighter RSI badge next to dimmer BUY cards.
+Sprint 15 changes are clean. Sort dropdown and ALL tab now match the cyan theme. No visual regressions introduced. The broader green→cyan migration from C14 is ~85% complete; the residual greens above break consistency on pixel components that appear site-wide.
 
 ## 4. Next Cycle Priority
 
-Consolidate all hardcoded `#00FF41` → `#00FF88` across signal config objects to unify the buy-signal palette.
+Sweep remaining `rgba(0,255,65,...)` references in `PixelProgress`, `PixelText`, and `badge.tsx` to complete the cyan theme migration.
 
-## 5. Score: 7/10
+## 5. Score: **8/10**
 
-Both sprint tasks completed correctly. Deducted for the systemic `#00FF41` inconsistency that makes the fix feel incomplete — the RSI label is right but everything around it is still wrong.
-
----
-
-Want me to write this to `agents/QA_REPORT.md`?
+Both tasks executed correctly and build is clean. Deducted for the residual green artifacts still polluting shared components from the earlier theme sweep.
