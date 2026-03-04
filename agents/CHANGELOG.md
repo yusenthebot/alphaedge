@@ -1,3 +1,6 @@
+## Cycle 12 [21:39:03]
+577acd6 feat(c12): sprint tasks - SearchBar: AbortController on fetch + cleanup on unmount/close - SignalCard: scanline overlay via repeating-linear-gradient
+
 ## Cycle 11 [21:33:44]
 b10f7f5 feat(c11): sprint tasks - LivePreview error state + 5s auto-retry - Dynamic ticker tape from signals state
 
@@ -11,4 +14,4 @@ a89ef13 feat(c9): sprint tasks - skeleton rounded-md→rounded-none, AbortContro
 730be9b feat(c8): sprint tasks - Replace rounded-md → rounded-none on signal badges (desktop + mobile) - Replace rounded → rounded-none on trash buttons (desktop + mobile) - All portfolio page elements now render with sharp 0px corners
 
 ## Cycle 7 [21:14:36]
-ff487cc feat(c7): sprint tasks - Replace PieChart with pixel-art stacked bar on Accuracy page - Remove PieChart/Pie/Cell imports and pieData useMemo - Fix rounded corners (radius, borderRadius
+ff487cc feat(c7): sprint tasks - Replace PieChart wit

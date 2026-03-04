@@ -1,13 +1,16 @@
-# Sprint — Cycle 11 [21:30:58]
+# Sprint — Cycle 13 [21:42:40]
 
-# SPRINT 11
+Here's the sprint — 1 task this cycle (CTO timed out, only 1 designer request):
 
-## Task 1: LivePreview error state (bug fix)
-File: `src/frontend/src/components/LivePreview.tsx`
-Change: Add `const [error, setError] = useState(false);` next to line 21. In the `.catch()` at line 38, add `setError(true)` after the console.error. After the loading guard (line 51), add an error guard: `if (error) return <div className="text-center text-xs text-[#FF3131] py-4">Signal fetch failed — retrying…</div>;` — and wrap the fetch in a retry: on catch, `setTimeout(() => { setError(false); setLoading(true); /* re-run fetch */ }, 5000)`.
-Done when: Network/5xx failure shows red error text instead of blank div, and auto-retries after 5s.
+---
 
-## Task 2: Dynamic ticker tape
+# SPRINT 13
+
+## Task 1: Fix RSI color mismatch — use CRT palette
 File: `src/frontend/src/app/dashboard/page.tsx`
-Change: Replace the hardcoded string at line 670 with: `{(signals.length > 0 ? signals.map(s => \`\${s.ticker} \${s.change >= 0 ? '▲' : '▼'}\${Math.abs(s.change).toFixed(2)}% \${s.signal}\`).join(' ◆ ') + ' ◆ ' : 'Loading signals… ◆ ').repeat(3)}`
-Done when: Ticker tape renders live signal data from `signals` state; falls back to "Loading signals…" while empty.
+Change: In `rsiLabel()` (lines 58–62), replace the Tailwind default colors with the project's CRT variables: `#22C55E` → `#00FF88` (matches `--pixel-buy`) and `#EF4444` → `#FF3131` (matches `--pixel-sell`). Keep NEUTRAL at `#A0A0A0`.
+Done when: OVERSOLD shows `#00FF88` and OVERBOUGHT shows `#FF3131`, matching the signal card and ticker detail colors exactly.
+
+---
+
+Only 1 task because the CTO timed out and the designer submitted a single fix. Clean 2-line change — engineer should be done in under a minute.

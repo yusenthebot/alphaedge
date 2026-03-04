@@ -21,7 +21,7 @@ function MatrixRain() {
     const draw = () => {
       ctx.fillStyle = 'rgba(6,10,6,0.1)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
-      ctx.fillStyle = '#00FF41'
+      ctx.fillStyle = '#00D4FF'
       ctx.font = '12px monospace'
       drops.forEach((y, i) => {
         const char = chars[Math.floor(Math.random() * chars.length)]
@@ -114,64 +114,78 @@ const DIALOG_LINES = [
 
 // 8×12 pixel trader sprite (box-shadow method)
 function PixelChar({ variant = "analyst" }: { variant?: "analyst" | "system" }) {
-  const pixel = (x: number, y: number, color: string) =>
+  const p = (x: number, y: number, color: string) =>
     `${x * 4}px ${y * 4}px 0 ${color}`
 
-  const analyst = [
-    // head
-    pixel(1,0,"#FFD580"), pixel(2,0,"#FFD580"),
-    pixel(0,1,"#FFD580"), pixel(1,1,"#FFD580"), pixel(2,1,"#FFD580"), pixel(3,1,"#FFD580"),
-    pixel(0,2,"#FFD580"), pixel(1,2,"#1A1A2E"), pixel(2,2,"#1A1A2E"), pixel(3,2,"#FFD580"),
-    pixel(0,3,"#FFD580"), pixel(1,3,"#FFD580"), pixel(2,3,"#FFD580"), pixel(3,3,"#FFD580"),
-    // hair
-    pixel(0,0,"#4A2800"), pixel(1,0,"#4A2800"), pixel(2,0,"#4A2800"), pixel(3,0,"#4A2800"),
-    // body / suit
-    pixel(0,4,"#1A3A5C"), pixel(1,4,"#1A3A5C"), pixel(2,4,"#1A3A5C"), pixel(3,4,"#1A3A5C"),
-    pixel(0,5,"#1A3A5C"), pixel(1,5,"#FFFFFF"), pixel(2,5,"#FFFFFF"), pixel(3,5,"#1A3A5C"),
-    pixel(0,6,"#1A3A5C"), pixel(1,6,"#1A3A5C"), pixel(2,6,"#1A3A5C"), pixel(3,6,"#1A3A5C"),
-    pixel(0,7,"#1A3A5C"), pixel(1,7,"#1A3A5C"), pixel(2,7,"#1A3A5C"), pixel(3,7,"#1A3A5C"),
-    // arms
-    pixel(-1,5,"#FFD580"), pixel(4,5,"#FFD580"),
-    pixel(-1,6,"#1A3A5C"), pixel(4,6,"#1A3A5C"),
-    // legs
-    pixel(0,8,"#2A2A4A"), pixel(1,8,"#2A2A4A"), pixel(2,8,"#2A2A4A"), pixel(3,8,"#2A2A4A"),
-    pixel(0,9,"#2A2A4A"), pixel(1,9,"#2A2A4A"), pixel(2,9,"#2A2A4A"), pixel(3,9,"#2A2A4A"),
-    // shoes
-    pixel(0,10,"#1A1A1A"), pixel(1,10,"#1A1A1A"), pixel(2,10,"#1A1A1A"), pixel(3,10,"#1A1A1A"),
-  ]
-
-  const system = [
-    // robot/terminal head
-    pixel(0,0,"#00FF41"), pixel(1,0,"#00FF41"), pixel(2,0,"#00FF41"), pixel(3,0,"#00FF41"),
-    pixel(0,1,"#00FF41"), pixel(1,1,"#060A06"), pixel(2,1,"#060A06"), pixel(3,1,"#00FF41"),
-    pixel(0,2,"#00FF41"), pixel(1,2,"#00FFFF"), pixel(2,2,"#00FFFF"), pixel(3,2,"#00FF41"),
-    pixel(0,3,"#00FF41"), pixel(1,3,"#060A06"), pixel(2,3,"#060A06"), pixel(3,3,"#00FF41"),
+  // ANALYST-BOT — sleek humanoid robot with cyan visor & data screen on chest
+  const analystBot = [
     // antenna
-    pixel(1,-1,"#00FF41"), pixel(2,-1,"#00FF41"),
-    pixel(1,-2,"#00FFFF"),
-    // body
-    pixel(0,4,"#0B160B"), pixel(1,4,"#00FF41"), pixel(2,4,"#00FF41"), pixel(3,4,"#0B160B"),
-    pixel(0,5,"#00FF41"), pixel(1,5,"#0B160B"), pixel(2,5,"#0B160B"), pixel(3,5,"#00FF41"),
-    pixel(0,6,"#00FF41"), pixel(1,6,"#00FF41"), pixel(2,6,"#00FF41"), pixel(3,6,"#00FF41"),
-    pixel(0,7,"#0B160B"), pixel(1,7,"#00FF41"), pixel(2,7,"#00FF41"), pixel(3,7,"#0B160B"),
+    p(1,-2,"#00D4FF"), p(2,-2,"#00D4FF"),
+    p(1,-1,"#5599BB"),
+    // head — steel frame
+    p(0,0,"#1A3A5C"), p(1,0,"#1A3A5C"), p(2,0,"#1A3A5C"), p(3,0,"#1A3A5C"),
+    // visor strip — glowing cyan eyes
+    p(0,1,"#0A2040"), p(1,1,"#00D4FF"), p(2,1,"#00D4FF"), p(3,1,"#0A2040"),
+    p(0,2,"#0A2040"), p(1,2,"#00EEFF"), p(2,2,"#00EEFF"), p(3,2,"#0A2040"),
+    // chin
+    p(0,3,"#1A3A5C"), p(1,3,"#0A2040"), p(2,3,"#0A2040"), p(3,3,"#1A3A5C"),
+    // neck
+    p(1,4,"#0D2035"), p(2,4,"#0D2035"),
+    // shoulders
+    p(-1,5,"#1A3A5C"), p(0,5,"#1A3A5C"), p(1,5,"#1A3A5C"), p(2,5,"#1A3A5C"), p(3,5,"#1A3A5C"), p(4,5,"#1A3A5C"),
+    // chest — data screen
+    p(0,6,"#0A1A30"), p(1,6,"#00D4FF"), p(2,6,"#00D4FF"), p(3,6,"#0A1A30"),
+    p(0,7,"#0A1A30"), p(1,7,"#0A2040"), p(2,7,"#0A2040"), p(3,7,"#0A1A30"),
+    // waist
+    p(0,8,"#1A3A5C"), p(1,8,"#1A3A5C"), p(2,8,"#1A3A5C"), p(3,8,"#1A3A5C"),
+    // arms
+    p(-1,6,"#0D2035"), p(-1,7,"#0D2035"), p(-1,8,"#00D4FF"),
+    p(4,6,"#0D2035"),  p(4,7,"#0D2035"),  p(4,8,"#00D4FF"),
     // legs
-    pixel(0,8,"#00FF41"), pixel(3,8,"#00FF41"),
-    pixel(0,9,"#00FF41"), pixel(3,9,"#00FF41"),
-    pixel(0,10,"#00FFFF"), pixel(3,10,"#00FFFF"),
+    p(0,9,"#0D2035"), p(1,9,"#0D2035"), p(2,9,"#0D2035"), p(3,9,"#0D2035"),
+    p(0,10,"#1A3A5C"), p(3,10,"#1A3A5C"),
+    // feet
+    p(0,11,"#00D4FF"), p(3,11,"#00D4FF"),
   ]
 
-  const shadows = (variant === "system" ? system : analyst).join(", ")
-  const color = variant === "system" ? "#00FF41" : "#FFD580"
+  // SYSTEM-BOT — boxy mainframe AI with glowing core & multiple sensors
+  const systemBot = [
+    // sensor array top
+    p(0,-1,"#7B61FF"), p(1,-1,"#00D4FF"), p(2,-1,"#00D4FF"), p(3,-1,"#7B61FF"),
+    // head — wide square
+    p(0,0,"#061428"), p(1,0,"#061428"), p(2,0,"#061428"), p(3,0,"#061428"),
+    // sensor eyes (3 dots)
+    p(0,1,"#7B61FF"), p(1,1,"#00FFFF"), p(2,1,"#00FFFF"), p(3,1,"#7B61FF"),
+    // speaker grille
+    p(0,2,"#0A1A38"), p(1,2,"#00D4FF"), p(2,2,"#00D4FF"), p(3,2,"#0A1A38"),
+    p(0,3,"#061428"), p(1,3,"#061428"), p(2,3,"#061428"), p(3,3,"#061428"),
+    // neck joint
+    p(1,4,"#00D4FF"), p(2,4,"#00D4FF"),
+    // wide body — mainframe chassis
+    p(-1,5,"#061428"), p(0,5,"#061428"), p(1,5,"#061428"), p(2,5,"#061428"), p(3,5,"#061428"), p(4,5,"#061428"),
+    // core reactor — glowing purple
+    p(0,6,"#0A1A38"), p(1,6,"#7B61FF"), p(2,6,"#7B61FF"), p(3,6,"#0A1A38"),
+    p(0,7,"#0A1A38"), p(1,7,"#00D4FF"), p(2,7,"#00D4FF"), p(3,7,"#0A1A38"),
+    // lower body
+    p(0,8,"#061428"), p(1,8,"#061428"), p(2,8,"#061428"), p(3,8,"#061428"),
+    // hover jets instead of legs
+    p(-1,9,"#00D4FF"), p(0,9,"#00D4FF"), p(1,9,"#7B61FF"), p(2,9,"#7B61FF"), p(3,9,"#00D4FF"), p(4,9,"#00D4FF"),
+    p(0,10,"#0A1A38"), p(1,10,"#00D4FF"), p(2,10,"#00D4FF"), p(3,10,"#0A1A38"),
+  ]
+
+  const shadows = (variant === "system" ? systemBot : analystBot).join(", ")
+  const baseColor = variant === "system" ? "#7B61FF" : "#00D4FF"
 
   return (
-    <div style={{ width: 16, height: 44, position: "relative", flexShrink: 0, marginTop: 4 }}>
+    <div style={{ width: 24, height: 52, position: "relative", flexShrink: 0, marginTop: 4 }}>
       <div style={{
         position: "absolute",
-        top: 0, left: 0,
+        top: 8, left: 4,
         width: 4, height: 4,
-        background: color,
+        background: baseColor,
         boxShadow: shadows,
         imageRendering: "pixelated",
+        filter: `drop-shadow(0 0 3px ${baseColor})`,
       }} />
     </div>
   )
@@ -218,7 +232,7 @@ function RPGDialog({ onDone }: { onDone: () => void }) {
     setLineIdx(i => i + 1)
   }, [typing, isLast, currentLine.text])
 
-  const speakerColor = currentLine.speaker === "SYSTEM" ? "var(--pixel-accent)" : "var(--pixel-hold)"
+  const speakerColor = currentLine.speaker === "SYSTEM" ? "var(--pixel-accent)" : "var(--pixel-border)"
 
   return (
     <div className="relative mx-auto max-w-2xl w-full" style={{ fontFamily: "var(--font-pixel)" }}>
@@ -245,7 +259,7 @@ function RPGDialog({ onDone }: { onDone: () => void }) {
         style={{
           background: "rgba(6,10,6,0.95)",
           border: "3px solid var(--pixel-border)",
-          boxShadow: "0 0 0 1px var(--pixel-bg), 0 0 0 4px var(--pixel-border-dim), inset 0 0 20px rgba(0,255,65,0.03)",
+          boxShadow: "0 0 0 1px var(--pixel-bg), 0 0 0 4px var(--pixel-border-dim), inset 0 0 20px rgba(0,212,255,0.03)",
           padding: "16px 20px",
           minHeight: "90px",
         }}
@@ -313,8 +327,8 @@ function RPGDialog({ onDone }: { onDone: () => void }) {
                 padding: "12px 28px",
                 fontSize: "9px",
                 color: "var(--pixel-buy)",
-                background: "rgba(0,255,65,0.08)",
-                boxShadow: "0 0 12px rgba(0,255,65,0.3)",
+                background: "rgba(0,212,255,0.08)",
+                boxShadow: "0 0 12px rgba(0,212,255,0.3)",
                 cursor: "pointer",
                 letterSpacing: "0.15em",
                 animation: "blink 1.2s step-end infinite",
@@ -445,7 +459,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/dashboard"
-              className="border border-[var(--pixel-border)] px-3 py-1 font-mono text-[0.5rem] uppercase tracking-widest transition-all hover:bg-[rgba(0,255,65,0.1)]"
+              className="border border-[var(--pixel-border)] px-3 py-1 font-mono text-[0.5rem] uppercase tracking-widest transition-all hover:bg-[rgba(0,212,255,0.1)]"
               style={{ color: "var(--pixel-buy)" }}
             >
               ▸ Dashboard
@@ -479,7 +493,7 @@ export default function LandingPage() {
             </p>
             <h1
               className="font-[var(--font-pixel)] text-[0.7rem] sm:text-[0.85rem] leading-[2] uppercase"
-              style={{ color: "var(--pixel-buy)", textShadow: "0 0 10px rgba(0,255,65,0.7)" }}
+              style={{ color: "var(--pixel-buy)", textShadow: "0 0 10px rgba(0,212,255,0.7)" }}
             >
               Chinese Market Intelligence
             </h1>
@@ -544,12 +558,12 @@ export default function LandingPage() {
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="group border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-6 transition-all duration-150 hover:border-[var(--pixel-border-mid)] hover:shadow-[0_0_8px_rgba(0,255,65,0.15)]"
+                className="group border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-6 transition-all duration-150 hover:border-[var(--pixel-border-mid)] hover:shadow-[0_0_8px_rgba(0,212,255,0.15)]"
               >
                 <div className="mb-4 flex items-start justify-between">
                   <div
                     className="flex h-10 w-10 items-center justify-center border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)]"
-                    style={{ boxShadow: "inset 0 0 8px rgba(0,255,65,0.05)" }}
+                    style={{ boxShadow: "inset 0 0 8px rgba(0,212,255,0.05)" }}
                   >
                     <f.icon className="h-5 w-5 text-[var(--pixel-buy)]" />
                   </div>
@@ -599,8 +613,8 @@ export default function LandingPage() {
             className="border-2 p-8 text-center"
             style={{
               borderColor: "var(--pixel-buy)",
-              background: "rgba(0,255,65,0.03)",
-              boxShadow: "0 0 24px rgba(0,255,65,0.08)",
+              background: "rgba(0,212,255,0.03)",
+              boxShadow: "0 0 24px rgba(0,212,255,0.08)",
             }}
           >
             <p className="pixel-title text-[0.5rem] mb-2" style={{ color: "var(--pixel-buy)" }}>
@@ -613,11 +627,11 @@ export default function LandingPage() {
               href="https://github.com/yusenthebot/alphaedge"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block border-2 px-8 py-3 font-mono text-[0.55rem] uppercase tracking-widest transition-all hover:bg-[rgba(0,255,65,0.08)]"
+              className="inline-block border-2 px-8 py-3 font-mono text-[0.55rem] uppercase tracking-widest transition-all hover:bg-[rgba(0,212,255,0.08)]"
               style={{
                 borderColor: "var(--pixel-buy)",
                 color: "var(--pixel-buy)",
-                boxShadow: "0 0 8px rgba(0,255,65,0.3)",
+                boxShadow: "0 0 8px rgba(0,212,255,0.3)",
               }}
             >
               github.com/yusenthebot/alphaedge →

@@ -46,7 +46,7 @@
   --radius-3xl: 0px;
   --radius-4xl: 0px;
 
-  --color-signal-buy: #00FF41;
+  --color-signal-buy: #00FF88;
   --color-signal-sell: #FF3131;
   --color-signal-hold: #FFB800;
 }
@@ -55,35 +55,37 @@
   /* ── Pixel Art Design System ── */
   --radius: 0px;
 
-  /* Backgrounds */
-  --pixel-bg: #060A06;
-  --pixel-surface: #0B160B;
-  --pixel-surface-2: #0F1F0F;
-  --pixel-surface-3: #142814;
+  /* ── SCI-FI CYAN/BLUE THEME ── */
 
-  /* Borders */
-  --pixel-border: #00FF41;
-  --pixel-border-dim: #003D10;
-  --pixel-border-mid: #007020;
-  --pixel-border-bright: #7FFF7F;
+  /* Backgrounds — deep space navy */
+  --pixel-bg: #020812;
+  --pixel-surface: #061428;
+  --pixel-surface-2: #0A1A38;
+  --pixel-surface-3: #0E2248;
 
-  /* Text */
-  --pixel-text: #00FF41;
-  --pixel-text-dim: #00BB30;
-  --pixel-text-muted: #004D15;
-  --pixel-text-off: #008820;
+  /* Borders — cyan phosphor */
+  --pixel-border: #00D4FF;
+  --pixel-border-dim: #00355A;
+  --pixel-border-mid: #0077AA;
+  --pixel-border-bright: #7FECFF;
 
-  /* Signals */
-  --pixel-buy: #00FF41;
+  /* Text — ice blue */
+  --pixel-text: #A8DCFF;
+  --pixel-text-dim: #5599BB;
+  --pixel-text-muted: #1A3A5C;
+  --pixel-text-off: #3A7A9C;
+
+  /* Signals — keep semantic colors, shift buy to blue-green */
+  --pixel-buy: #00FF88;
   --pixel-sell: #FF3131;
   --pixel-hold: #FFB800;
-  --pixel-accent: #00FFFF;
+  --pixel-accent: #7B61FF;
 
-  /* Glows */
-  --pixel-glow-green: 0 0 6px rgba(0,255,65,0.8), 0 0 12px rgba(0,255,65,0.4), 0 0 24px rgba(0,255,65,0.15);
+  /* Glows — cyan primary */
+  --pixel-glow-green: 0 0 6px rgba(0,255,136,0.8), 0 0 12px rgba(0,255,136,0.4), 0 0 24px rgba(0,255,136,0.15);
   --pixel-glow-red: 0 0 6px rgba(255,49,49,0.8), 0 0 12px rgba(255,49,49,0.4);
   --pixel-glow-amber: 0 0 6px rgba(255,184,0,0.8), 0 0 12px rgba(255,184,0,0.4);
-  --pixel-glow-cyan: 0 0 6px rgba(0,255,255,0.7), 0 0 12px rgba(0,255,255,0.3);
+  --pixel-glow-cyan: 0 0 6px rgba(0,212,255,0.9), 0 0 14px rgba(0,212,255,0.5), 0 0 28px rgba(0,212,255,0.2);
 
   /* Fonts */
   --font-pixel: 'Press Start 2P', 'Silkscreen', 'Courier New', monospace;
@@ -158,7 +160,7 @@ body::after {
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: var(--pixel-bg); }
 ::-webkit-scrollbar-thumb { background: var(--pixel-border-dim); }
-::-webkit-scrollbar-thumb:hover { background: var(--pixel-border); box-shadow: var(--pixel-glow-green); }
+::-webkit-scrollbar-thumb:hover { background: var(--pixel-border); box-shadow: var(--pixel-glow-cyan); }
 
 /* ── Selection ── */
 ::selection { background: var(--pixel-border); color: var(--pixel-bg); }
@@ -184,11 +186,11 @@ body::after {
 }
 .pixel-panel:hover {
   border-color: var(--pixel-border-mid);
-  box-shadow: 0 0 4px rgba(0,255,65,0.2), inset 0 0 20px rgba(0,255,65,0.02);
+  box-shadow: 0 0 4px rgba(0,212,255,0.2), inset 0 0 20px rgba(0,212,255,0.02);
 }
 
 /* Glows */
-.pixel-glow       { box-shadow: var(--pixel-glow-green); }
+.pixel-glow       { box-shadow: var(--pixel-glow-cyan); }
 .pixel-glow-red   { box-shadow: var(--pixel-glow-red); }
 .pixel-glow-amber { box-shadow: var(--pixel-glow-amber); }
 .pixel-glow-cyan  { box-shadow: var(--pixel-glow-cyan); }
@@ -223,7 +225,7 @@ body::after {
   font-variant-numeric: tabular-nums;
 }
 .pixel-inset {
-  box-shadow: inset 2px 2px 0px rgba(0,0,0,0.9), inset -1px -1px 0px rgba(0,255,65,0.08);
+  box-shadow: inset 2px 2px 0px rgba(0,0,0,0.9), inset -1px -1px 0px rgba(0,212,255,0.08);
 }
 
 /* Signal colors */
@@ -268,8 +270,8 @@ body::after {
   50% { opacity: 0.75; transform: scale(1.005); }
 }
 @keyframes signal-pulse {
-  0%, 100% { box-shadow: 0 0 4px rgba(0,255,65,0.3), 0 0 8px rgba(0,255,65,0.1); }
-  50% { box-shadow: 0 0 10px rgba(0,255,65,0.7), 0 0 20px rgba(0,255,65,0.3), 0 0 40px rgba(0,255,65,0.1); }
+  0%, 100% { box-shadow: 0 0 4px rgba(0,212,255,0.3), 0 0 8px rgba(0,212,255,0.1); }
+  50% { box-shadow: 0 0 10px rgba(0,212,255,0.7), 0 0 20px rgba(0,212,255,0.3), 0 0 40px rgba(0,212,255,0.1); }
 }
 @keyframes signal-pulse-red {
   0%, 100% { box-shadow: 0 0 4px rgba(255,49,49,0.3); }
@@ -384,8 +386,8 @@ body::after {
     0deg,
     transparent,
     transparent 2px,
-    rgba(0,255,65,0.06) 2px,
-    rgba(0,255,65,0.06) 4px
+    rgba(0,212,255,0.06) 2px,
+    rgba(0,212,255,0.06) 4px
   );
   pointer-events: none;
   animation: scanlineIntensify 0.3s ease;
@@ -471,7 +473,7 @@ nav a, header a {
 }
 nav a:hover, header a:hover {
   color: var(--pixel-text);
-  text-shadow: var(--pixel-glow-green);
+  text-shadow: var(--pixel-glow-cyan);
 }
 
 /* ── Scroll Fade-in ── */
