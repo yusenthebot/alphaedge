@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Newspaper, BarChart3, Bell, Zap } from "lucide-react";
+import { Newspaper, BarChart3, Bell, Zap, TrendingUp, RefreshCw } from "lucide-react";
 import { LivePreview } from "@/components/LivePreview";
 import { MarketStatus } from "@/components/MarketStatus";
 
@@ -418,6 +418,190 @@ const STATS = [
   { label: "Signals / Day", value: "~12", color: "var(--pixel-buy)" },
 ];
 
+// ── Jin10 24h Digest Component ───────────────────────────────────────────────
+interface DigestEntry {
+  text: string
+  time_str: string
+  is_important: boolean
+}
+interface DigestData {
+  total_24h: number
+  important_count: number
+  top_headlines: DigestEntry[]
+  categories: Record<string, DigestEntry[]>
+  generated_at: string
+}
+
+const CAT_ICONS: Record<string, string> = {
+  "央行/政策": "🏦",
+  "地缘政治": "🌐",
+  "贵金属/商品": "🥇",
+  "科技/AI":  "🤖",
+  "经济数据": "📊",
+  "市场异动": "⚡",
+  "其他重要": "📌",
+}
+
+function Jin10Digest() {
+  const [data, setData] = useState<DigestData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [expanded, setExpanded] = useState(false)
+
+  useEffect(() => {
+    const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8765"
+    fetch(`${API}/api/news/digest`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { setData(d); setLoading(false) })
+      .catch(() => setLoading(false))
+  }, [])
+
+  if (loading) return (
+    <div className="flex items-center justify-center gap-2 py-8" style={{ color: "var(--pixel-border)" }}>
+      <RefreshCw className="h-4 w-4 animate-spin" />
+      <span style={{ fontFamily: "var(--font-pixel)", fontSize: "7px" }}>LOADING 24H DIGEST...</span>
+    </div>
+  )
+  if (!data) return null
+
+  const cats = Object.entries(data.categories)
+
+  return (
+    <div className="space-y-4">
+      {/* Stats bar */}
+      <div className="flex flex-wrap gap-4 text-center">
+        {[
+          { label: "过去24小时", value: `${data.total_24h}条`, color: "var(--pixel-border)" },
+          { label: "重要快讯", value: `${data.important_count}条`, color: "var(--pixel-hold)" },
+          { label: "分类", value: `${cats.length}个`, color: "var(--pixel-accent)" },
+        ].map(s => (
+          <div key={s.label} style={{
+            border: "1px solid var(--pixel-border-dim)",
+            background: "var(--pixel-surface)",
+            padding: "8px 16px",
+            flex: 1, minWidth: 80,
+          }}>
+            <div style={{ fontFamily: "var(--font-pixel)", fontSize: "11px", color: s.color }}>{s.value}</div>
+            <div style={{ fontSize: "8px", color: "var(--pixel-text-muted)", marginTop: 4, letterSpacing: "0.1em" }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Top headlines */}
+      <div style={{
+        border: "2px solid var(--pixel-border-dim)",
+        background: "var(--pixel-surface)",
+      }}>
+        <div style={{
+          padding: "8px 14px",
+          borderBottom: "1px solid var(--pixel-border-dim)",
+          fontFamily: "var(--font-pixel)",
+          fontSize: "7px",
+          color: "var(--pixel-border)",
+          letterSpacing: "0.15em",
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}>
+          <TrendingUp className="h-3 w-3" /> TOP HEADLINES · 精选头条
+        </div>
+        <div>
+          {data.top_headlines.slice(0, expanded ? 10 : 5).map((h, i) => (
+            <div key={i} style={{
+              padding: "8px 14px",
+              borderBottom: i < (expanded ? 9 : 4) ? "1px solid var(--pixel-border-dim)" : "none",
+              display: "flex",
+              gap: 10,
+              alignItems: "flex-start",
+            }}>
+              <span style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "9px",
+                color: "var(--pixel-text-muted)",
+                flexShrink: 0,
+                marginTop: 1,
+              }}>{h.time_str}</span>
+              {h.is_important && (
+                <span style={{
+                  fontFamily: "var(--font-pixel)",
+                  fontSize: "6px",
+                  color: "var(--pixel-hold)",
+                  border: "1px solid var(--pixel-hold)",
+                  padding: "1px 4px",
+                  flexShrink: 0,
+                  marginTop: 1,
+                }}>重要</span>
+              )}
+              <span style={{ fontSize: "11px", color: "var(--pixel-text)", lineHeight: 1.6 }}>{h.text}</span>
+            </div>
+          ))}
+        </div>
+        {data.top_headlines.length > 5 && (
+          <button
+            onClick={() => setExpanded(e => !e)}
+            style={{
+              width: "100%",
+              padding: "8px",
+              borderTop: "1px solid var(--pixel-border-dim)",
+              background: "none",
+              color: "var(--pixel-border)",
+              fontFamily: "var(--font-pixel)",
+              fontSize: "7px",
+              cursor: "pointer",
+              letterSpacing: "0.1em",
+            }}
+          >
+            {expanded ? "▲ 收起" : `▼ 展开全部 ${data.top_headlines.length} 条`}
+          </button>
+        )}
+      </div>
+
+      {/* Category grid */}
+      {cats.length > 0 && (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {cats.map(([cat, items]) => (
+            <div key={cat} style={{
+              border: "1px solid var(--pixel-border-dim)",
+              background: "var(--pixel-surface)",
+            }}>
+              <div style={{
+                padding: "6px 12px",
+                borderBottom: "1px solid var(--pixel-border-dim)",
+                fontFamily: "var(--font-pixel)",
+                fontSize: "6px",
+                color: "var(--pixel-text-off)",
+                letterSpacing: "0.12em",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}>
+                <span>{CAT_ICONS[cat] || "📋"}</span> {cat}
+              </div>
+              <div>
+                {items.slice(0, 3).map((item, i) => (
+                  <div key={i} style={{
+                    padding: "6px 12px",
+                    borderBottom: i < Math.min(items.length, 3) - 1 ? "1px solid rgba(0,212,255,0.06)" : "none",
+                    fontSize: "10px",
+                    color: "var(--pixel-text)",
+                    lineHeight: 1.6,
+                    display: "flex",
+                    gap: 8,
+                  }}>
+                    <span style={{ color: "var(--pixel-text-muted)", fontSize: "8px", flexShrink: 0, marginTop: 1 }}>
+                      {item.time_str}
+                    </span>
+                    {item.text}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function LandingPage() {
   const [booting, setBooting] = useState(true)
   const handleBootDone = useCallback(() => setBooting(false), [])
@@ -637,6 +821,33 @@ export default function LandingPage() {
               github.com/yusenthebot/alphaedge →
             </a>
           </div>
+        </div>
+      </section>
+
+      {/* ── Jin10 24h Digest ── */}
+      <section className="scroll-fade border-t-2 border-[var(--pixel-border-dim)] px-6 py-20">
+        <div className="mx-auto max-w-3xl space-y-8">
+          {/* Header */}
+          <div className="text-center space-y-2">
+            <div className="flex items-center justify-center gap-3">
+              <Newspaper className="h-4 w-4" style={{ color: "var(--pixel-border)" }} />
+              <span style={{
+                fontFamily: "var(--font-pixel)",
+                fontSize: "7px",
+                color: "var(--pixel-border)",
+                textShadow: "var(--pixel-glow-cyan)",
+                letterSpacing: "0.2em",
+              }}>
+                JIN10 · 过去24小时精选
+              </span>
+              <Newspaper className="h-4 w-4" style={{ color: "var(--pixel-border)" }} />
+            </div>
+            <p style={{ fontFamily: "var(--font-pixel)", fontSize: "6px", color: "var(--pixel-text-muted)", letterSpacing: "0.1em" }}>
+              REAL-TIME CHINESE MARKET INTELLIGENCE — AUTO CURATED
+            </p>
+          </div>
+
+          <Jin10Digest />
         </div>
       </section>
 

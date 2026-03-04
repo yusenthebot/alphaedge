@@ -1,13 +1,13 @@
-# Sprint — Cycle 14 [21:47:11]
+# Sprint — Cycle 15 [21:52:18]
 
-# SPRINT 14
+# SPRINT 15
 
-## Task 1: Fix RSI OVERSOLD color mismatch
-File: `src/frontend/src/app/dashboard/page.tsx:59`
-Change: In `rsiLabel()`, replace hardcoded `#00FF41` with `#00FF88` to match the current `--pixel-buy` theme variable set in Cycle 13.
-Done when: OVERSOLD badge color is `#00FF88`, consistent with the rest of the buy-signal palette.
+## Task 1: Fix sort dropdown shadow using stale green
+File: `src/frontend/src/app/dashboard/page.tsx:331`
+Change: Replace `boxShadow: "4px 4px 0px rgba(0,255,65,0.1)"` with `boxShadow: "4px 4px 0px rgba(0,212,255,0.1)"`
+Done when: Sort dropdown shadow uses cyan `rgba(0,212,255,0.1)` instead of green `rgba(0,255,65,0.1)`.
 
-## Task 2: Remove rounded badge in SearchBar
-File: `src/frontend/src/components/SearchBar.tsx:218`
-Change: On line 218, remove `rounded-md` from the signal badge className so it renders with sharp corners matching the pixel aesthetic.
-Done when: Signal badge in search preview has no border-radius class.
+## Task 2: Fix ALL filter tab using stale green
+File: `src/frontend/src/app/dashboard/page.tsx`
+Change: Find the "ALL" filter tab/button styling that still uses the old green theme color (`#00FF41` or `rgba(0,255,65,...)`) and update it to the cyan theme equivalent (`#00D4FF` or `rgba(0,212,255,...)`).
+Done when: The ALL filter tab's colors (background, border, glow, or shadow) use cyan theme values instead of legacy green.

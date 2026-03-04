@@ -1,13 +1,11 @@
-# Design — Cycle 14 [21:45:44]
+# Design — Cycle 15 [21:50:31]
 
-Here are two concrete improvements:
+## Task 1: Sort dropdown shadow uses stale green
+File: `src/frontend/src/app/dashboard/page.tsx:331`
+Change: `boxShadow: "4px 4px 0px rgba(0,255,65,0.1)"` → `"4px 4px 0px rgba(0,212,255,0.1)"`
+Why: Dropdown shadow still glows green from the old theme; should match the cyan overhaul from C14.
 
-## Task 1: Fix rounded badge in SearchBar (breaks pixel aesthetic)
-**File:** `src/frontend/src/components/SearchBar.tsx:218`
-**Change:** Replace `rounded-md` with nothing (remove it) — the signal badge in the search preview uses a soft border-radius, which clashes with the hard-edged CRT pixel look every other badge in the app uses.
-**Why:** Every dashboard signal badge uses square corners with `border-2`; this is the only badge with `rounded-md`, breaking visual consistency.
-
-## Task 2: Add pixel-label class to RSI/MACD column for tighter hierarchy
-**File:** `src/frontend/src/app/dashboard/page.tsx:179-189`
-**Change:** On the `<div className="mb-3 flex items-center gap-3">` wrapper (line 179), add `justify-between` and move the confidence badge (`CONF`) onto the same row as RSI/MACD by pulling it out of the nested `space-y-1.5` div and placing it right-aligned — currently all three indicators (RSI, MACD, CONF) stack vertically wasting horizontal space in the card.
-**Why:** Cards are narrow; putting CONF right-aligned on the RSI row uses whitespace better and reduces card height, fitting more content above the fold.
+## Task 2: ALL filter tab uses old green accent
+File: `src/frontend/src/app/dashboard/page.tsx:37`
+Change: `ALL: "#00AA2B"` → `ALL: "#00D4FF"`
+Why: The ALL filter pill uses a dark green that clashes with the new cyan primary; every non-signal UI accent should be cyan.

@@ -207,13 +207,13 @@ def get_price_history(ticker: str, days: int = 7):
 
 @app.get("/api/news")
 def get_news():
-    """Return last 30 Jin10 headlines, newest first."""
+    """Return Jin10 headlines from the past 24 hours, newest first."""
     try:
-        from jin10 import fetch_flash_news, parse_flash
+        from jin10 import fetch_flash_news, parse_flash, filter_by_time
     except ImportError as e:
         raise HTTPException(status_code=500, detail=f"jin10 module not available: {e}")
 
-    raw_items = fetch_flash_news(max_items=200)
+    raw_items = fetch_flash_news(max_items=300)
     parsed = []
     for item in raw_items:
         p = parse_flash(item)
@@ -223,11 +223,85 @@ def get_news():
                 "created_at": p["time"].isoformat(),
                 "time_str": p["time_str"],
                 "is_important": p["important"],
+                "_dt": p["time"],
             })
 
-    # Sort newest first, return up to 80 items
+    # Filter to past 24 hours
+    from datetime import datetime, timedelta
+    cutoff = datetime.now() - timedelta(hours=24)
+    parsed = [x for x in parsed if x["_dt"] >= cutoff]
+    for x in parsed:
+        del x["_dt"]
+
     parsed.sort(key=lambda x: x["created_at"], reverse=True)
-    return {"news": parsed[:80], "count": min(len(parsed), 80)}
+    return {"news": parsed[:80], "count": len(parsed)}
+
+
+@app.get("/api/news/digest")
+def get_news_digest():
+    """Return curated digest: past 24h important Jin10 headlines, grouped by category."""
+    try:
+        from jin10 import fetch_flash_news, parse_flash
+    except ImportError as e:
+        raise HTTPException(status_code=500, detail=f"jin10 module not available: {e}")
+
+    from datetime import datetime, timedelta
+
+    raw_items = fetch_flash_news(max_items=300)
+    cutoff = datetime.now() - timedelta(hours=24)
+
+    all_items = []
+    important_items = []
+
+    for item in raw_items:
+        p = parse_flash(item)
+        if not p or p["time"] < cutoff:
+            continue
+        entry = {
+            "text": p["text"],
+            "created_at": p["time"].isoformat(),
+            "time_str": p["time_str"],
+            "is_important": p["important"],
+        }
+        all_items.append(entry)
+        if p["important"]:
+            important_items.append(entry)
+
+    all_items.sort(key=lambda x: x["created_at"], reverse=True)
+    important_items.sort(key=lambda x: x["created_at"], reverse=True)
+
+    # Category buckets based on keywords
+    CATEGORIES = {
+        "央行/政策": ["美联储", "央行", "降息", "加息", "利率", "QE", "缩表", "货币政策"],
+        "地缘政治": ["特朗普", "战争", "制裁", "关税", "普京", "习近平", "冲突"],
+        "贵金属/商品": ["黄金", "白银", "原油", "天然气", "铜", "大宗商品"],
+        "科技/AI":  ["人工智能", "AI", "芯片", "半导体", "英伟达", "NVIDIA", "科技"],
+        "经济数据": ["非农", "CPI", "GDP", "PMI", "失业率", "通胀", "经济数据"],
+        "市场异动": ["涨停", "跌停", "暴涨", "暴跌", "大涨", "大跌", "创新高", "熔断"],
+    }
+
+    categorized: dict[str, list] = {k: [] for k in CATEGORIES}
+    for entry in important_items:
+        txt = entry["text"]
+        assigned = False
+        for cat, keywords in CATEGORIES.items():
+            if any(kw in txt for kw in keywords):
+                categorized[cat].append(entry)
+                assigned = True
+                break
+        if not assigned:
+            categorized.setdefault("其他重要", []).append(entry)
+
+    # Remove empty categories
+    categorized = {k: v[:5] for k, v in categorized.items() if v}
+
+    return {
+        "total_24h": len(all_items),
+        "important_count": len(important_items),
+        "top_headlines": important_items[:10],
+        "categories": categorized,
+        "generated_at": datetime.now().isoformat(),
+    }
 
 
 @app.get("/api/alerts")
