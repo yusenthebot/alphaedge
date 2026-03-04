@@ -19,6 +19,7 @@ const badgeVariants = cva(
       variant: {
         default: [
           "border-[var(--pixel-border-dim)] bg-[var(--pixel-surface-2)] text-[var(--pixel-text-dim)]",
+          "chroma-badge",
         ].join(" "),
         primary: [
           "border-[var(--pixel-border)] bg-[rgba(0,255,65,0.08)] text-[var(--pixel-buy)]",
@@ -42,12 +43,15 @@ const badgeVariants = cva(
         ].join(" "),
         secondary: [
           "border-[var(--pixel-border-dim)] bg-[var(--pixel-surface-2)] text-[var(--pixel-text-off)]",
+          "chroma-badge",
         ].join(" "),
         destructive: [
           "border-[var(--pixel-sell)] bg-[rgba(255,49,49,0.1)] text-[var(--pixel-sell)]",
+          "chroma-badge",
         ].join(" "),
         outline: [
           "border-[var(--pixel-border-dim)] text-[var(--pixel-text-dim)] bg-transparent",
+          "chroma-badge",
         ].join(" "),
         ghost: [
           "border-transparent text-[var(--pixel-text-muted)] bg-transparent",

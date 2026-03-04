@@ -13,6 +13,7 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
         "py-5 text-[var(--pixel-text)]",
         "transition-all duration-150",
         "hover:border-[var(--pixel-border-mid)]",
+        "pixel-hover-glow",
         // Corner accent marks via outline trick
         "outline outline-1 outline-transparent",
         className
