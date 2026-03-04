@@ -1,1 +1,1 @@
-Cycle 6: Replaced RadialBarChart Gauge with PixelProgress/SignalStrengthBar on ticker detail page; removed unused Recharts imports. Build: 0 TypeScript errors, 13+ pages.
+feat(c7): Replace PieChart with pixel-art stacked bar on Accuracy page, fix rounded corners — 0 TS errors, 13+ pages

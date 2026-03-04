@@ -10,9 +10,6 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  Cell,
-  PieChart,
-  Pie,
 } from "recharts";
 import { Zap, ArrowLeft, TrendingUp, BarChart3, Activity, RefreshCw } from "lucide-react";
 
@@ -150,7 +147,7 @@ function SignalBadge({ signal }: { signal: string }) {
   const color = SIGNAL_COLORS[signal as keyof typeof SIGNAL_COLORS] || "#A0A0A0";
   return (
     <span
-      className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold"
+      className="inline-flex items-center rounded-none px-2 py-0.5 text-xs font-bold"
       style={{ background: `${color}15`, color }}
     >
       {signal}
@@ -207,16 +204,6 @@ export default function AccuracyPage() {
         SELL: s.sell_signals,
       })),
     [stats]
-  );
-
-  // ── Pie chart data ─────────────────────────────────────────────
-  const pieData = useMemo(
-    () => [
-      { name: "BUY", value: totals.buy, fill: SIGNAL_COLORS.BUY },
-      { name: "HOLD", value: totals.hold, fill: SIGNAL_COLORS.HOLD },
-      { name: "SELL", value: totals.sell, fill: SIGNAL_COLORS.SELL },
-    ],
-    [totals]
   );
 
   // ── Sorting ──────────────────────────────────────────────────
@@ -392,7 +379,7 @@ export default function AccuracyPage() {
                   />
                   <Bar dataKey="BUY" stackId="a" fill={SIGNAL_COLORS.BUY} radius={[0, 0, 0, 0]} />
                   <Bar dataKey="HOLD" stackId="a" fill={SIGNAL_COLORS.HOLD} radius={[0, 0, 0, 0]} />
-                  <Bar dataKey="SELL" stackId="a" fill={SIGNAL_COLORS.SELL} radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="SELL" stackId="a" fill={SIGNAL_COLORS.SELL} radius={[0, 0, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -406,39 +393,33 @@ export default function AccuracyPage() {
           <div className="rounded-none border border-[#1C1C24] bg-[var(--pixel-surface)] p-5">
             <h2 className="mb-4 text-sm font-semibold text-[var(--pixel-text)]">Overall Distribution</h2>
             {totals.signals > 0 ? (
-              <div className="flex flex-col items-center">
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie
-                      data={pieData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={55}
-                      outerRadius={80}
-                      dataKey="value"
-                      strokeWidth={0}
-                    >
-                      {pieData.map((entry, i) => (
-                        <Cell key={i} fill={entry.fill} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        background: "#15151B",
-                        border: "1px solid #2A2A35",
-                        borderRadius: 8,
-                        fontSize: 11,
-                      }}
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      formatter={(value: any, name: any) => [
-                        `${value ?? 0} (${pct(value ?? 0, totals.signals)}%)`,
-                        name ?? "",
-                      ]}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
+              <div className="flex flex-col">
+                <div className="flex h-8 w-full overflow-hidden">
+                  <div
+                    className="flex items-center justify-center text-[10px] font-bold text-black bg-[#00ff41]"
+                    style={{ width: pct(totals.buy, totals.signals) + '%' }}
+                  >
+                    {Number(pct(totals.buy, totals.signals)) >= 5 && `${pct(totals.buy, totals.signals)}%`}
+                  </div>
+                  <div
+                    className="flex items-center justify-center text-[10px] font-bold text-black bg-[#FFB800]"
+                    style={{ width: pct(totals.hold, totals.signals) + '%' }}
+                  >
+                    {Number(pct(totals.hold, totals.signals)) >= 5 && `${pct(totals.hold, totals.signals)}%`}
+                  </div>
+                  <div
+                    className="flex items-center justify-center text-[10px] font-bold text-black bg-[#FF3131]"
+                    style={{ width: pct(totals.sell, totals.signals) + '%' }}
+                  >
+                    {Number(pct(totals.sell, totals.signals)) >= 5 && `${pct(totals.sell, totals.signals)}%`}
+                  </div>
+                </div>
                 <div className="mt-2 flex gap-4">
-                  {pieData.map((d) => (
+                  {([
+                    { name: "BUY", fill: SIGNAL_COLORS.BUY },
+                    { name: "HOLD", fill: SIGNAL_COLORS.HOLD },
+                    { name: "SELL", fill: SIGNAL_COLORS.SELL },
+                  ] as const).map((d) => (
                     <div key={d.name} className="flex items-center gap-1.5 text-xs text-[#A0A0A0]">
                       <span className="h-2.5 w-2.5 rounded-none" style={{ background: d.fill }} />
                       {d.name}
