@@ -131,9 +131,9 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
   if (!open) return null;
 
   const SIGNAL_COLORS: Record<string, string> = {
-    BUY: "#22C55E",
-    HOLD: "#F59E0B",
-    SELL: "#EF4444",
+    BUY: "#00FF41",
+    HOLD: "#FFB800",
+    SELL: "#FF3131",
   };
 
   return (
@@ -144,11 +144,11 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
       {/* Panel */}
       <div
         ref={panelRef}
-        className="relative w-full max-w-lg rounded-2xl border border-[#2A2A35] bg-[#15151B] shadow-2xl fade-in-up"
+        className="relative w-full max-w-lg rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] shadow-2xl fade-in-up"
       >
         {/* Search input */}
-        <div className="flex items-center gap-3 border-b border-[#2A2A35] px-4 py-3">
-          <Search className="h-5 w-5 text-[#666]" />
+        <div className="flex items-center gap-3 border-b border-[var(--pixel-border-dim)] px-4 py-3">
+          <Search className="h-5 w-5 text-[var(--pixel-text-muted)]" />
           <input
             ref={inputRef}
             type="text"
@@ -159,27 +159,27 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
             }}
             placeholder="Search any ticker... (e.g. AMZN, GOOGL)"
             maxLength={5}
-            className="flex-1 bg-transparent text-sm text-white placeholder-[#555] outline-none"
+            className="flex-1 bg-transparent text-sm text-[var(--pixel-text)] placeholder-[#555] outline-none"
           />
           {query && (
             <button
               onClick={() => { setQuery(""); setPreview(null); }}
-              className="rounded p-0.5 text-[#666] transition hover:text-white"
+              className="rounded p-0.5 text-[var(--pixel-text-muted)] transition hover:text-[var(--pixel-text)]"
             >
               <X className="h-4 w-4" />
             </button>
           )}
-          <kbd className="hidden rounded border border-[#2A2A35] bg-[#0D0D0D] px-1.5 py-0.5 text-[10px] text-[#555] sm:inline">
+          <kbd className="hidden rounded border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] px-1.5 py-0.5 text-[10px] text-[#555] sm:inline">
             ESC
           </kbd>
         </div>
 
         {/* Preview result */}
         {query && (
-          <div className="border-b border-[#2A2A35] px-4 py-3">
+          <div className="border-b border-[var(--pixel-border-dim)] px-4 py-3">
             {loadingPreview ? (
               <div className="flex items-center gap-3">
-                <div className="h-8 w-8 animate-pulse rounded-lg bg-[#2A2A35]" />
+                <div className="h-8 w-8 animate-pulse rounded-none bg-[#2A2A35]" />
                 <div className="space-y-1.5">
                   <div className="h-4 w-24 animate-pulse rounded bg-[#2A2A35]" />
                   <div className="h-3 w-32 animate-pulse rounded bg-[#2A2A35]" />
@@ -188,10 +188,10 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
             ) : preview ? (
               <button
                 onClick={() => navigateToTicker(preview.ticker)}
-                className="flex w-full items-center justify-between rounded-xl bg-[#0D0D0D] p-3 transition hover:bg-[#1C1C24]"
+                className="flex w-full items-center justify-between rounded-none bg-[var(--pixel-bg)] p-3 transition hover:bg-[var(--pixel-surface-2)]"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-lg font-black text-white">{preview.ticker}</span>
+                  <span className="text-lg font-black text-[var(--pixel-text)]">{preview.ticker}</span>
                   <span
                     className="rounded-md px-2 py-0.5 text-xs font-black tracking-widest"
                     style={{
@@ -204,8 +204,8 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold text-white">${preview.price.toFixed(2)}</span>
-                  <span className={`flex items-center gap-0.5 text-sm font-semibold ${preview.change >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+                  <span className="text-sm font-bold text-[var(--pixel-text)]">${preview.price.toFixed(2)}</span>
+                  <span className={`flex items-center gap-0.5 text-sm font-semibold ${preview.change >= 0 ? "text-[#00FF41]" : "text-[#FF3131]"}`}>
                     {preview.change >= 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
                     {preview.change >= 0 ? "+" : ""}{preview.change.toFixed(2)}%
                   </span>
@@ -215,11 +215,11 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
             ) : (
               <button
                 onClick={handleSubmit}
-                className="flex w-full items-center gap-3 rounded-xl bg-[#0D0D0D] p-3 text-left transition hover:bg-[#1C1C24]"
+                className="flex w-full items-center gap-3 rounded-none bg-[var(--pixel-bg)] p-3 text-left transition hover:bg-[var(--pixel-surface-2)]"
               >
                 <Search className="h-4 w-4 text-[#555]" />
-                <span className="text-sm text-[#A0A0A0]">
-                  Look up <span className="font-bold text-white">{query}</span>
+                <span className="text-sm text-[var(--pixel-text-off)]">
+                  Look up <span className="font-bold text-[var(--pixel-text)]">{query}</span>
                 </span>
               </button>
             )}
@@ -229,7 +229,7 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
         {/* Recent searches */}
         {recent.length > 0 && (
           <div className="px-4 py-3">
-            <div className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-[#444]">
+            <div className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-[var(--pixel-text-muted)]">
               <Clock className="h-3 w-3" />
               Recent
             </div>
@@ -238,12 +238,12 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
                 <button
                   key={ticker}
                   onClick={() => navigateToTicker(ticker)}
-                  className="group/chip flex items-center gap-1.5 rounded-lg border border-[#2A2A35] bg-[#0D0D0D] px-3 py-1.5 text-xs font-semibold text-[#A0A0A0] transition hover:border-[#22C55E]/30 hover:bg-[#1C1C24] hover:text-white"
+                  className="group/chip flex items-center gap-1.5 rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--pixel-text-off)] transition hover:border-[#00FF41]/30 hover:bg-[var(--pixel-surface-2)] hover:text-[var(--pixel-text)]"
                 >
                   {ticker}
                   <span
                     onClick={(e) => removeRecent(ticker, e)}
-                    className="rounded-full p-0.5 text-[#444] opacity-0 transition hover:bg-[#2A2A35] hover:text-[#EF4444] group-hover/chip:opacity-100"
+                    className="rounded-none p-0.5 text-[var(--pixel-text-muted)] opacity-0 transition hover:bg-[#2A2A35] hover:text-[#FF3131] group-hover/chip:opacity-100"
                   >
                     <X className="h-2.5 w-2.5" />
                   </span>
@@ -254,7 +254,7 @@ export default function SearchBar({ open, onClose }: { open: boolean; onClose: (
         )}
 
         {/* Hint */}
-        <div className="border-t border-[#2A2A35] px-4 py-2.5 text-[10px] text-[#333]">
+        <div className="border-t border-[var(--pixel-border-dim)] px-4 py-2.5 text-[10px] text-[#333]">
           Type a ticker symbol and press Enter to view full analysis
         </div>
       </div>

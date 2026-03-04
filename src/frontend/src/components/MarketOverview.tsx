@@ -18,17 +18,17 @@ const TICKER_LABELS: Record<string, string> = {
 };
 
 const SIGNAL_COLORS: Record<string, string> = {
-  BUY: "#22C55E",
-  HOLD: "#F59E0B",
-  SELL: "#EF4444",
+  BUY: "#00FF41",
+  HOLD: "#FFB800",
+  SELL: "#FF3131",
 };
 
 function tileColor(change: number): string {
-  if (change >= 2) return "#22C55E";
+  if (change >= 2) return "#00FF41";
   if (change > 0) return "#4ADE80";
   if (change === 0) return "#6B7280";
   if (change > -2) return "#F87171";
-  return "#EF4444";
+  return "#FF3131";
 }
 
 function tileBg(change: number): string {
@@ -73,7 +73,7 @@ export default function MarketOverview() {
     <div className="mb-6">
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-black uppercase tracking-widest text-[#444]">Market Heatmap</h2>
+        <h2 className="text-sm font-black uppercase tracking-widest text-[var(--pixel-text-muted)]">Market Heatmap</h2>
         {lastUpdated && (
           <span className="flex items-center gap-1 text-[10px] text-[#333]">
             <Clock className="h-3 w-3" />
@@ -92,7 +92,7 @@ export default function MarketOverview() {
             return (
               <div
                 key={ticker}
-                className="animate-pulse rounded-xl border border-[#2A2A35] bg-[#15151B] p-3"
+                className="animate-pulse rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-3"
               >
                 <div className="mb-1.5 h-3 w-12 rounded bg-[#2A2A35]" />
                 <div className="h-5 w-16 rounded bg-[#2A2A35]" />
@@ -109,7 +109,7 @@ export default function MarketOverview() {
           return (
             <div
               key={ticker}
-              className="relative cursor-default rounded-xl border p-3 transition-all duration-200"
+              className="relative cursor-default rounded-none border p-3 transition-all duration-200"
               style={{
                 background: tileBg(change),
                 borderColor: tileBorder(change),
@@ -123,10 +123,10 @@ export default function MarketOverview() {
                   <div className="text-[10px] font-semibold uppercase tracking-wider text-[#888]">
                     {label}
                   </div>
-                  <div className="text-xs font-bold text-white">{ticker}</div>
+                  <div className="text-xs font-bold text-[var(--pixel-text)]">{ticker}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-bold text-white">
+                  <div className="text-sm font-bold text-[var(--pixel-text)]">
                     ${sig.price.toFixed(2)}
                   </div>
                   <div
@@ -147,7 +147,7 @@ export default function MarketOverview() {
               {/* Hover overlay: signal info */}
               {isHovered && (
                 <div
-                  className="absolute inset-0 flex items-center justify-center rounded-xl border backdrop-blur-sm fade-in-up"
+                  className="absolute inset-0 flex items-center justify-center rounded-none border backdrop-blur-sm fade-in-up"
                   style={{
                     background: "#15151BE8",
                     borderColor: sigColor + "44",
@@ -164,7 +164,7 @@ export default function MarketOverview() {
                     >
                       {sig.signal}
                     </span>
-                    <div className="mt-1.5 text-xs font-bold text-white">
+                    <div className="mt-1.5 text-xs font-bold text-[var(--pixel-text)]">
                       Strength {sig.strength}
                     </div>
                     <div className="mt-0.5 text-[10px] text-[#888]">

@@ -1,26 +1,27 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Newspaper, BarChart3, Bell, Zap, Check } from "lucide-react";
+import { Newspaper, BarChart3, Bell, Zap, Check, TrendingUp } from "lucide-react";
 import { LivePreview } from "@/components/LivePreview";
 import { MarketStatus } from "@/components/MarketStatus";
 
 const FEATURES = [
   {
     icon: Newspaper,
-    title: "Real-time Jin10 Signals",
+    tag: "01",
+    title: "Jin10 Signal Engine",
     description:
       "Chinese financial news decoded into actionable US stock signals. Get the edge before the Western market reacts.",
   },
   {
     icon: BarChart3,
+    tag: "02",
     title: "Technical Analysis",
     description:
-      "RSI, MACD, and momentum indicators combined with sentiment for high-confidence trading signals.",
+      "RSI, MACD, and momentum indicators fused with sentiment for high-confidence BUY/HOLD/SELL signals.",
   },
   {
     icon: Bell,
+    tag: "03",
     title: "Smart Alerts",
     description:
       "Instant notifications when signal strength crosses your threshold. Never miss a high-conviction move.",
@@ -32,6 +33,8 @@ const PLANS = [
     name: "Free",
     price: "$0",
     period: "forever",
+    tag: "STARTER",
+    color: "var(--pixel-text-off)",
     features: [
       "5 stock watchlist",
       "1-hour delayed signals",
@@ -45,6 +48,8 @@ const PLANS = [
     name: "Pro",
     price: "$29",
     period: "/month",
+    tag: "RECOMMENDED",
+    color: "var(--pixel-buy)",
     features: [
       "Unlimited watchlist",
       "Real-time signals",
@@ -59,6 +64,8 @@ const PLANS = [
     name: "Elite",
     price: "$79",
     period: "/month",
+    tag: "POWER USER",
+    color: "var(--pixel-accent)",
     features: [
       "Everything in Pro",
       "API access",
@@ -71,172 +78,270 @@ const PLANS = [
   },
 ];
 
+const STATS = [
+  { label: "Signal Accuracy", value: "73%", color: "var(--pixel-buy)" },
+  { label: "Avg Lead Time", value: "2.4h", color: "var(--pixel-accent)" },
+  { label: "Stocks Covered", value: "500+", color: "var(--pixel-hold)" },
+  { label: "Signals / Day", value: "~12", color: "var(--pixel-buy)" },
+];
+
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0D0D0D]">
-      {/* Nav */}
-      <nav className="border-b border-white/5 px-6 py-4">
+    <div className="min-h-screen bg-[var(--pixel-bg)] text-[var(--pixel-text)]">
+
+      {/* ── Nav ── */}
+      <nav className="border-b-2 border-[var(--pixel-border-dim)] px-6 py-4">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Zap className="h-6 w-6 text-[#22C55E]" />
-            <span className="text-xl font-bold text-white">AlphaEdge</span>
+          <div className="flex items-center gap-3">
+            <div
+              className="flex h-8 w-8 items-center justify-center border-2 border-[var(--pixel-border)] bg-[var(--pixel-surface)]"
+              style={{ boxShadow: "var(--pixel-glow-green)" }}
+            >
+              <Zap className="h-4 w-4 text-[var(--pixel-buy)]" />
+            </div>
+            <span className="pixel-title text-[0.65rem]">AlphaEdge</span>
           </div>
           <div className="flex items-center gap-4">
             <Link
               href="/signal-of-the-day"
-              className="text-sm text-[#A0A0A0] transition-colors hover:text-white"
+              className="pixel-label hover:text-[var(--pixel-text)] transition-colors"
             >
               Signal of the Day
             </Link>
             <Link href="/dashboard">
-              <Button size="sm" className="bg-[#22C55E] text-black hover:bg-[#22C55E]/90">
-                Dashboard
+              <Button variant="primary" size="sm">
+                ▸ Dashboard
               </Button>
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="px-6 py-24 text-center">
-        <div className="mx-auto max-w-3xl space-y-6">
-          <Badge className="bg-[#22C55E]/10 text-[#22C55E]">
-            Now in Beta
-          </Badge>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Trade US stocks with{" "}
-            <span className="text-[#22C55E]">Chinese market intelligence</span>
-          </h1>
-          <p className="mx-auto max-w-xl text-lg text-[#A0A0A0]">
+      {/* ── Hero ── */}
+      <section className="relative overflow-hidden px-6 py-24 text-center">
+        {/* Background grid */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-5"
+          style={{
+            backgroundImage: `
+              linear-gradient(var(--pixel-border) 1px, transparent 1px),
+              linear-gradient(90deg, var(--pixel-border) 1px, transparent 1px)
+            `,
+            backgroundSize: "40px 40px",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-3xl space-y-8">
+          {/* Beta badge */}
+          <div className="flex justify-center">
+            <span
+              className="border-2 border-[var(--pixel-border)] bg-[rgba(0,255,65,0.08)] px-3 py-1 font-mono text-[0.55rem] uppercase tracking-widest"
+              style={{ boxShadow: "var(--pixel-glow-green)", color: "var(--pixel-buy)" }}
+            >
+              ▸ Now in Beta — Free Access
+            </span>
+          </div>
+
+          {/* Headline */}
+          <div className="space-y-3">
+            <h1
+              className="font-[var(--font-pixel)] text-[0.75rem] sm:text-[0.9rem] lg:text-[1rem] leading-[2] uppercase tracking-wider"
+              style={{ color: "var(--pixel-text)", textShadow: "var(--pixel-glow-green)" }}
+            >
+              Trade US stocks with
+            </h1>
+            <h1
+              className="font-[var(--font-pixel)] text-[0.75rem] sm:text-[0.9rem] lg:text-[1rem] leading-[2] uppercase tracking-wider"
+              style={{ color: "var(--pixel-buy)", textShadow: "0 0 12px rgba(0,255,65,0.8), 0 0 24px rgba(0,255,65,0.4)" }}
+            >
+              Chinese Market Intelligence
+            </h1>
+          </div>
+
+          <p className="mx-auto max-w-xl font-mono text-[0.7rem] leading-relaxed text-[var(--pixel-text-off)]">
             AI-powered signals combining Jin10 financial news, sentiment
             analysis, and technical indicators. Get the edge before the
             Western market catches up.
           </p>
-          <div className="flex items-center justify-center gap-4">
+
+          {/* CTA buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-4">
             <Link href="/dashboard">
-              <Button
-                size="lg"
-                className="bg-[#22C55E] text-black hover:bg-[#22C55E]/90"
-              >
-                Open Dashboard
+              <Button variant="primary" size="lg">
+                ▸ Open Dashboard
               </Button>
             </Link>
             <Link href="/signal-of-the-day">
-              <Button size="lg" variant="outline" className="border-white/20 text-white">
+              <Button variant="ghost" size="lg">
                 Signal of the Day
               </Button>
             </Link>
           </div>
-          <div className="pt-2 flex justify-center">
+
+          {/* Market status */}
+          <div className="flex justify-center pt-2">
             <MarketStatus />
           </div>
         </div>
       </section>
 
-      {/* Live signals preview */}
-      <section className="px-6 pb-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-[#444]">
-            Live Signals — Updated Every 5 Minutes
-          </p>
+      {/* ── Stats row ── */}
+      <section className="border-t-2 border-b-2 border-[var(--pixel-border-dim)] px-6 py-8">
+        <div className="mx-auto grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4">
+          {STATS.map((s) => (
+            <div
+              key={s.label}
+              className="border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-4 text-center transition hover:border-[var(--pixel-border-mid)]"
+            >
+              <div
+                className="font-[var(--font-pixel)] text-lg"
+                style={{ color: s.color, textShadow: `0 0 8px ${s.color}88` }}
+              >
+                {s.value}
+              </div>
+              <div className="pixel-label mt-1 text-[0.45rem]">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Live signals preview ── */}
+      <section className="px-6 py-16">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-6 flex items-center gap-3">
+            <span className="text-[var(--pixel-border-mid)] font-mono text-[0.6rem]">══</span>
+            <h2 className="pixel-title text-[0.5rem]">Live Signals</h2>
+            <div className="flex-1 h-px bg-[var(--pixel-border-dim)]" />
+            <span className="pixel-label text-[0.45rem]">Updates every 5 min</span>
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping bg-[var(--pixel-buy)] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 bg-[var(--pixel-buy)]" style={{ boxShadow: "var(--pixel-glow-green)" }} />
+            </span>
+          </div>
           <LivePreview />
         </div>
       </section>
 
-      {/* Features */}
-      <section className="border-t border-white/5 px-6 py-20">
+      {/* ── Features ── */}
+      <section className="border-t-2 border-[var(--pixel-border-dim)] px-6 py-20">
         <div className="mx-auto max-w-6xl">
-          <h2 className="mb-12 text-center text-2xl font-bold text-white">
-            Your unfair advantage
-          </h2>
+          <div className="mb-12 flex items-center gap-3">
+            <span className="text-[var(--pixel-border-mid)] font-mono text-[0.6rem]">══</span>
+            <h2 className="pixel-title text-[0.5rem]">Your Unfair Advantage</h2>
+            <div className="flex-1 h-px bg-[var(--pixel-border-dim)]" />
+          </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {FEATURES.map((f) => (
-              <Card
+              <div
                 key={f.title}
-                className="border-white/5 bg-[#15151B]"
+                className="group border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-6 transition-all duration-150 hover:border-[var(--pixel-border-mid)] hover:shadow-[0_0_8px_rgba(0,255,65,0.15)]"
               >
-                <CardContent className="space-y-3 p-6">
-                  <f.icon className="h-8 w-8 text-[#22C55E]" />
-                  <h3 className="text-lg font-semibold text-white">
-                    {f.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-[#A0A0A0]">
-                    {f.description}
-                  </p>
-                </CardContent>
-              </Card>
+                <div className="mb-4 flex items-start justify-between">
+                  <div
+                    className="flex h-10 w-10 items-center justify-center border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)]"
+                    style={{ boxShadow: "inset 0 0 8px rgba(0,255,65,0.05)" }}
+                  >
+                    <f.icon className="h-5 w-5 text-[var(--pixel-buy)]" />
+                  </div>
+                  <span className="pixel-label text-[0.45rem]">{f.tag}</span>
+                </div>
+                <h3 className="pixel-title mb-3 text-[0.5rem]">{f.title}</h3>
+                <p className="font-mono text-[0.6rem] leading-relaxed text-[var(--pixel-text-off)]">
+                  {f.description}
+                </p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing */}
-      <section className="border-t border-white/5 px-6 py-20">
+      {/* ── Pricing ── */}
+      <section className="border-t-2 border-[var(--pixel-border-dim)] px-6 py-20">
         <div className="mx-auto max-w-6xl">
-          <h2 className="mb-4 text-center text-2xl font-bold text-white">
-            Simple pricing
-          </h2>
-          <p className="mb-12 text-center text-[#A0A0A0]">
-            Start free, upgrade when you&apos;re ready.
-          </p>
+          <div className="mb-4 flex items-center gap-3">
+            <span className="text-[var(--pixel-border-mid)] font-mono text-[0.6rem]">══</span>
+            <h2 className="pixel-title text-[0.5rem]">Pricing</h2>
+            <div className="flex-1 h-px bg-[var(--pixel-border-dim)]" />
+          </div>
+          <p className="mb-12 pixel-label text-center">Start free. Upgrade when ready.</p>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {PLANS.map((plan) => (
-              <Card
+              <div
                 key={plan.name}
-                className={`border-white/5 bg-[#15151B] ${
-                  plan.highlight ? "ring-2 ring-[#22C55E]" : ""
-                }`}
+                className="border-2 bg-[var(--pixel-surface)] p-6 flex flex-col transition-all"
+                style={{
+                  borderColor: plan.highlight ? plan.color + "88" : "var(--pixel-border-dim)",
+                  boxShadow: plan.highlight ? `0 0 16px ${plan.color}22, 0 0 32px ${plan.color}0A` : "none",
+                }}
               >
-                <CardContent className="flex h-full flex-col p-6">
-                  <div className="mb-6">
-                    {plan.highlight && (
-                      <Badge className="mb-3 bg-[#22C55E]/10 text-[#22C55E]">
-                        Most Popular
-                      </Badge>
-                    )}
-                    <h3 className="text-lg font-semibold text-white">
-                      {plan.name}
-                    </h3>
-                    <div className="mt-2 flex items-baseline gap-1">
-                      <span className="text-4xl font-bold text-white">
-                        {plan.price}
-                      </span>
-                      <span className="text-[#A0A0A0]">{plan.period}</span>
-                    </div>
+                <div className="mb-6">
+                  <span
+                    className="border px-1.5 py-0.5 font-mono text-[0.45rem] uppercase tracking-widest"
+                    style={{ borderColor: plan.color + "66", color: plan.color }}
+                  >
+                    {plan.tag}
+                  </span>
+                  <h3 className="mt-3 pixel-title text-[0.55rem]" style={{ color: plan.color }}>{plan.name}</h3>
+                  <div className="mt-2 flex items-baseline gap-1">
+                    <span
+                      className="font-[var(--font-pixel)] text-2xl"
+                      style={{ color: plan.color, textShadow: `0 0 8px ${plan.color}66` }}
+                    >
+                      {plan.price}
+                    </span>
+                    <span className="pixel-label">{plan.period}</span>
                   </div>
-                  <ul className="mb-8 flex-1 space-y-3">
-                    {plan.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className="flex items-center gap-2 text-sm text-[#A0A0A0]"
-                      >
-                        <Check className="h-4 w-4 shrink-0 text-[#22C55E]" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    className={
+                </div>
+                <ul className="mb-8 flex-1 space-y-3">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2 font-mono text-[0.6rem] text-[var(--pixel-text-off)]">
+                      <Check className="mt-0.5 h-3 w-3 shrink-0" style={{ color: plan.color }} />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/dashboard" className="block">
+                  <div
+                    className="w-full border-2 py-2.5 text-center font-mono text-[0.55rem] uppercase tracking-widest transition-all cursor-pointer"
+                    style={
                       plan.highlight
-                        ? "w-full bg-[#22C55E] text-black hover:bg-[#22C55E]/90"
-                        : "w-full border-white/20"
+                        ? { borderColor: plan.color, background: plan.color + "14", color: plan.color, boxShadow: `0 0 8px ${plan.color}44` }
+                        : { borderColor: "var(--pixel-border-dim)", background: "transparent", color: "var(--pixel-text-off)" }
                     }
-                    variant={plan.highlight ? "default" : "outline"}
                   >
                     {plan.cta}
-                  </Button>
-                </CardContent>
-              </Card>
+                  </div>
+                </Link>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 px-6 py-8">
-        <div className="mx-auto flex max-w-6xl items-center justify-between text-sm text-[#A0A0A0]">
-          <span>AlphaEdge {new Date().getFullYear()}</span>
-          <span>Trade US stocks with Chinese market intelligence</span>
+      {/* ── Footer ── */}
+      <footer className="border-t-2 border-[var(--pixel-border-dim)] px-6 py-8">
+        <div className="mx-auto flex max-w-6xl items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Zap className="h-4 w-4 text-[var(--pixel-buy)]" />
+            <span className="pixel-label">AlphaEdge {new Date().getFullYear()}</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <Link href="/signal-of-the-day" className="pixel-label hover:text-[var(--pixel-text)] transition-colors">
+              Signal of the Day
+            </Link>
+            <Link href="/dashboard" className="pixel-label hover:text-[var(--pixel-text)] transition-colors">
+              Dashboard
+            </Link>
+          </div>
+          <span className="pixel-label text-[0.45rem]">Trade US stocks with Chinese Market Intelligence</span>
+        </div>
+        {/* Terminal status line */}
+        <div className="mx-auto mt-4 max-w-6xl border-t border-[var(--pixel-border-dim)] pt-4">
+          <p className="font-mono text-[0.5rem] text-[var(--pixel-text-muted)]">
+            <span className="text-[var(--pixel-border)]">$</span> alphaedge --status <span className="text-[var(--pixel-buy)]">ONLINE</span>
+            <span className="blink ml-1 text-[var(--pixel-buy)]">█</span>
+          </p>
         </div>
       </footer>
     </div>

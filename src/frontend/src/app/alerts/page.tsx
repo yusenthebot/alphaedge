@@ -19,9 +19,9 @@ type AlertFilter = "ALL" | "HIGH" | "MEDIUM" | "BUY" | "SELL";
 const POLL_INTERVAL = 120_000; // 2 minutes
 
 const SIGNAL_COLORS: Record<string, string> = {
-  BUY: "#22C55E",
-  HOLD: "#F59E0B",
-  SELL: "#EF4444",
+  BUY: "#00FF41",
+  HOLD: "#FFB800",
+  SELL: "#FF3131",
 };
 
 // ── Helpers ────────────────────────────────────────────────────────
@@ -37,15 +37,11 @@ function timeAgo(dateString: string) {
 
 // ── Signal Badge ───────────────────────────────────────────────────
 function SignalBadge({ signal }: { signal: string }) {
-  const color = SIGNAL_COLORS[signal] ?? "#A0A0A0";
+  const color = SIGNAL_COLORS[signal] ?? "var(--pixel-text-off)";
   return (
     <span
-      className="rounded-md px-2 py-0.5 text-xs font-black tracking-widest"
-      style={{
-        background: color + "22",
-        color,
-        border: `1px solid ${color}55`,
-      }}
+      className="border-2 px-1.5 py-0.5 font-mono text-[0.5rem] font-bold uppercase tracking-widest"
+      style={{ background: color + "14", color, borderColor: color + "88" }}
     >
       {signal}
     </span>
@@ -54,36 +50,37 @@ function SignalBadge({ signal }: { signal: string }) {
 
 // ── Alert Card ─────────────────────────────────────────────────────
 function AlertCard({ alert }: { alert: Alert }) {
+  const toColor = SIGNAL_COLORS[alert.to_signal] ?? "var(--pixel-text-off)";
   return (
     <Link href={`/ticker/${alert.ticker}`}>
-      <div className="group rounded-xl border border-[#2A2A35] bg-[#15151B] p-4 transition-all duration-200 hover:bg-[#1C1C24] hover:border-[#3A3A45]">
+      <div
+        className="group border-2 bg-[var(--pixel-surface)] p-4 transition-all duration-150 hover:bg-[var(--pixel-surface-2)]"
+        style={{
+          borderColor: alert.severity === "high" ? "#FF313144" : "var(--pixel-border-dim)",
+          boxShadow: alert.severity === "high" ? "0 0 8px rgba(255,49,49,0.1)" : "none",
+        }}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* Severity indicator */}
-            <span className="text-lg" title={alert.severity === "high" ? "High severity" : "Medium severity"}>
-              {alert.severity === "high" ? "\uD83D\uDD34" : "\uD83D\uDFE1"}
+            <span
+              className="border px-1.5 py-0.5 font-mono text-[0.45rem] uppercase tracking-widest"
+              style={alert.severity === "high"
+                ? { borderColor: "#FF3131", color: "#FF3131", background: "rgba(255,49,49,0.08)" }
+                : { borderColor: "#FFB800", color: "#FFB800", background: "rgba(255,184,0,0.08)" }
+              }
+            >
+              {alert.severity}
             </span>
-
-            {/* Ticker */}
-            <span className="text-lg font-black tracking-wide text-white">
-              {alert.ticker}
-            </span>
-
-            {/* Signal transition */}
+            <span className="pixel-title text-[0.65rem]" style={{ color: toColor }}>{alert.ticker}</span>
             <div className="flex items-center gap-1.5">
               <SignalBadge signal={alert.from_signal} />
-              <ArrowRight className="h-3.5 w-3.5 text-[#666]" />
+              <ArrowRight className="h-3 w-3 text-[var(--pixel-text-muted)]" />
               <SignalBadge signal={alert.to_signal} />
             </div>
           </div>
-
           <div className="text-right">
-            <div className="text-sm font-bold text-white">
-              ${alert.price.toFixed(2)}
-            </div>
-            <div className="text-[10px] text-[#666]">
-              {timeAgo(alert.created_at)}
-            </div>
+            <div className="pixel-data text-sm font-bold">${alert.price.toFixed(2)}</div>
+            <div className="pixel-label text-[0.45rem]">{timeAgo(alert.created_at)}</div>
           </div>
         </div>
       </div>
@@ -95,11 +92,11 @@ function AlertCard({ alert }: { alert: Alert }) {
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#22C55E]/10">
-        <ShieldCheck className="h-8 w-8 text-[#22C55E]" />
+      <div className="mb-4 flex h-16 w-16 items-center justify-center border-2 border-[var(--pixel-buy)] bg-[var(--pixel-surface)]" style={{ boxShadow: "var(--pixel-glow-green)" }}>
+        <ShieldCheck className="h-8 w-8 text-[var(--pixel-buy)]" />
       </div>
-      <h3 className="mb-2 text-lg font-bold text-white">All Signals Stable</h3>
-      <p className="max-w-sm text-sm text-[#666]">
+      <h3 className="pixel-title mb-2 text-[0.6rem]">All Signals Stable</h3>
+      <p className="pixel-label max-w-sm">
         No signal changes in the last 24h. Signals are stable.
       </p>
     </div>
@@ -150,48 +147,44 @@ export default function AlertsPage() {
   );
 
   const FILTER_STYLES: Record<AlertFilter, string> = {
-    ALL: "#A0A0A0",
-    HIGH: "#EF4444",
-    MEDIUM: "#F59E0B",
-    BUY: "#22C55E",
-    SELL: "#EF4444",
+    ALL: "var(--pixel-text-off)",
+    HIGH: "#FF3131",
+    MEDIUM: "#FFB800",
+    BUY: "#00FF41",
+    SELL: "#FF3131",
   };
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white">
+    <div className="min-h-screen bg-[var(--pixel-bg)] text-[var(--pixel-text)]">
       {/* ── Header ── */}
-      <header className="sticky top-0 z-20 border-b border-[#1C1C24] bg-[#0D0D0D]/90 backdrop-blur-sm">
+      <header className="sticky top-0 z-20 border-b-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)]/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <Link
               href="/dashboard"
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#2A2A35] text-[#666] transition hover:bg-[#1C1C24] hover:text-white"
+              className="flex h-8 w-8 items-center justify-center border-2 border-[var(--pixel-border-dim)] text-[var(--pixel-text-muted)] transition hover:border-[var(--pixel-border)] hover:text-[var(--pixel-text)]"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#EF4444]/15">
-                <Zap className="h-4 w-4 text-[#EF4444]" />
+              <div className="flex h-8 w-8 items-center justify-center border-2 border-[var(--pixel-sell)] bg-[var(--pixel-surface)]" style={{ boxShadow: "var(--pixel-glow-red)" }}>
+                <Zap className="h-4 w-4 text-[var(--pixel-sell)]" />
               </div>
               <div>
-                <h1 className="text-base font-black tracking-tight text-white">
-                  Signal Alerts
-                </h1>
-                <div className="text-[10px] uppercase tracking-widest text-[#444]">
-                  Last 24 hours
-                </div>
+                <h1 className="pixel-title text-[0.6rem]">Signal Alerts</h1>
+                <div className="pixel-label text-[0.45rem]">Last 24 hours</div>
               </div>
             </div>
             {alerts.length > 0 && (
-              <span className="rounded-full bg-[#EF4444]/15 px-2 py-0.5 text-xs font-bold text-[#EF4444]">
+              <span className="border border-[var(--pixel-sell)] bg-[rgba(255,49,49,0.1)] px-2 py-0.5 font-mono text-[0.55rem] font-bold text-[var(--pixel-sell)]">
                 {alerts.length}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-[#22C55E]">
+          <div className="flex items-center gap-1.5 font-mono text-[0.55rem] uppercase tracking-widest text-[var(--pixel-buy)]">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22C55E] opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#22C55E]" />
+              <span className="absolute inline-flex h-full w-full animate-ping bg-[var(--pixel-buy)] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 bg-[var(--pixel-buy)]" style={{ boxShadow: "var(--pixel-glow-green)" }} />
             </span>
             Polling 2min
           </div>
@@ -209,27 +202,14 @@ export default function AlertsPage() {
                 <button
                   key={tab}
                   onClick={() => setFilter(tab)}
-                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                    isActive ? "text-white" : "text-[#666] hover:text-[#A0A0A0]"
-                  }`}
-                  style={
-                    isActive
-                      ? {
-                          background: color + "20",
-                          color,
-                          border: `1px solid ${color}44`,
-                        }
-                      : { background: "transparent", border: "1px solid transparent" }
+                  className="flex items-center gap-1.5 border-2 px-3 py-1.5 font-mono text-[0.5rem] uppercase tracking-widest transition"
+                  style={isActive
+                    ? { background: color + "14", color, borderColor: color + "88" }
+                    : { background: "transparent", borderColor: "var(--pixel-border-dim)", color: "var(--pixel-text-muted)" }
                   }
                 >
-                  {tab}
-                  <span
-                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${
-                      isActive ? "bg-white/10" : "bg-[#2A2A35]"
-                    }`}
-                  >
-                    {filterCounts[tab]}
-                  </span>
+                  {isActive && "▸ "}{tab}
+                  <span className="border border-current px-1 py-0.5 text-[0.45rem] font-bold">{filterCounts[tab]}</span>
                 </button>
               );
             }
@@ -240,10 +220,7 @@ export default function AlertsPage() {
         {loading && (
           <div className="space-y-3">
             {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="h-16 animate-pulse rounded-xl border border-[#2A2A35] bg-[#15151B]"
-              />
+              <div key={i} className="h-16 animate-pulse border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)]" />
             ))}
           </div>
         )}

@@ -37,14 +37,14 @@ export default function NewsFeed() {
   }, [fetchNews]);
 
   return (
-    <div className="rounded-2xl border border-[#2A2A35] bg-[#0D0D0D] p-4">
+    <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] p-4">
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-black uppercase tracking-widest text-[#A0A0A0]">
+        <h3 className="text-sm font-black uppercase tracking-widest text-[var(--pixel-text-off)]">
           Jin10 Live
         </h3>
         {lastUpdated && (
-          <span className="text-[10px] text-[#444]">
+          <span className="text-[10px] text-[var(--pixel-text-muted)]">
             {lastUpdated.toLocaleTimeString()}
           </span>
         )}
@@ -56,29 +56,29 @@ export default function NewsFeed() {
           Array.from({ length: 5 }).map((_, i) => (
             <div
               key={i}
-              className="flex animate-pulse items-start gap-2 rounded-lg px-2 py-2"
+              className="flex animate-pulse items-start gap-2 rounded-none px-2 py-2"
             >
-              <div className="mt-1 h-3 w-10 rounded bg-[#1C1C24]" />
-              <div className="h-3 flex-1 rounded bg-[#1C1C24]" />
+              <div className="mt-1 h-3 w-10 rounded bg-[var(--pixel-surface-2)]" />
+              <div className="h-3 flex-1 rounded bg-[var(--pixel-surface-2)]" />
             </div>
           ))
         ) : news.length === 0 ? (
-          <div className="py-6 text-center text-xs text-[#444]">
+          <div className="py-6 text-center text-xs text-[var(--pixel-text-muted)]">
             No news available
           </div>
         ) : (
           news.slice(0, MAX_VISIBLE).map((item, i) => (
             <div
               key={`${item.created_at}-${i}`}
-              className={`flex items-start gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-[#15151B] ${
-                item.is_important ? "text-white" : "text-[#A0A0A0]"
+              className={`flex items-start gap-2 rounded-none px-2 py-1.5 transition-colors hover:bg-[var(--pixel-surface)] ${
+                item.is_important ? "text-[var(--pixel-text)]" : "text-[var(--pixel-text-off)]"
               }`}
             >
               <span className="mt-0.5 shrink-0 text-[11px] tabular-nums text-[#555]">
                 {item.time_str}
               </span>
               {item.is_important && (
-                <span className="mt-1 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-[#EF4444]" />
+                <span className="mt-1 inline-block h-1.5 w-1.5 shrink-0 rounded-none bg-[#FF3131]" />
               )}
               <span className="text-xs leading-relaxed">
                 {item.text.length > 100

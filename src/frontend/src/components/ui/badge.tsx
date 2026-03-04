@@ -1,23 +1,58 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
-
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3",
+  [
+    "inline-flex w-fit shrink-0 items-center justify-center gap-1",
+    "overflow-hidden rounded-none",
+    "px-1.5 py-0.5",
+    "font-mono text-[0.5rem] uppercase tracking-widest",
+    "border-2 border-transparent",
+    "whitespace-nowrap",
+    "transition-all duration-100",
+    "[&>svg]:pointer-events-none [&>svg]:size-2.5",
+  ].join(" "),
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
-        secondary:
-          "bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
-        destructive:
-          "bg-destructive text-white focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40 [a&]:hover:bg-destructive/90",
-        outline:
-          "border-border text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-        ghost: "[a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 [a&]:hover:underline",
+        default: [
+          "border-[var(--pixel-border-dim)] bg-[var(--pixel-surface-2)] text-[var(--pixel-text-dim)]",
+        ].join(" "),
+        primary: [
+          "border-[var(--pixel-border)] bg-[rgba(0,255,65,0.08)] text-[var(--pixel-buy)]",
+          "shadow-[0_0_4px_rgba(0,255,65,0.3)]",
+        ].join(" "),
+        buy: [
+          "border-[var(--pixel-buy)] bg-[rgba(0,255,65,0.08)] text-[var(--pixel-buy)]",
+          "shadow-[0_0_4px_rgba(0,255,65,0.4)]",
+        ].join(" "),
+        sell: [
+          "border-[var(--pixel-sell)] bg-[rgba(255,49,49,0.08)] text-[var(--pixel-sell)]",
+          "shadow-[0_0_4px_rgba(255,49,49,0.4)]",
+        ].join(" "),
+        hold: [
+          "border-[var(--pixel-hold)] bg-[rgba(255,184,0,0.08)] text-[var(--pixel-hold)]",
+          "shadow-[0_0_4px_rgba(255,184,0,0.4)]",
+        ].join(" "),
+        cyan: [
+          "border-[var(--pixel-accent)] bg-[rgba(0,255,255,0.08)] text-[var(--pixel-accent)]",
+          "shadow-[0_0_4px_rgba(0,255,255,0.3)]",
+        ].join(" "),
+        secondary: [
+          "border-[var(--pixel-border-dim)] bg-[var(--pixel-surface-2)] text-[var(--pixel-text-off)]",
+        ].join(" "),
+        destructive: [
+          "border-[var(--pixel-sell)] bg-[rgba(255,49,49,0.1)] text-[var(--pixel-sell)]",
+        ].join(" "),
+        outline: [
+          "border-[var(--pixel-border-dim)] text-[var(--pixel-text-dim)] bg-transparent",
+        ].join(" "),
+        ghost: [
+          "border-transparent text-[var(--pixel-text-muted)] bg-transparent",
+        ].join(" "),
+        link: "border-transparent text-[var(--pixel-accent)] underline-offset-2 hover:underline",
       },
     },
     defaultVariants: {

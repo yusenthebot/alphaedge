@@ -54,9 +54,9 @@ const STORAGE_KEY = "alphaedge-portfolio";
 const POLL_INTERVAL = 60_000;
 
 const SIGNAL_CONFIG = {
-  BUY:  { bg: "#22C55E", text: "text-[#22C55E]", border: "border-[#22C55E]/40" },
-  HOLD: { bg: "#F59E0B", text: "text-[#F59E0B]", border: "border-[#F59E0B]/40" },
-  SELL: { bg: "#EF4444", text: "text-[#EF4444]", border: "border-[#EF4444]/40" },
+  BUY:  { bg: "#00FF41", text: "text-[#00FF41]", border: "border-[#00FF41]/40" },
+  HOLD: { bg: "#FFB800", text: "text-[#FFB800]", border: "border-[#FFB800]/40" },
+  SELL: { bg: "#FF3131", text: "text-[#FF3131]", border: "border-[#FF3131]/40" },
 } as const;
 
 // ── Helpers ───────────────────────────────────────────────────────
@@ -119,13 +119,13 @@ function generateHistoricalData(positions: PositionWithSignal[]): PortfolioSnaps
 // ── Signal suggestion ────────────────────────────────────────────
 function getSignalSuggestion(pos: PositionWithSignal): { text: string; color: string } | null {
   if (pos.signal === "BUY" && pos.strength >= 60) {
-    return { text: "BUY more — strong bullish signal", color: "#22C55E" };
+    return { text: "BUY more — strong bullish signal", color: "#00FF41" };
   }
   if (pos.signal === "SELL" && pos.strength >= 60) {
-    return { text: "REDUCE — bearish signal detected", color: "#EF4444" };
+    return { text: "REDUCE — bearish signal detected", color: "#FF3131" };
   }
   if (pos.signal === "HOLD") {
-    return { text: "HOLD — wait for clearer signal", color: "#F59E0B" };
+    return { text: "HOLD — wait for clearer signal", color: "#FFB800" };
   }
   return null;
 }
@@ -134,9 +134,9 @@ function getSignalSuggestion(pos: PositionWithSignal): { text: string; color: st
 function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-[#2A2A35] bg-[#15151B] px-3 py-2 text-xs shadow-xl">
+    <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-3 py-2 text-xs shadow-xl">
       <div className="text-[#666]">{label}</div>
-      <div className="font-bold text-white">{formatCurrency(payload[0].value)}</div>
+      <div className="font-bold text-[var(--pixel-text)]">{formatCurrency(payload[0].value)}</div>
     </div>
   );
 }
@@ -264,22 +264,22 @@ export default function PortfolioPage() {
 
   // Chart data
   const chartData = useMemo(() => generateHistoricalData(enrichedPositions), [enrichedPositions]);
-  const chartColor = summary.totalPnl >= 0 ? "#22C55E" : "#EF4444";
+  const chartColor = summary.totalPnl >= 0 ? "#00FF41" : "#FF3131";
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white">
+    <div className="min-h-screen bg-[var(--pixel-bg)] text-[var(--pixel-text)]">
       {/* ── Header ── */}
-      <header className="sticky top-0 z-20 border-b border-[#1C1C24] bg-[#0D0D0D]/90 backdrop-blur-sm">
+      <header className="sticky top-0 z-20 border-b-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)]/90 backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="flex items-center gap-2 text-[#666] transition hover:text-white">
+            <Link href="/dashboard" className="flex items-center gap-2 text-[#666] transition hover:text-[var(--pixel-text)]">
               <ArrowLeft className="h-4 w-4" />
             </Link>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#22C55E]/15">
-              <Briefcase className="h-4 w-4 text-[#22C55E]" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-none bg-[#00FF41]/15">
+              <Briefcase className="h-4 w-4 text-[#00FF41]" />
             </div>
             <div>
-              <h1 className="text-base font-black tracking-tight text-white">Portfolio</h1>
+              <h1 className="text-base font-black tracking-tight text-[var(--pixel-text)]">Portfolio</h1>
               <div className="text-[10px] text-[#444] tracking-widest uppercase">Paper Trading</div>
             </div>
           </div>
@@ -288,10 +288,10 @@ export default function PortfolioPage() {
             {/* Follow Signal toggle */}
             <button
               onClick={() => setFollowSignal(!followSignal)}
-              className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs transition ${
+              className={`flex items-center gap-1.5 rounded-none border px-2.5 py-1.5 text-xs transition ${
                 followSignal
-                  ? "border-[#22C55E]/40 bg-[#22C55E]/10 text-[#22C55E]"
-                  : "border-[#2A2A35] bg-[#15151B] text-[#666] hover:text-white"
+                  ? "border-[#00FF41]/40 bg-[#00FF41]/10 text-[#00FF41]"
+                  : "border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] text-[#666] hover:text-[var(--pixel-text)]"
               }`}
             >
               {followSignal ? <ToggleRight className="h-3.5 w-3.5" /> : <ToggleLeft className="h-3.5 w-3.5" />}
@@ -301,7 +301,7 @@ export default function PortfolioPage() {
             {/* Add Position */}
             <button
               onClick={() => setAddingPosition(true)}
-              className="flex items-center gap-1 rounded-lg border border-[#2A2A35] bg-[#15151B] px-2.5 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24] hover:text-white"
+              className="flex items-center gap-1 rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-2.5 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[var(--pixel-surface-2)] hover:text-[var(--pixel-text)]"
             >
               <Plus className="h-3 w-3" />
               Add Position
@@ -314,12 +314,12 @@ export default function PortfolioPage() {
         {/* ── Add Position Modal ── */}
         {addingPosition && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="w-full max-w-sm rounded-2xl border border-[#2A2A35] bg-[#15151B] p-6">
+            <div className="w-full max-w-sm rounded-2xl border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-6">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-sm font-bold text-white">Add Position</h3>
+                <h3 className="text-sm font-bold text-[var(--pixel-text)]">Add Position</h3>
                 <button
                   onClick={() => { setAddingPosition(false); setFormError(""); }}
-                  className="text-[#666] transition hover:text-white"
+                  className="text-[#666] transition hover:text-[var(--pixel-text)]"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -334,7 +334,7 @@ export default function PortfolioPage() {
                     onChange={(e) => { setFormTicker(e.target.value.toUpperCase()); setFormError(""); }}
                     placeholder="NVDA"
                     maxLength={5}
-                    className="w-full rounded-lg border border-[#2A2A35] bg-[#0D0D0D] px-3 py-2 text-sm text-white placeholder-[#444] outline-none focus:border-[#22C55E]/50"
+                    className="w-full rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] px-3 py-2 text-sm text-[var(--pixel-text)] placeholder-[#444] outline-none focus:border-[#00FF41]/50"
                   />
                 </div>
                 <div>
@@ -346,7 +346,7 @@ export default function PortfolioPage() {
                     placeholder="10"
                     min="0"
                     step="any"
-                    className="w-full rounded-lg border border-[#2A2A35] bg-[#0D0D0D] px-3 py-2 text-sm text-white placeholder-[#444] outline-none focus:border-[#22C55E]/50"
+                    className="w-full rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] px-3 py-2 text-sm text-[var(--pixel-text)] placeholder-[#444] outline-none focus:border-[#00FF41]/50"
                   />
                 </div>
                 <div>
@@ -358,17 +358,17 @@ export default function PortfolioPage() {
                     placeholder="875.00"
                     min="0"
                     step="any"
-                    className="w-full rounded-lg border border-[#2A2A35] bg-[#0D0D0D] px-3 py-2 text-sm text-white placeholder-[#444] outline-none focus:border-[#22C55E]/50"
+                    className="w-full rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] px-3 py-2 text-sm text-[var(--pixel-text)] placeholder-[#444] outline-none focus:border-[#00FF41]/50"
                   />
                 </div>
 
                 {formError && (
-                  <div className="rounded-lg bg-[#EF4444]/10 px-3 py-1.5 text-xs text-[#EF4444]">{formError}</div>
+                  <div className="rounded-none bg-[#FF3131]/10 px-3 py-1.5 text-xs text-[#FF3131]">{formError}</div>
                 )}
 
                 <button
                   onClick={addPosition}
-                  className="w-full rounded-lg bg-[#22C55E] px-4 py-2 text-sm font-bold text-black transition hover:bg-[#22C55E]/90"
+                  className="w-full rounded-none bg-[#00FF41] px-4 py-2 text-sm font-bold text-black transition hover:bg-[#00FF41]/90"
                 >
                   Add to Portfolio
                 </button>
@@ -385,7 +385,7 @@ export default function PortfolioPage() {
             <p className="mb-6 text-sm text-[#444]">Add your first paper trade to start tracking</p>
             <button
               onClick={() => setAddingPosition(true)}
-              className="flex items-center gap-2 rounded-lg bg-[#22C55E] px-4 py-2 text-sm font-bold text-black transition hover:bg-[#22C55E]/90"
+              className="flex items-center gap-2 rounded-none bg-[#00FF41] px-4 py-2 text-sm font-bold text-black transition hover:bg-[#00FF41]/90"
             >
               <Plus className="h-4 w-4" />
               Add Position
@@ -397,7 +397,7 @@ export default function PortfolioPage() {
         {loading && positions.length > 0 && (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-20 animate-pulse rounded-xl bg-[#15151B]" />
+              <div key={i} className="h-20 animate-pulse rounded-none bg-[var(--pixel-surface)]" />
             ))}
           </div>
         )}
@@ -407,36 +407,36 @@ export default function PortfolioPage() {
           <>
             {/* ── Summary Bar ── */}
             <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="rounded-xl border border-[#2A2A35] bg-[#15151B] p-4">
+              <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-4">
                 <div className="mb-1 text-[10px] uppercase tracking-widest text-[#666]">Total Value</div>
-                <div className="text-lg font-bold text-white">{formatCurrency(summary.totalValue)}</div>
+                <div className="text-lg font-bold text-[var(--pixel-text)]">{formatCurrency(summary.totalValue)}</div>
               </div>
-              <div className="rounded-xl border border-[#2A2A35] bg-[#15151B] p-4">
+              <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-4">
                 <div className="mb-1 text-[10px] uppercase tracking-widest text-[#666]">Total P&L</div>
-                <div className={`text-lg font-bold ${summary.totalPnl >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+                <div className={`text-lg font-bold ${summary.totalPnl >= 0 ? "text-[#00FF41]" : "text-[#FF3131]"}`}>
                   {formatPnl(summary.totalPnl)}
                 </div>
-                <div className={`text-xs ${summary.totalPnlPct >= 0 ? "text-[#22C55E]/70" : "text-[#EF4444]/70"}`}>
+                <div className={`text-xs ${summary.totalPnlPct >= 0 ? "text-[#00FF41]/70" : "text-[#FF3131]/70"}`}>
                   {formatPct(summary.totalPnlPct)}
                 </div>
               </div>
-              <div className="rounded-xl border border-[#2A2A35] bg-[#15151B] p-4">
+              <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-4">
                 <div className="mb-1 text-[10px] uppercase tracking-widest text-[#666]">Best Performer</div>
                 {summary.best && (
                   <>
-                    <div className="text-sm font-bold text-white">{summary.best.ticker}</div>
-                    <div className={`text-xs ${summary.best.pnlPercent >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+                    <div className="text-sm font-bold text-[var(--pixel-text)]">{summary.best.ticker}</div>
+                    <div className={`text-xs ${summary.best.pnlPercent >= 0 ? "text-[#00FF41]" : "text-[#FF3131]"}`}>
                       {formatPct(summary.best.pnlPercent)}
                     </div>
                   </>
                 )}
               </div>
-              <div className="rounded-xl border border-[#2A2A35] bg-[#15151B] p-4">
+              <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-4">
                 <div className="mb-1 text-[10px] uppercase tracking-widest text-[#666]">Worst Performer</div>
                 {summary.worst && (
                   <>
-                    <div className="text-sm font-bold text-white">{summary.worst.ticker}</div>
-                    <div className={`text-xs ${summary.worst.pnlPercent >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+                    <div className="text-sm font-bold text-[var(--pixel-text)]">{summary.worst.ticker}</div>
+                    <div className={`text-xs ${summary.worst.pnlPercent >= 0 ? "text-[#00FF41]" : "text-[#FF3131]"}`}>
                       {formatPct(summary.worst.pnlPercent)}
                     </div>
                   </>
@@ -446,7 +446,7 @@ export default function PortfolioPage() {
 
             {/* ── Portfolio Value Chart ── */}
             {chartData.length > 1 && (
-              <div className="mb-6 rounded-xl border border-[#2A2A35] bg-[#15151B] p-4">
+              <div className="mb-6 rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-4">
                 <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-[#666]">Portfolio Value (30d)</h3>
                 <ResponsiveContainer width="100%" height={200}>
                   <AreaChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
@@ -485,13 +485,13 @@ export default function PortfolioPage() {
             )}
 
             {/* ── Positions Table ── */}
-            <div className="rounded-xl border border-[#2A2A35] bg-[#15151B]">
-              <div className="border-b border-[#2A2A35] px-4 py-3">
+            <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)]">
+              <div className="border-b border-[var(--pixel-border-dim)] px-4 py-3">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-[#666]">Positions</h3>
               </div>
 
               {/* Table header */}
-              <div className="hidden grid-cols-[1fr_0.7fr_0.8fr_0.8fr_0.9fr_0.7fr_0.7fr_0.3fr] gap-2 border-b border-[#1C1C24] px-4 py-2 text-[10px] uppercase tracking-widest text-[#444] sm:grid">
+              <div className="hidden grid-cols-[1fr_0.7fr_0.8fr_0.8fr_0.9fr_0.7fr_0.7fr_0.3fr] gap-2 border-b-2 border-[var(--pixel-border-dim)] px-4 py-2 text-[10px] uppercase tracking-widest text-[#444] sm:grid">
                 <div>Ticker</div>
                 <div className="text-right">Shares</div>
                 <div className="text-right">Avg Cost</div>
@@ -504,27 +504,27 @@ export default function PortfolioPage() {
 
               {/* Table rows */}
               {enrichedPositions.map((pos, idx) => {
-                const pnlColor = pos.pnlDollar >= 0 ? "text-[#22C55E]" : "text-[#EF4444]";
+                const pnlColor = pos.pnlDollar >= 0 ? "text-[#00FF41]" : "text-[#FF3131]";
                 const signalCfg = SIGNAL_CONFIG[pos.signal];
                 const suggestion = followSignal ? getSignalSuggestion(pos) : null;
 
                 return (
                   <div key={`${pos.ticker}-${idx}`}>
                     {/* Desktop row */}
-                    <div className="group hidden grid-cols-[1fr_0.7fr_0.8fr_0.8fr_0.9fr_0.7fr_0.7fr_0.3fr] items-center gap-2 border-b border-[#1C1C24] px-4 py-3 transition hover:bg-[#1C1C24] sm:grid">
+                    <div className="group hidden grid-cols-[1fr_0.7fr_0.8fr_0.8fr_0.9fr_0.7fr_0.7fr_0.3fr] items-center gap-2 border-b-2 border-[var(--pixel-border-dim)] px-4 py-3 transition hover:bg-[var(--pixel-surface-2)] sm:grid">
                       <div className="flex items-center gap-2">
-                        <Link href={`/ticker/${pos.ticker}`} className="font-bold text-white hover:text-[#22C55E] transition">
+                        <Link href={`/ticker/${pos.ticker}`} className="font-bold text-[var(--pixel-text)] hover:text-[#00FF41] transition">
                           {pos.ticker}
                         </Link>
                         {pos.change !== 0 && (
-                          <span className={`text-[10px] ${pos.change >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+                          <span className={`text-[10px] ${pos.change >= 0 ? "text-[#00FF41]" : "text-[#FF3131]"}`}>
                             {pos.change >= 0 ? "+" : ""}{pos.change.toFixed(2)}%
                           </span>
                         )}
                       </div>
                       <div className="text-right text-sm text-[#A0A0A0]">{pos.shares}</div>
                       <div className="text-right text-sm text-[#A0A0A0]">{formatCurrency(pos.avgCost)}</div>
-                      <div className="text-right text-sm text-white">{formatCurrency(pos.currentPrice)}</div>
+                      <div className="text-right text-sm text-[var(--pixel-text)]">{formatCurrency(pos.currentPrice)}</div>
                       <div className={`text-right text-sm font-medium ${pnlColor}`}>{formatPnl(pos.pnlDollar)}</div>
                       <div className={`text-right text-sm font-medium ${pnlColor}`}>{formatPct(pos.pnlPercent)}</div>
                       <div className="flex justify-center">
@@ -538,7 +538,7 @@ export default function PortfolioPage() {
                       <div className="flex justify-end">
                         <button
                           onClick={() => removePosition(idx)}
-                          className="rounded p-1 text-[#333] opacity-0 transition hover:bg-[#EF4444]/10 hover:text-[#EF4444] group-hover:opacity-100"
+                          className="rounded p-1 text-[#333] opacity-0 transition hover:bg-[#FF3131]/10 hover:text-[#FF3131] group-hover:opacity-100"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -546,10 +546,10 @@ export default function PortfolioPage() {
                     </div>
 
                     {/* Mobile row */}
-                    <div className="border-b border-[#1C1C24] p-4 sm:hidden">
+                    <div className="border-b-2 border-[var(--pixel-border-dim)] p-4 sm:hidden">
                       <div className="mb-2 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <Link href={`/ticker/${pos.ticker}`} className="font-bold text-white">{pos.ticker}</Link>
+                          <Link href={`/ticker/${pos.ticker}`} className="font-bold text-[var(--pixel-text)]">{pos.ticker}</Link>
                           <span
                             className="rounded-md px-1.5 py-0.5 text-[10px] font-bold"
                             style={{ backgroundColor: signalCfg.bg + "20", color: signalCfg.bg }}
@@ -559,14 +559,14 @@ export default function PortfolioPage() {
                         </div>
                         <button
                           onClick={() => removePosition(idx)}
-                          className="rounded p-1 text-[#444] transition hover:text-[#EF4444]"
+                          className="rounded p-1 text-[#444] transition hover:text-[#FF3131]"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </div>
                       <div className="grid grid-cols-2 gap-y-1 text-xs">
                         <div className="text-[#666]">{pos.shares} shares @ {formatCurrency(pos.avgCost)}</div>
-                        <div className="text-right text-white">{formatCurrency(pos.currentPrice)}</div>
+                        <div className="text-right text-[var(--pixel-text)]">{formatCurrency(pos.currentPrice)}</div>
                         <div className={pnlColor}>{formatPnl(pos.pnlDollar)}</div>
                         <div className={`text-right ${pnlColor}`}>{formatPct(pos.pnlPercent)}</div>
                       </div>
@@ -575,7 +575,7 @@ export default function PortfolioPage() {
                     {/* Signal suggestion */}
                     {suggestion && (
                       <div
-                        className="flex items-center gap-2 border-b border-[#1C1C24] px-4 py-2 text-xs"
+                        className="flex items-center gap-2 border-b-2 border-[var(--pixel-border-dim)] px-4 py-2 text-xs"
                         style={{ backgroundColor: suggestion.color + "08" }}
                       >
                         <Zap className="h-3 w-3" style={{ color: suggestion.color }} />

@@ -49,20 +49,20 @@ const SIGNAL = {
 };
 
 const SIGNAL_COLORS: Record<string, string> = {
-  BUY: "bg-[#22C55E] text-white",
-  SELL: "bg-[#EF4444] text-white",
-  HOLD: "bg-[#F59E0B] text-black",
+  BUY: "bg-[#00FF41] text-[var(--pixel-text)]",
+  SELL: "bg-[#FF3131] text-[var(--pixel-text)]",
+  HOLD: "bg-[#FFB800] text-black",
 };
 
 export default function SignalOfTheDayPage() {
   return (
-    <div className="min-h-screen bg-[#0D0D0D]">
+    <div className="min-h-screen bg-[var(--pixel-bg)]">
       {/* Nav */}
-      <nav className="border-b border-[#2A2A35] px-4 py-4 sm:px-6">
+      <nav className="border-b border-[var(--pixel-border-dim)] px-4 py-4 sm:px-6">
         <div className="mx-auto flex max-w-4xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Zap className="h-6 w-6 text-[#22C55E]" />
-            <span className="text-xl font-bold text-white">AlphaEdge</span>
+            <Zap className="h-6 w-6 text-[#00FF41]" />
+            <span className="text-xl font-bold text-[var(--pixel-text)]">AlphaEdge</span>
           </Link>
           <Link href="/dashboard">
             <Button size="sm">Open Dashboard</Button>
@@ -74,12 +74,12 @@ export default function SignalOfTheDayPage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="mb-4 flex items-center justify-center gap-2">
-            <Zap className="h-5 w-5 text-[#F59E0B]" />
-            <span className="text-sm font-semibold uppercase tracking-wider text-[#F59E0B]">
+            <Zap className="h-5 w-5 text-[#FFB800]" />
+            <span className="text-sm font-semibold uppercase tracking-wider text-[#FFB800]">
               Signal of the Day
             </span>
           </div>
-          <h1 className="mb-2 text-3xl font-bold text-white sm:text-4xl">
+          <h1 className="mb-2 text-3xl font-bold text-[var(--pixel-text)] sm:text-4xl">
             {SIGNAL.date}
           </h1>
           <p className="text-[#A0A0A0]">
@@ -88,12 +88,12 @@ export default function SignalOfTheDayPage() {
         </div>
 
         {/* Main Signal Card */}
-        <Card className="mb-8 border-[#22C55E]/30 bg-[#15151B]">
+        <Card className="mb-8 border-[#00FF41]/30 bg-[var(--pixel-surface)]">
           <CardContent className="p-6 sm:p-8">
             {/* Ticker + Signal */}
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
-                <span className="text-4xl font-bold text-white">
+                <span className="text-4xl font-bold text-[var(--pixel-text)]">
                   {SIGNAL.ticker}
                 </span>
                 <Badge
@@ -103,10 +103,10 @@ export default function SignalOfTheDayPage() {
                 </Badge>
               </div>
               <div className="text-right">
-                <div className="text-3xl font-bold text-white">
+                <div className="text-3xl font-bold text-[var(--pixel-text)]">
                   ${SIGNAL.price.toFixed(2)}
                 </div>
-                <div className="flex items-center justify-end gap-1 text-[#22C55E]">
+                <div className="flex items-center justify-end gap-1 text-[#00FF41]">
                   <TrendingUp className="h-4 w-4" />+{SIGNAL.change}%
                 </div>
               </div>
@@ -114,31 +114,31 @@ export default function SignalOfTheDayPage() {
 
             {/* Metrics */}
             <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <div className="rounded-lg bg-[#0D0D0D] p-4">
+              <div className="rounded-none bg-[var(--pixel-bg)] p-4">
                 <div className="mb-1 text-xs uppercase text-[#A0A0A0]">
                   Strength
                 </div>
-                <div className="text-2xl font-bold text-[#22C55E]">
+                <div className="text-2xl font-bold text-[#00FF41]">
                   {SIGNAL.strength}/100
                 </div>
               </div>
-              <div className="rounded-lg bg-[#0D0D0D] p-4">
+              <div className="rounded-none bg-[var(--pixel-bg)] p-4">
                 <div className="mb-1 text-xs uppercase text-[#A0A0A0]">
                   Confidence
                 </div>
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold text-[var(--pixel-text)]">
                   {Math.round(SIGNAL.confidence * 100)}%
                 </div>
               </div>
-              <div className="rounded-lg bg-[#0D0D0D] p-4">
+              <div className="rounded-none bg-[var(--pixel-bg)] p-4">
                 <div className="mb-1 text-xs uppercase text-[#A0A0A0]">
                   RSI
                 </div>
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold text-[var(--pixel-text)]">
                   {SIGNAL.sources.rsi}
                 </div>
               </div>
-              <div className="rounded-lg bg-[#0D0D0D] p-4">
+              <div className="rounded-none bg-[var(--pixel-bg)] p-4">
                 <div className="mb-1 text-xs uppercase text-[#A0A0A0]">
                   Jin10 Sentiment
                 </div>
@@ -153,7 +153,7 @@ export default function SignalOfTheDayPage() {
               <div className="flex items-start gap-3">
                 <Newspaper className="mt-1 h-5 w-5 shrink-0 text-[#3B82F6]" />
                 <div>
-                  <div className="mb-1 text-sm font-medium text-white">
+                  <div className="mb-1 text-sm font-medium text-[var(--pixel-text)]">
                     Jin10 Breaking News
                   </div>
                   <p className="text-sm text-[#A0A0A0]">
@@ -167,7 +167,7 @@ export default function SignalOfTheDayPage() {
               <div className="flex items-start gap-3">
                 <BarChart3 className="mt-1 h-5 w-5 shrink-0 text-[#8B5CF6]" />
                 <div>
-                  <div className="mb-1 text-sm font-medium text-white">
+                  <div className="mb-1 text-sm font-medium text-[var(--pixel-text)]">
                     Technical Indicators
                   </div>
                   <p className="text-sm text-[#A0A0A0]">
@@ -179,11 +179,11 @@ export default function SignalOfTheDayPage() {
             </div>
 
             {/* Reasoning */}
-            <div className="mt-6 rounded-lg border border-[#2A2A35] bg-[#0D0D0D] p-4">
+            <div className="mt-6 rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] p-4">
               <div className="mb-2 text-xs font-semibold uppercase text-[#A0A0A0]">
                 AI Analysis
               </div>
-              <p className="text-sm leading-relaxed text-white">
+              <p className="text-sm leading-relaxed text-[var(--pixel-text)]">
                 {SIGNAL.reasoning}
               </p>
             </div>
@@ -198,7 +198,7 @@ export default function SignalOfTheDayPage() {
           <Link href="/dashboard">
             <Button
               size="lg"
-              className="bg-[#22C55E] text-white hover:bg-[#16A34A]"
+              className="bg-[#00FF41] text-[var(--pixel-text)] hover:bg-[#16A34A]"
             >
               Open Dashboard
               <ArrowRight className="ml-2 h-4 w-4" />

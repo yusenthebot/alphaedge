@@ -36,16 +36,16 @@ const STORAGE_KEY = "alphaedge-watchlist";
 const POLL_INTERVAL = 60_000;
 
 const SIGNAL_CONFIG = {
-  BUY:  { bg: "#22C55E", text: "text-[#22C55E]", glow: "shadow-[0_0_20px_rgba(34,197,94,0.3)]",  border: "border-[#22C55E]/40" },
-  HOLD: { bg: "#F59E0B", text: "text-[#F59E0B]", glow: "shadow-[0_0_20px_rgba(245,158,11,0.2)]", border: "border-[#F59E0B]/40" },
-  SELL: { bg: "#EF4444", text: "text-[#EF4444]", glow: "shadow-[0_0_20px_rgba(239,68,68,0.3)]",  border: "border-[#EF4444]/40" },
+  BUY:  { bg: "#00FF41", text: "text-[#00FF41]", glow: "shadow-[0_0_16px_rgba(0,255,65,0.4),_0_0_32px_rgba(0,255,65,0.15)]",  border: "border-[#00FF41]/50" },
+  HOLD: { bg: "#FFB800", text: "text-[#FFB800]", glow: "shadow-[0_0_16px_rgba(255,184,0,0.35),_0_0_24px_rgba(255,184,0,0.12)]", border: "border-[#FFB800]/50" },
+  SELL: { bg: "#FF3131", text: "text-[#FF3131]", glow: "shadow-[0_0_16px_rgba(255,49,49,0.4),_0_0_32px_rgba(255,49,49,0.15)]",  border: "border-[#FF3131]/50" },
 } as const;
 
 const FILTER_COLORS: Record<SignalFilter, string> = {
-  ALL: "#A0A0A0",
-  BUY: "#22C55E",
-  HOLD: "#F59E0B",
-  SELL: "#EF4444",
+  ALL: "#00AA2B",
+  BUY: "#00FF41",
+  HOLD: "#FFB800",
+  SELL: "#FF3131",
 };
 
 const SORT_LABELS: Record<SortMode, string> = {
@@ -105,9 +105,9 @@ function RSIGauge({ rsi }: { rsi: number }) {
         data={data}
       >
         <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-        <RadialBar dataKey="value" cornerRadius={4} background={{ fill: "#2A2A35" }} />
+        <RadialBar dataKey="value" cornerRadius={0} background={{ fill: "#0B160B" }} />
       </RadialBarChart>
-      <span className="absolute text-xs font-bold text-white">{rsi}</span>
+      <span className="absolute text-xs font-mono font-bold" style={{ color }}>{rsi}</span>
     </div>
   );
 }
@@ -130,11 +130,11 @@ function StrengthRing({ strength, signal }: { strength: number; signal: string }
         data={data}
       >
         <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-        <RadialBar dataKey="value" cornerRadius={6} background={{ fill: "#2A2A35" }} />
+        <RadialBar dataKey="value" cornerRadius={0} background={{ fill: "#0B160B" }} />
       </RadialBarChart>
       <div className="absolute text-center">
-        <div className="text-sm font-bold text-white">{strength}</div>
-        <div className="text-[9px] text-[#666]">/ 100</div>
+        <div className="text-sm font-mono font-bold" style={{ color: cfg?.bg }}>{strength}</div>
+        <div className="text-[9px] font-mono" style={{ color: "var(--pixel-text-muted)" }}>/ 100</div>
       </div>
     </div>
   );
@@ -164,8 +164,8 @@ function Sparkline({ data, color }: { data: HistoryPoint[]; color: string }) {
           activeDot={{ r: 3, fill: color }}
         />
         <Tooltip
-          contentStyle={{ background: "#15151B", border: "1px solid #2A2A35", borderRadius: 6, fontSize: 11 }}
-          labelStyle={{ color: "#666" }}
+          contentStyle={{ background: "var(--pixel-surface)", border: "1px solid var(--pixel-border-dim)", borderRadius: 0, fontSize: 10, fontFamily: "var(--font-mono)" }}
+          labelStyle={{ color: "var(--pixel-text-muted)" }}
           formatter={(v) => [`$${Number(v).toFixed(2)}`, ""]}
         />
       </AreaChart>
@@ -179,10 +179,10 @@ function MacdBadge({ macd }: { macd: string }) {
   const isBear = macd === "死叉";
   return (
     <span
-      className={`rounded px-2 py-0.5 text-xs font-semibold ${
-        isBull ? "bg-[#22C55E]/15 text-[#22C55E]"
-        : isBear ? "bg-[#EF4444]/15 text-[#EF4444]"
-        : "bg-[#2A2A35] text-[#A0A0A0]"
+      className={`border-2 px-1.5 py-0.5 font-mono text-[0.5rem] font-semibold uppercase tracking-widest ${
+        isBull ? "border-[#00FF41]/50 text-[#00FF41] bg-[#00FF41]/08"
+        : isBear ? "border-[#FF3131]/50 text-[#FF3131] bg-[#FF3131]/08"
+        : "border-[var(--pixel-border-dim)] text-[var(--pixel-text-off)]"
       }`}
     >
       MACD {macd}
@@ -194,7 +194,7 @@ function MacdBadge({ macd }: { macd: string }) {
 function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove: (ticker: string) => void }) {
   const cfg = SIGNAL_CONFIG[signal.signal];
   const isPos = signal.change >= 0;
-  const sparkColor = isPos ? "#22C55E" : "#EF4444";
+  const sparkColor = isPos ? "#00FF41" : "#FF3131";
   const { label: rsiLbl, color: rsiColor } = rsiLabel(signal.sources.rsi);
 
   return (
@@ -206,7 +206,7 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
           e.stopPropagation();
           onRemove(signal.ticker);
         }}
-        className="absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2A35] text-[#666] opacity-0 transition-opacity hover:bg-[#EF4444]/20 hover:text-[#EF4444] group-hover:opacity-100"
+        className="absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] text-[var(--pixel-text-muted)] opacity-0 transition-opacity hover:border-[var(--pixel-sell)] hover:text-[var(--pixel-sell)] group-hover:opacity-100"
         title={`Remove ${signal.ticker}`}
       >
         <X className="h-3 w-3" />
@@ -214,23 +214,23 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
 
       <Link href={`/ticker/${signal.ticker}`}>
         <div
-          className={`rounded-2xl border bg-[#15151B] p-5 transition-all duration-200 hover:bg-[#1C1C24] ${cfg.border} ${cfg.glow}`}
+          className={`border-2 bg-[var(--pixel-surface)] p-5 transition-all duration-150 hover:bg-[var(--pixel-surface-2)] ${cfg.border} ${cfg.glow}`}
         >
           {/* ── Top row: ticker + price + signal badge ── */}
           <div className="mb-3 flex items-start justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xl font-black tracking-wide text-white">{signal.ticker}</span>
+                <span className="pixel-title text-[0.65rem] tracking-wide" style={{ color: cfg.bg }}>{signal.ticker}</span>
                 <span
-                  className={`rounded-md px-2 py-0.5 text-xs font-black tracking-widest`}
-                  style={{ background: cfg.bg + "22", color: cfg.bg, border: `1px solid ${cfg.bg}55` }}
+                  className="border-2 px-2 py-0.5 font-mono text-[0.5rem] font-bold tracking-widest uppercase"
+                  style={{ background: cfg.bg + "14", color: cfg.bg, borderColor: cfg.bg + "88", boxShadow: `0 0 6px ${cfg.bg}44` }}
                 >
                   {signal.signal}
                 </span>
               </div>
               <div className="mt-1 flex items-center gap-2">
-                <span className="text-lg font-bold text-white">${signal.price.toFixed(2)}</span>
-                <span className={`flex items-center gap-0.5 text-sm font-semibold ${isPos ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+                <span className="pixel-data text-base font-bold">${signal.price.toFixed(2)}</span>
+                <span className={`flex items-center gap-0.5 text-xs font-mono font-semibold ${isPos ? "text-[#00FF41]" : "text-[#FF3131]"}`}>
                   {isPos ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
                   {isPos ? "+" : ""}{signal.change.toFixed(2)}%
                 </span>
@@ -250,25 +250,25 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
             <RSIGauge rsi={signal.sources.rsi} />
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[#666]">RSI</span>
-                <span className="text-xs font-semibold" style={{ color: rsiColor }}>{rsiLbl}</span>
+                <span className="pixel-label">RSI</span>
+                <span className="font-mono text-[0.6rem] font-semibold" style={{ color: rsiColor }}>{rsiLbl}</span>
               </div>
               <MacdBadge macd={signal.sources.macd} />
-              <div className="text-xs text-[#666]">
-                Conf. <span className="text-[#A0A0A0] font-semibold">{Math.round(signal.confidence * 100)}%</span>
+              <div className="pixel-label">
+                CONF <span className="text-[var(--pixel-text-dim)]">{Math.round(signal.confidence * 100)}%</span>
               </div>
             </div>
           </div>
 
           {/* ── Jin10 headline ── */}
-          <div className="rounded-lg bg-[#0D0D0D] p-2.5 text-xs leading-relaxed text-[#888]">
-            <span className="mr-1 text-[#3B82F6] font-semibold">Jin10</span>
+          <div className="border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] p-2.5 text-[0.6rem] leading-relaxed font-mono" style={{ color: "var(--pixel-text-off)" }}>
+            <span className="mr-1 font-mono text-[var(--pixel-accent)] font-semibold">JIN10 ▸</span>
             {signal.sources.jin10_headline}
           </div>
 
           {/* ── Footer ── */}
-          <div className="mt-2.5 flex items-center gap-1 text-[10px] text-[#444]">
-            <Clock className="h-3 w-3" />
+          <div className="mt-2.5 flex items-center gap-1 pixel-label text-[0.45rem]">
+            <Clock className="h-2.5 w-2.5" />
             {timeAgo(signal.updated_at)}
           </div>
         </div>
@@ -287,21 +287,21 @@ function SummaryBar({ signals }: { signals: Signal[] }) {
   return (
     <div className="mb-6 grid grid-cols-3 gap-3">
       {[
-        { label: "BUY",  count: buy,  color: "#22C55E", pct: Math.round(buy  / total * 100) },
-        { label: "HOLD", count: hold, color: "#F59E0B", pct: Math.round(hold / total * 100) },
-        { label: "SELL", count: sell, color: "#EF4444", pct: Math.round(sell / total * 100) },
+        { label: "BUY",  count: buy,  color: "#00FF41", pct: Math.round(buy  / total * 100) },
+        { label: "HOLD", count: hold, color: "#FFB800", pct: Math.round(hold / total * 100) },
+        { label: "SELL", count: sell, color: "#FF3131", pct: Math.round(sell / total * 100) },
       ].map(({ label, count, color, pct }) => (
-        <div key={label} className="rounded-xl border border-[#2A2A35] bg-[#15151B] px-4 py-3">
+        <div key={label} className="border-2 bg-[var(--pixel-surface)] px-4 py-3 transition hover:bg-[var(--pixel-surface-2)]" style={{ borderColor: color + "55" }}>
           <div className="flex items-end justify-between">
             <div>
-              <div className="text-2xl font-black text-white">{count}</div>
-              <div className="text-xs font-semibold mt-0.5" style={{ color }}>{label}</div>
+              <div className="pixel-data text-2xl font-black" style={{ color }}>{count}</div>
+              <div className="pixel-label mt-0.5 text-[0.5rem]" style={{ color }}>{label}</div>
             </div>
             <div className="text-right">
-              <div className="text-sm font-bold text-white">{pct}%</div>
-              {/* Mini bar */}
-              <div className="mt-1 h-1.5 w-16 rounded-full bg-[#2A2A35]">
-                <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
+              <div className="pixel-data text-sm font-bold" style={{ color }}>{pct}%</div>
+              {/* Pixel mini bar */}
+              <div className="mt-1 h-1.5 w-16" style={{ background: color + "14", border: `1px solid ${color}33` }}>
+                <div className="h-full" style={{ width: `${pct}%`, background: color, boxShadow: `0 0 4px ${color}88` }} />
               </div>
             </div>
           </div>
@@ -317,30 +317,31 @@ function TopSignal({ signal }: { signal: SignalWithHistory }) {
   const isPos = signal.change >= 0;
 
   return (
-    <div className={`mb-6 rounded-2xl border bg-gradient-to-br from-[#15151B] to-[#0D0D0D] p-6 ${cfg.border} ${cfg.glow}`}>
+    <div className={`mb-6 border-2 bg-[var(--pixel-surface)] p-6 ${cfg.border} ${cfg.glow}`}>
       <div className="mb-4 flex items-center gap-2">
         <Zap className="h-4 w-4" style={{ color: cfg.bg }} />
-        <span className="text-xs font-black uppercase tracking-widest" style={{ color: cfg.bg }}>
-          Strongest Signal Today
+        <span className="pixel-title text-[0.5rem]" style={{ color: cfg.bg }}>
+          ▸ Strongest Signal Today
         </span>
+        <div className="flex-1 h-px" style={{ background: cfg.bg + "33" }} />
       </div>
 
       <div className="flex items-center gap-6">
         <StrengthRing strength={signal.strength} signal={signal.signal} />
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <span className="text-3xl font-black text-white">{signal.ticker}</span>
+            <span className="pixel-title text-xl" style={{ color: cfg.bg }}>{signal.ticker}</span>
             <span
-              className="rounded-lg px-3 py-1 text-base font-black tracking-widest"
-              style={{ background: cfg.bg + "22", color: cfg.bg, border: `1px solid ${cfg.bg}55` }}
+              className="border-2 px-3 py-1 font-mono text-sm font-black tracking-widest uppercase"
+              style={{ background: cfg.bg + "14", color: cfg.bg, borderColor: cfg.bg + "88", boxShadow: `0 0 8px ${cfg.bg}44` }}
             >
               {signal.signal}
             </span>
-            <span className={`text-xl font-bold ${isPos ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+            <span className={`pixel-data text-base font-bold ${isPos ? "text-[#00FF41]" : "text-[#FF3131]"}`}>
               {isPos ? "+" : ""}{signal.change.toFixed(2)}%
             </span>
           </div>
-          <div className="mt-1 text-sm text-[#A0A0A0]">${signal.price.toFixed(2)} · Confidence {Math.round(signal.confidence * 100)}%</div>
+          <div className="mt-1 pixel-label">${signal.price.toFixed(2)} · CONF {Math.round(signal.confidence * 100)}%</div>
           <div className="mt-2 h-8 w-full">
             <Sparkline data={signal.history ?? []} color={cfg.bg} />
           </div>
@@ -353,24 +354,24 @@ function TopSignal({ signal }: { signal: SignalWithHistory }) {
 // ── Loading Skeleton ──────────────────────────────────────────────
 function CardSkeleton() {
   return (
-    <div className="rounded-2xl border border-[#2A2A35] bg-[#15151B] p-5 space-y-3 animate-pulse">
+    <div className="border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-5 space-y-3 animate-pulse">
       <div className="flex justify-between">
         <div className="space-y-2">
-          <div className="h-5 w-24 rounded bg-[#2A2A35]" />
-          <div className="h-4 w-32 rounded bg-[#2A2A35]" />
+          <div className="h-4 w-20 bg-[var(--pixel-border-dim)]" />
+          <div className="h-3 w-28 bg-[var(--pixel-border-dim)]" />
         </div>
-        <div className="h-20 w-20 rounded-full bg-[#2A2A35]" />
+        <div className="h-16 w-16 bg-[var(--pixel-border-dim)]" />
       </div>
-      <div className="h-14 w-full rounded bg-[#2A2A35]" />
+      <div className="h-12 w-full bg-[var(--pixel-border-dim)]" />
       <div className="flex gap-3">
-        <div className="h-16 w-16 rounded-full bg-[#2A2A35]" />
+        <div className="h-14 w-14 bg-[var(--pixel-border-dim)]" />
         <div className="flex-1 space-y-2">
-          <div className="h-3 w-20 rounded bg-[#2A2A35]" />
-          <div className="h-4 w-24 rounded bg-[#2A2A35]" />
-          <div className="h-3 w-16 rounded bg-[#2A2A35]" />
+          <div className="h-2.5 w-16 bg-[var(--pixel-border-dim)]" />
+          <div className="h-3 w-20 bg-[var(--pixel-border-dim)]" />
+          <div className="h-2.5 w-14 bg-[var(--pixel-border-dim)]" />
         </div>
       </div>
-      <div className="h-10 w-full rounded-lg bg-[#2A2A35]" />
+      <div className="h-8 w-full bg-[var(--pixel-border-dim)]" />
     </div>
   );
 }
@@ -392,22 +393,22 @@ function SortDropdown({ value, onChange }: { value: SortMode; onChange: (v: Sort
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 rounded-lg border border-[#2A2A35] bg-[#15151B] px-3 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24]"
+        className="flex items-center gap-1.5 border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-3 py-1.5 font-mono text-[0.55rem] uppercase tracking-wider text-[var(--pixel-text-off)] transition hover:border-[var(--pixel-border)] hover:text-[var(--pixel-text)]"
       >
         Sort: {SORT_LABELS[value]}
         <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <div className="absolute right-0 top-full z-20 mt-1 min-w-[160px] rounded-lg border border-[#2A2A35] bg-[#15151B] py-1 shadow-xl">
+        <div className="absolute right-0 top-full z-20 mt-1 min-w-[160px] border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] py-1" style={{ boxShadow: "4px 4px 0px rgba(0,255,65,0.1)" }}>
           {(Object.keys(SORT_LABELS) as SortMode[]).map((mode) => (
             <button
               key={mode}
               onClick={() => { onChange(mode); setOpen(false); }}
-              className={`block w-full px-3 py-1.5 text-left text-xs transition hover:bg-[#1C1C24] ${
-                value === mode ? "text-white font-semibold" : "text-[#A0A0A0]"
+              className={`block w-full border-b border-[var(--pixel-border-dim)] px-3 py-1.5 text-left font-mono text-[0.55rem] uppercase tracking-wider transition last:border-b-0 hover:bg-[var(--pixel-surface-2)] hover:text-[var(--pixel-text)] ${
+                value === mode ? "text-[var(--pixel-buy)] font-semibold" : "text-[var(--pixel-text-off)]"
               }`}
             >
-              {SORT_LABELS[mode]}
+              {value === mode && "▸ "}{SORT_LABELS[mode]}
             </button>
           ))}
         </div>
@@ -570,17 +571,17 @@ export default function DashboardPage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white">
+    <div className="min-h-screen bg-[var(--pixel-bg)] text-[var(--pixel-text)]">
       {/* ── Header ── */}
-      <header className="sticky top-0 z-20 border-b border-[#1C1C24] bg-[#0D0D0D]/90 backdrop-blur-sm">
+      <header className="sticky top-0 z-20 border-b-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)]/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#22C55E]/15">
-              <Zap className="h-4 w-4 text-[#22C55E]" />
+            <div className="flex h-8 w-8 items-center justify-center border-2 border-[var(--pixel-border)] bg-[var(--pixel-surface)]" style={{ boxShadow: "var(--pixel-glow-green)" }}>
+              <Zap className="h-4 w-4" style={{ color: "var(--pixel-buy)" }} />
             </div>
             <div>
-              <h1 className="text-base font-black tracking-tight text-white">AlphaEdge</h1>
-              <div className="text-[10px] text-[#444] tracking-widest uppercase">Signal Dashboard</div>
+              <h1 className="pixel-title text-[0.6rem]">AlphaEdge</h1>
+              <div className="pixel-label text-[0.45rem]">Signal Dashboard</div>
             </div>
           </div>
 
@@ -588,14 +589,14 @@ export default function DashboardPage() {
             {/* Alerts link */}
             <Link
               href="/alerts"
-              className="relative flex items-center gap-1 rounded-lg border border-[#2A2A35] bg-[#15151B] px-2.5 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24] hover:text-white"
+              className="relative flex items-center gap-1 border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-wider text-[var(--pixel-text-off)] transition hover:border-[var(--pixel-sell)] hover:text-[var(--pixel-sell)]"
             >
               <Bell className="h-3 w-3" />
               Alerts
               {hasHighAlerts && (
                 <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#EF4444] opacity-75" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#EF4444]" />
+                  <span className="absolute inline-flex h-full w-full animate-ping bg-[var(--pixel-sell)] opacity-75" />
+                  <span className="relative inline-flex h-2.5 w-2.5 bg-[var(--pixel-sell)]" style={{ boxShadow: "var(--pixel-glow-red)" }} />
                 </span>
               )}
             </Link>
@@ -603,7 +604,7 @@ export default function DashboardPage() {
             {/* Accuracy link */}
             <Link
               href="/accuracy"
-              className="flex items-center gap-1 rounded-lg border border-[#2A2A35] bg-[#15151B] px-2.5 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24] hover:text-white"
+              className="flex items-center gap-1 border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-wider text-[var(--pixel-text-off)] transition hover:border-[var(--pixel-accent)] hover:text-[var(--pixel-accent)]"
             >
               <BarChart3 className="h-3 w-3" />
               Accuracy
@@ -612,11 +613,11 @@ export default function DashboardPage() {
             {/* Search button */}
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex items-center gap-1.5 rounded-lg border border-[#2A2A35] bg-[#15151B] px-2.5 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24] hover:text-white"
+              className="flex items-center gap-1.5 border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-wider text-[var(--pixel-text-off)] transition hover:border-[var(--pixel-border)] hover:text-[var(--pixel-text)]"
             >
               <Search className="h-3 w-3" />
-              <span className="hidden sm:inline">Search ticker...</span>
-              <kbd className="ml-1 hidden rounded border border-[#2A2A35] bg-[#0D0D0D] px-1 py-0.5 text-[9px] text-[#555] sm:inline">
+              <span className="hidden sm:inline">Search...</span>
+              <kbd className="ml-1 hidden border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] px-1 py-0.5 font-mono text-[0.45rem] text-[var(--pixel-text-muted)] sm:inline">
                 ⌘K
               </kbd>
             </button>
@@ -624,7 +625,7 @@ export default function DashboardPage() {
             {/* Portfolio link */}
             <Link
               href="/portfolio"
-              className="flex items-center gap-1 rounded-lg border border-[#2A2A35] bg-[#15151B] px-2.5 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24] hover:text-white"
+              className="flex items-center gap-1 border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-wider text-[var(--pixel-text-off)] transition hover:border-[var(--pixel-accent)] hover:text-[var(--pixel-accent)]"
             >
               <Briefcase className="h-3 w-3" />
               Portfolio
@@ -644,17 +645,18 @@ export default function DashboardPage() {
                   }}
                   placeholder="TICKER"
                   maxLength={5}
-                  className="w-20 rounded-lg border border-[#2A2A35] bg-[#15151B] px-2 py-1.5 text-xs text-white placeholder-[#444] outline-none focus:border-[#22C55E]/50"
+                  className="w-20 border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-2 py-1.5 font-mono text-[0.6rem] uppercase text-[var(--pixel-text)] placeholder-[var(--pixel-text-muted)] outline-none focus:border-[var(--pixel-border)]"
+                  style={{ boxShadow: "none" }}
                 />
                 <button
                   onClick={() => addTicker(tickerInput)}
-                  className="rounded-lg bg-[#22C55E]/15 px-2 py-1.5 text-xs font-semibold text-[#22C55E] transition hover:bg-[#22C55E]/25"
+                  className="border-2 border-[var(--pixel-buy)] bg-[rgba(0,255,65,0.08)] px-2 py-1.5 font-mono text-[0.55rem] font-semibold uppercase tracking-widest text-[var(--pixel-buy)] transition hover:bg-[var(--pixel-buy)] hover:text-[var(--pixel-bg)]"
                 >
                   Add
                 </button>
                 <button
                   onClick={() => { setAddingTicker(false); setTickerInput(""); setTickerError(""); }}
-                  className="rounded-lg px-1.5 py-1.5 text-xs text-[#666] transition hover:text-white"
+                  className="border border-[var(--pixel-border-dim)] px-1.5 py-1.5 text-[var(--pixel-text-muted)] transition hover:border-[var(--pixel-sell)] hover:text-[var(--pixel-sell)]"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -662,30 +664,30 @@ export default function DashboardPage() {
             ) : (
               <button
                 onClick={() => setAddingTicker(true)}
-                className="flex items-center gap-1 rounded-lg border border-[#2A2A35] bg-[#15151B] px-2.5 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24] hover:text-white"
+                className="flex items-center gap-1 border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-wider text-[var(--pixel-text-off)] transition hover:border-[var(--pixel-border)] hover:text-[var(--pixel-text)]"
               >
                 <Plus className="h-3 w-3" />
-                Add Ticker
+                + Ticker
               </button>
             )}
 
             {lastUpdate && (
-              <span className="hidden text-xs text-[#444] sm:block">
-                Updated {lastUpdate.toLocaleTimeString()}
+              <span className="hidden font-mono text-[0.5rem] text-[var(--pixel-text-muted)] sm:block">
+                {lastUpdate.toLocaleTimeString()}
               </span>
             )}
             <button
               onClick={() => fetchSignals(watchlist, true)}
               disabled={refreshing}
-              className="flex items-center gap-1.5 rounded-lg border border-[#2A2A35] bg-[#15151B] px-3 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24] disabled:opacity-50"
+              className="flex items-center gap-1.5 border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-3 py-1.5 font-mono text-[0.55rem] uppercase tracking-wider text-[var(--pixel-text-off)] transition hover:border-[var(--pixel-border)] hover:text-[var(--pixel-text)] disabled:opacity-30"
             >
               <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />
               Refresh
             </button>
-            <div className="flex items-center gap-1.5 text-xs text-[#22C55E]">
+            <div className="flex items-center gap-1.5 font-mono text-[0.55rem] uppercase tracking-widest" style={{ color: "var(--pixel-buy)" }}>
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22C55E] opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#22C55E]" />
+                <span className="absolute inline-flex h-full w-full animate-ping bg-[var(--pixel-buy)] opacity-75" />
+                <span className="relative inline-flex h-2 w-2 bg-[var(--pixel-buy)]" style={{ boxShadow: "var(--pixel-glow-green)" }} />
               </span>
               Live
             </div>
@@ -694,8 +696,8 @@ export default function DashboardPage() {
         {/* Ticker error toast */}
         {tickerError && (
           <div className="mx-auto max-w-7xl px-4 pb-2 sm:px-6">
-            <div className="rounded-lg bg-[#EF4444]/10 px-3 py-1.5 text-xs text-[#EF4444]">
-              {tickerError}
+            <div className="border-2 border-[var(--pixel-sell)] bg-[rgba(255,49,49,0.08)] px-3 py-1.5 font-mono text-[0.55rem] uppercase text-[var(--pixel-sell)]">
+              ▸ {tickerError}
             </div>
           </div>
         )}
@@ -716,8 +718,8 @@ export default function DashboardPage() {
 
         {/* ── Watchlist header ── */}
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-black uppercase tracking-widest text-[#444]">Watchlist</h2>
-          <span className="text-xs text-[#333]">Auto-refresh 60s</span>
+          <h2 className="pixel-title text-[0.5rem]">▸ Watchlist</h2>
+          <span className="pixel-label text-[0.45rem]">Auto-refresh 60s</span>
         </div>
 
         {/* ── Filter tabs + Sort controls ── */}
@@ -730,18 +732,16 @@ export default function DashboardPage() {
                 <button
                   key={tab}
                   onClick={() => setFilter(tab)}
-                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  className="flex items-center gap-1.5 border-2 px-3 py-1.5 font-mono text-[0.5rem] uppercase tracking-widest transition"
+                  style={
                     isActive
-                      ? "text-white"
-                      : "text-[#666] hover:text-[#A0A0A0]"
-                  }`}
-                  style={isActive ? { background: color + "20", color, border: `1px solid ${color}44` } : { background: "transparent", border: "1px solid transparent" }}
+                      ? { background: color + "14", color, borderColor: color + "88", boxShadow: `0 0 6px ${color}44` }
+                      : { background: "transparent", borderColor: "var(--pixel-border-dim)", color: "var(--pixel-text-muted)" }
+                  }
                 >
-                  {tab}
+                  {isActive && "▸ "}{tab}
                   <span
-                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${
-                      isActive ? "bg-white/10" : "bg-[#2A2A35]"
-                    }`}
+                    className="border border-current px-1 py-0.5 text-[0.45rem] font-bold leading-none"
                   >
                     {signalCounts[tab]}
                   </span>
@@ -754,8 +754,8 @@ export default function DashboardPage() {
 
         {/* ── Card count ── */}
         {!loading && (
-          <div className="mb-4 text-xs text-[#444]">
-            Showing {filteredSorted.length} of {signals.length} stocks
+          <div className="mb-4 pixel-label text-[0.45rem]">
+            Showing {filteredSorted.length} of {signals.length} signals
           </div>
         )}
 
@@ -770,8 +770,8 @@ export default function DashboardPage() {
 
         {/* Empty state for filters */}
         {!loading && filteredSorted.length === 0 && signals.length > 0 && (
-          <div className="py-12 text-center text-sm text-[#444]">
-            No {filter} signals found. Try a different filter.
+          <div className="py-12 text-center pixel-label">
+            No {filter} signals found.
           </div>
         )}
 

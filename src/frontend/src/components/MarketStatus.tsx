@@ -41,18 +41,18 @@ export function MarketStatus() {
         className={`relative flex h-2 w-2 ${status.open ? "" : ""}`}
       >
         {status.open && (
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22C55E] opacity-60" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-none bg-[#00FF41] opacity-60" />
         )}
         <span
-          className={`relative inline-flex h-2 w-2 rounded-full ${
-            status.open ? "bg-[#22C55E]" : "bg-[#666]"
+          className={`relative inline-flex h-2 w-2 rounded-none ${
+            status.open ? "bg-[#00FF41]" : "bg-[#666]"
           }`}
         />
       </span>
-      <span className={status.open ? "text-[#22C55E]" : "text-[#666]"}>
+      <span className={status.open ? "text-[#00FF41]" : "text-[var(--pixel-text-muted)]"}>
         {status.label}
       </span>
-      <span className="text-[#444]">· {status.next}</span>
+      <span className="text-[var(--pixel-text-muted)]">· {status.next}</span>
     </div>
   );
 }

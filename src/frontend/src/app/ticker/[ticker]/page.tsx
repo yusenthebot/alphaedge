@@ -49,16 +49,16 @@ interface TickerSignal {
 
 // ── Config ─────────────────────────────────────────────────────────
 const SIG = {
-  BUY:  { color: "#22C55E", bg: "rgba(34,197,94,0.1)",  border: "rgba(34,197,94,0.35)" },
-  HOLD: { color: "#F59E0B", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.35)" },
-  SELL: { color: "#EF4444", bg: "rgba(239,68,68,0.1)",  border: "rgba(239,68,68,0.35)" },
+  BUY:  { color: "#00FF41", bg: "rgba(34,197,94,0.1)",  border: "rgba(34,197,94,0.35)" },
+  HOLD: { color: "#FFB800", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.35)" },
+  SELL: { color: "#FF3131", bg: "rgba(239,68,68,0.1)",  border: "rgba(239,68,68,0.35)" },
 } as const;
 
 // ── Custom Tooltip ─────────────────────────────────────────────────
 function DarkTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; dataKey: string; color: string }>; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-[#2A2A35] bg-[#0D0D0D] px-3 py-2 text-xs shadow-xl">
+    <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-bg)] px-3 py-2 text-xs shadow-xl">
       <div className="mb-1 text-[#666]">{label}</div>
       {payload.map((p, i) => (
         <div key={i} style={{ color: p.color }} className="flex gap-2">
@@ -88,7 +88,7 @@ function Gauge({ value, max = 100, color, label, sublabel }: { value: number; ma
           <RadialBar dataKey="value" cornerRadius={5} background={{ fill: "#1C1C24" }} />
         </RadialBarChart>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-sm font-bold text-white">{value}</span>
+          <span className="text-sm font-bold text-[var(--pixel-text)]">{value}</span>
           {sublabel && <span className="text-[9px] text-[#444]">{sublabel}</span>}
         </div>
       </div>
@@ -100,9 +100,9 @@ function Gauge({ value, max = 100, color, label, sublabel }: { value: number; ma
 // ── Stats ──────────────────────────────────────────────────────────
 function StatBox({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className="rounded-xl border border-[#2A2A35] bg-[#15151B] px-4 py-3">
+    <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-4 py-3">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-[#444]">{label}</div>
-      <div className="mt-1 text-lg font-bold text-white">{value}</div>
+      <div className="mt-1 text-lg font-bold text-[var(--pixel-text)]">{value}</div>
       {sub && <div className="text-[10px] text-[#555]">{sub}</div>}
     </div>
   );
@@ -111,14 +111,14 @@ function StatBox({ label, value, sub }: { label: string; value: string; sub?: st
 // ── Skeleton ───────────────────────────────────────────────────────
 function PageSkeleton() {
   return (
-    <div className="min-h-screen bg-[#0D0D0D] p-6 animate-pulse space-y-6">
-      <div className="h-8 w-32 rounded bg-[#15151B]" />
-      <div className="h-24 w-full rounded-2xl bg-[#15151B]" />
-      <div className="h-72 w-full rounded-2xl bg-[#15151B]" />
+    <div className="min-h-screen bg-[var(--pixel-bg)] p-6 animate-pulse space-y-6">
+      <div className="h-8 w-32 rounded bg-[var(--pixel-surface)]" />
+      <div className="h-24 w-full rounded-none bg-[var(--pixel-surface)]" />
+      <div className="h-72 w-full rounded-none bg-[var(--pixel-surface)]" />
       <div className="grid grid-cols-4 gap-4">
-        {[...Array(4)].map((_, i) => <div key={i} className="h-20 rounded-xl bg-[#15151B]" />)}
+        {[...Array(4)].map((_, i) => <div key={i} className="h-20 rounded-none bg-[var(--pixel-surface)]" />)}
       </div>
-      <div className="h-48 w-full rounded-2xl bg-[#15151B]" />
+      <div className="h-48 w-full rounded-none bg-[var(--pixel-surface)]" />
     </div>
   );
 }
@@ -164,9 +164,9 @@ export default function TickerPage() {
   if (loading) return <PageSkeleton />;
   if (error || !signal) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#0D0D0D] gap-4">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--pixel-bg)] gap-4">
         <div className="text-[#666]">No data for {ticker}</div>
-        <button onClick={() => router.back()} className="text-sm text-[#22C55E] hover:underline">← Back</button>
+        <button onClick={() => router.back()} className="text-sm text-[#00FF41] hover:underline">← Back</button>
       </div>
     );
   }
@@ -182,7 +182,7 @@ export default function TickerPage() {
   const totalVol = history.reduce((a, h) => a + (h.volume || 0), 0);
 
   // Sparkline color based on trend
-  const priceColor = isPos ? "#22C55E" : "#EF4444";
+  const priceColor = isPos ? "#00FF41" : "#FF3131";
 
   // Annotate history with flat RSI for visualization
   const chartData = history.map((h) => ({
@@ -194,17 +194,17 @@ export default function TickerPage() {
   const macdIsBear = signal.sources.macd === "死叉";
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white">
+    <div className="min-h-screen bg-[var(--pixel-bg)] text-[var(--pixel-text)]">
       {/* ── Header ── */}
-      <header className="sticky top-0 z-20 border-b border-[#1C1C24] bg-[#0D0D0D]/90 backdrop-blur-sm">
+      <header className="sticky top-0 z-20 border-b border-[#1C1C24] bg-[var(--pixel-bg)]/90 backdrop-blur-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
-          <Link href="/dashboard" className="flex items-center gap-2 text-sm text-[#666] transition hover:text-white">
+          <Link href="/dashboard" className="flex items-center gap-2 text-sm text-[#666] transition hover:text-[var(--pixel-text)]">
             <ArrowLeft className="h-4 w-4" />
             Dashboard
           </Link>
           <button
             onClick={fetchData}
-            className="flex items-center gap-1.5 rounded-lg border border-[#2A2A35] bg-[#15151B] px-3 py-1.5 text-xs text-[#666] transition hover:text-white"
+            className="flex items-center gap-1.5 rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-3 py-1.5 text-xs text-[#666] transition hover:text-[var(--pixel-text)]"
           >
             <RefreshCw className="h-3 w-3" />
             Refresh
@@ -215,7 +215,7 @@ export default function TickerPage() {
       <main className="mx-auto max-w-5xl space-y-5 px-4 py-6 sm:px-6">
         {/* ── Hero ── */}
         <div
-          className="rounded-2xl p-6"
+          className="rounded-none p-6"
           style={{ background: cfg.bg, border: `1px solid ${cfg.border}` }}
         >
           <div className="flex items-start justify-between">
@@ -223,7 +223,7 @@ export default function TickerPage() {
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-black tracking-tight">{ticker}</h1>
                 <span
-                  className="rounded-lg px-3 py-1 text-sm font-black tracking-widest"
+                  className="rounded-none px-3 py-1 text-sm font-black tracking-widest"
                   style={{ color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.border}` }}
                 >
                   {signal.signal}
@@ -232,7 +232,7 @@ export default function TickerPage() {
               <div className="flex items-center gap-3">
                 <span className="text-3xl font-bold">${signal.price.toFixed(2)}</span>
                 <span
-                  className={`flex items-center gap-1 text-lg font-semibold ${isPos ? "text-[#22C55E]" : "text-[#EF4444]"}`}
+                  className={`flex items-center gap-1 text-lg font-semibold ${isPos ? "text-[#00FF41]" : "text-[#FF3131]"}`}
                 >
                   {isPos ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
                   {isPos ? "+" : ""}{signal.change.toFixed(2)}%
@@ -259,10 +259,10 @@ export default function TickerPage() {
         </div>
 
         {/* ── Price + Volume chart ── */}
-        <div className="rounded-2xl border border-[#2A2A35] bg-[#15151B] p-5">
+        <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-5">
           <div className="mb-3 flex items-center gap-2">
             <Activity className="h-4 w-4 text-[#666]" />
-            <span className="text-sm font-bold text-white">30-Day Price & Volume</span>
+            <span className="text-sm font-bold text-[var(--pixel-text)]">30-Day Price & Volume</span>
           </div>
           <ResponsiveContainer width="100%" height={280}>
             <ComposedChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
@@ -288,12 +288,12 @@ export default function TickerPage() {
         </div>
 
         {/* ── RSI chart ── */}
-        <div className="rounded-2xl border border-[#2A2A35] bg-[#15151B] p-5">
+        <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-5">
           <div className="mb-1 flex items-center justify-between">
-            <span className="text-sm font-bold text-white">RSI (14)</span>
+            <span className="text-sm font-bold text-[var(--pixel-text)]">RSI (14)</span>
             <span
               className="text-sm font-bold"
-              style={{ color: signal.sources.rsi < 30 ? "#22C55E" : signal.sources.rsi > 70 ? "#EF4444" : "#A0A0A0" }}
+              style={{ color: signal.sources.rsi < 30 ? "#00FF41" : signal.sources.rsi > 70 ? "#FF3131" : "#A0A0A0" }}
             >
               Current: {signal.sources.rsi} — {signal.sources.rsi_label}
             </span>
@@ -304,8 +304,8 @@ export default function TickerPage() {
               <XAxis dataKey="date" tick={{ fontSize: 9, fill: "#444" }} axisLine={false} tickLine={false} />
               <YAxis domain={[0, 100]} tick={{ fontSize: 9, fill: "#444" }} axisLine={false} tickLine={false} width={30} />
               <Tooltip content={<DarkTooltip />} />
-              <ReferenceLine y={70} stroke="#EF4444" strokeDasharray="4 4" strokeOpacity={0.6} />
-              <ReferenceLine y={30} stroke="#22C55E" strokeDasharray="4 4" strokeOpacity={0.6} />
+              <ReferenceLine y={70} stroke="#FF3131" strokeDasharray="4 4" strokeOpacity={0.6} />
+              <ReferenceLine y={30} stroke="#00FF41" strokeDasharray="4 4" strokeOpacity={0.6} />
               <Line type="monotone" dataKey="rsi" stroke="#8B5CF6" strokeWidth={2} dot={false}
                 activeDot={{ r: 3, fill: "#8B5CF6" }} />
             </LineChart>
@@ -313,18 +313,18 @@ export default function TickerPage() {
         </div>
 
         {/* ── Signal breakdown ── */}
-        <div className="rounded-2xl border border-[#2A2A35] bg-[#15151B] p-5">
-          <div className="mb-4 text-sm font-bold text-white">Signal Breakdown</div>
+        <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-5">
+          <div className="mb-4 text-sm font-bold text-[var(--pixel-text)]">Signal Breakdown</div>
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             <Gauge
               value={Math.round(signal.sources.jin10_sentiment * 100)}
-              color={signal.sources.jin10_sentiment > 0 ? "#22C55E" : "#EF4444"}
+              color={signal.sources.jin10_sentiment > 0 ? "#00FF41" : "#FF3131"}
               label="Jin10"
               sublabel="%"
             />
             <Gauge
               value={signal.sources.rsi}
-              color={signal.sources.rsi < 30 ? "#22C55E" : signal.sources.rsi > 70 ? "#EF4444" : "#8B5CF6"}
+              color={signal.sources.rsi < 30 ? "#00FF41" : signal.sources.rsi > 70 ? "#FF3131" : "#8B5CF6"}
               label="RSI"
             />
             <div className="flex flex-col items-center gap-1">
@@ -332,8 +332,8 @@ export default function TickerPage() {
                 className="flex h-20 w-20 items-center justify-center rounded-full text-sm font-bold"
                 style={{
                   background: macdIsBull ? "rgba(34,197,94,0.1)" : macdIsBear ? "rgba(239,68,68,0.1)" : "rgba(160,160,160,0.1)",
-                  border: `2px solid ${macdIsBull ? "#22C55E55" : macdIsBear ? "#EF444455" : "#55555555"}`,
-                  color: macdIsBull ? "#22C55E" : macdIsBear ? "#EF4444" : "#A0A0A0",
+                  border: `2px solid ${macdIsBull ? "#00FF4155" : macdIsBear ? "#FF313155" : "#55555555"}`,
+                  color: macdIsBull ? "#00FF41" : macdIsBear ? "#FF3131" : "#A0A0A0",
                 }}
               >
                 {signal.sources.macd}
@@ -350,11 +350,11 @@ export default function TickerPage() {
         </div>
 
         {/* ── Analysis ── */}
-        <div className="rounded-2xl border border-[#2A2A35] bg-[#15151B] p-5">
-          <div className="mb-3 text-sm font-bold text-white">Analysis</div>
+        <div className="rounded-none border border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] p-5">
+          <div className="mb-3 text-sm font-bold text-[var(--pixel-text)]">Analysis</div>
           <p className="leading-relaxed text-[#A0A0A0]">{signal.reasoning}</p>
           {signal.sources.jin10_headline && signal.sources.jin10_headline !== signal.reasoning && (
-            <div className="mt-3 rounded-lg bg-[#0D0D0D] p-3 text-sm text-[#666]">
+            <div className="mt-3 rounded-none bg-[var(--pixel-bg)] p-3 text-sm text-[#666]">
               <span className="mr-1 font-semibold text-[#3B82F6]">Jin10</span>
               {signal.sources.jin10_headline}
             </div>
