@@ -11,9 +11,11 @@ import {
   RadialBar,
   PolarAngleAxis,
 } from "recharts";
-import { TrendingUp, TrendingDown, Zap, RefreshCw, Clock, Plus, X, ChevronDown } from "lucide-react";
+import { TrendingUp, TrendingDown, Zap, RefreshCw, Clock, Plus, X, ChevronDown, Bell, Search, Briefcase, BarChart3 } from "lucide-react";
 import type { Signal } from "@/types/signal";
 import NewsFeed from "@/components/NewsFeed";
+import SearchBar from "@/components/SearchBar";
+import MarketOverview from "@/components/MarketOverview";
 
 // ── Types ──────────────────────────────────────────────────────────
 interface HistoryPoint {
@@ -426,11 +428,38 @@ export default function DashboardPage() {
   const [addingTicker, setAddingTicker] = useState(false);
   const [tickerInput, setTickerInput] = useState("");
   const [tickerError, setTickerError] = useState("");
+  const [hasHighAlerts, setHasHighAlerts] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const addInputRef = useRef<HTMLInputElement>(null);
 
   // Load watchlist from localStorage on mount
   useEffect(() => {
     setWatchlist(loadWatchlist());
+  }, []);
+
+  // Cmd+K / Ctrl+K to open search
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Fetch alerts to check for HIGH severity
+  useEffect(() => {
+    async function checkAlerts() {
+      try {
+        const res = await fetch("/api/alerts");
+        const data = await res.json();
+        const alerts = data.alerts ?? [];
+        setHasHighAlerts(alerts.some((a: { severity: string }) => a.severity === "high"));
+      } catch {}
+    }
+    checkAlerts();
   }, []);
 
   // Focus input when add mode is activated
@@ -556,6 +585,51 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-4">
+            {/* Alerts link */}
+            <Link
+              href="/alerts"
+              className="relative flex items-center gap-1 rounded-lg border border-[#2A2A35] bg-[#15151B] px-2.5 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24] hover:text-white"
+            >
+              <Bell className="h-3 w-3" />
+              Alerts
+              {hasHighAlerts && (
+                <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#EF4444] opacity-75" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#EF4444]" />
+                </span>
+              )}
+            </Link>
+
+            {/* Accuracy link */}
+            <Link
+              href="/accuracy"
+              className="flex items-center gap-1 rounded-lg border border-[#2A2A35] bg-[#15151B] px-2.5 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24] hover:text-white"
+            >
+              <BarChart3 className="h-3 w-3" />
+              Accuracy
+            </Link>
+
+            {/* Search button */}
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-[#2A2A35] bg-[#15151B] px-2.5 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24] hover:text-white"
+            >
+              <Search className="h-3 w-3" />
+              <span className="hidden sm:inline">Search ticker...</span>
+              <kbd className="ml-1 hidden rounded border border-[#2A2A35] bg-[#0D0D0D] px-1 py-0.5 text-[9px] text-[#555] sm:inline">
+                ⌘K
+              </kbd>
+            </button>
+
+            {/* Portfolio link */}
+            <Link
+              href="/portfolio"
+              className="flex items-center gap-1 rounded-lg border border-[#2A2A35] bg-[#15151B] px-2.5 py-1.5 text-xs text-[#A0A0A0] transition hover:bg-[#1C1C24] hover:text-white"
+            >
+              <Briefcase className="h-3 w-3" />
+              Portfolio
+            </Link>
+
             {/* Add Ticker button */}
             {addingTicker ? (
               <div className="flex items-center gap-1.5">
@@ -627,9 +701,15 @@ export default function DashboardPage() {
         )}
       </header>
 
+      {/* ── Search modal ── */}
+      <SearchBar open={searchOpen} onClose={() => setSearchOpen(false)} />
+
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
         {/* ── Summary bar ── */}
         {!loading && signals.length > 0 && <SummaryBar signals={signals} />}
+
+        {/* ── Market Heatmap ── */}
+        <MarketOverview />
 
         {/* ── Top signal ── */}
         {!loading && topSignal && <TopSignal signal={topSignal} />}

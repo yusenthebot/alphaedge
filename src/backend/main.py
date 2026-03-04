@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.dirname(__file__))       # for signal_store.py
 
 from pipeline.unified_collector import collect_all
 from signals.aggregator import generate_signals
-from signal_store import init_db, log_signal, get_history, get_all_latest
+from signal_store import init_db, log_signal, get_history, get_all_latest, get_signal_changes, compute_win_rate, compute_all_win_rates
 
 
 def _generate_signals_for_tickers(tickers: list[str]) -> list[dict]:
@@ -228,6 +228,51 @@ def get_news():
     # Sort newest first, limit to 30
     parsed.sort(key=lambda x: x["created_at"], reverse=True)
     return {"news": parsed[:30], "count": min(len(parsed), 30)}
+
+
+@app.get("/api/alerts")
+def get_alerts(hours: int = 24):
+    """Return signal changes in the last N hours with severity."""
+    hours = min(max(1, hours), 168)  # clamp 1h-7d
+    changes = get_signal_changes(since_hours=hours)
+
+    def severity(old: str, new: str) -> str:
+        pair = {old, new}
+        if pair == {"BUY", "SELL"}:
+            return "high"
+        return "medium"
+
+    alerts = [
+        {
+            "ticker": c["ticker"],
+            "from_signal": c["old_signal"],
+            "to_signal": c["new_signal"],
+            "price": c["price"],
+            "created_at": c["created_at"],
+            "severity": severity(c["old_signal"], c["new_signal"]),
+        }
+        for c in changes
+    ]
+    return {"alerts": alerts, "count": len(alerts)}
+
+
+@app.get("/api/accuracy")
+def get_accuracy(days: int = 30):
+    """Return signal accuracy stats for all tracked tickers."""
+    days = min(max(1, days), 365)
+    stats = compute_all_win_rates(days_back=days)
+    return {"stats": stats, "count": len(stats), "days_back": days}
+
+
+@app.get("/api/accuracy/{ticker}")
+def get_accuracy_ticker(ticker: str, days: int = 30):
+    """Return signal accuracy stats for a single ticker."""
+    ticker = ticker.upper()
+    days = min(max(1, days), 365)
+    stats = compute_win_rate(ticker, days_back=days)
+    if stats["total_signals"] == 0:
+        raise HTTPException(status_code=404, detail=f"No signal history for {ticker}")
+    return stats
 
 
 @app.post("/api/refresh")
