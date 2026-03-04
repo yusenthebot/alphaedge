@@ -56,8 +56,8 @@ function timeAgo(dateString: string) {
 }
 
 function rsiLabel(rsi: number) {
-  if (rsi < 30) return { label: "OVERSOLD", color: "#22C55E" };
-  if (rsi > 70) return { label: "OVERBOUGHT", color: "#EF4444" };
+  if (rsi < 30) return { label: "OVERSOLD", color: "#00FF41" };
+  if (rsi > 70) return { label: "OVERBOUGHT", color: "#FF3131" };
   return { label: "NEUTRAL", color: "#A0A0A0" };
 }
 
