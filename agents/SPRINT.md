@@ -1,15 +1,17 @@
-# Sprint — Cycle 2 [20:39:33]
+# Sprint — Cycle 3 [20:44:46]
 
-Clear picture. Here's the sprint:
+Confirmed both issues. Here's the sprint:
 
-# SPRINT 2
+---
 
-## Task 1: Add AbortController to cancel stale dashboard fetches
-File: `src/frontend/src/app/dashboard/page.tsx:486-510`
-Change: Add an `AbortController` parameter to `fetchSignals`. Pass `signal` to both the `/api/signals` fetch (line 489) and each `/api/history/{ticker}` fetch (line 477 via `fetchHistory`). In the `useEffect` at line 513-518, create an `AbortController`, pass it to `fetchSignals` and the interval calls, and call `controller.abort()` in the cleanup return. In the catch blocks, ignore `AbortError` (don't log it or set error state).
-Done when: Rapidly toggling watchlist tickers produces no stale/out-of-order signal renders; only the latest request's data is applied.
+# SPRINT 3
 
-## Task 2: Suppress AbortError logging in fetchSignals catch block
-File: `src/frontend/src/app/dashboard/page.tsx:504-505`
-Change: In the catch block of `fetchSignals`, check `if (err instanceof DOMException && err.name === 'AbortError') return;` before the `console.error` call. This prevents aborted requests from polluting the console.
-Done when: Aborting an in-flight fetch does not log any error to the console.
+## Task 1: Fix manual-refresh missing AbortSignal (BUG)
+File: `src/frontend/src/app/dashboard/page.tsx`
+Change: On line 634, the manual refresh button calls `fetchSignals(watchlist, true)` without passing an `AbortSignal`. Create an `AbortController`, pass its `.signal` as the third argument: `fetchSignals(watchlist, true, controller.signal)`. Store the controller in a ref so clicking refresh again (or watchlist change) aborts the prior in-flight manual request.
+Done when: Manual refresh passes an `AbortSignal` to `fetchSignals`, and rapid clicks or watchlist changes abort stale manual requests.
+
+## Task 2: Remove duplicate SignalStrengthBar in signal cards
+File: `src/frontend/src/app/dashboard/page.tsx`
+Change: Delete line 195 (`<SignalStrengthBar value={signal.strength || 50} signal={signal.signal} />`). The strength bar at line 185 (card header, top-right) already displays the same data. Keep the RSI/MACD row contents (lines 196–204) intact.
+Done when: Each signal card renders exactly one `SignalStrengthBar` (the one at line 185), and the RSI/MACD row shows RSI value, MACD badge, and confidence without a second bar.

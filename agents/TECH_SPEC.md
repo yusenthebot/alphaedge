@@ -1,20 +1,23 @@
-# Tech — Cycle 2 [20:39:12]
+# Tech — Cycle 3 [20:44:17]
 
-## Tech Priority: AbortController for dashboard fetch race conditions
+Confirmed both bugs. Here's the priority:
 
-**File:** `src/frontend/src/app/dashboard/page.tsx:513-518`
+## Tech Priority: Fix manual-refresh missing AbortSignal (BUG-1)
 
-**Issue:** When the watchlist changes, `fetchSignals` is called but the previous in-flight request isn't cancelled. Rapid watchlist edits (add/remove tickers) trigger overlapping fetches that resolve out-of-order, causing stale data to overwrite fresh data. The `Promise.all` for history (line 495-500) amplifies this — each watchlist change fires N+1 requests with no abort.
+**File:** `src/frontend/src/app/dashboard/page.tsx:634`
 
-**Fix:** Add `AbortController` to the polling `useEffect`. Pass `signal` to every `fetch` call. Abort on cleanup:
+**Issue:** The manual refresh button calls `fetchSignals(watchlist, true)` without passing the AbortController's signal. If the user changes their watchlist while a manual refresh is in-flight, the stale request won't cancel — it will resolve and overwrite the new watchlist's data with stale results. Every other call site (lines 462–463) correctly passes `controller.signal`.
+
+**Fix:** Store the AbortController in a `useRef` so the refresh button can access the current signal:
 ```ts
-useEffect(() => {
-  const ac = new AbortController();
-  setLoading(true);
-  fetchSignals(watchlist, false, ac.signal);
-  const iv = setInterval(() => fetchSignals(watchlist, false, ac.signal), POLL_INTERVAL);
-  return () => { ac.abort(); clearInterval(iv); };
-}, [watchlist, fetchSignals]);
+const controllerRef = useRef<AbortController>();
+// In the useEffect: controllerRef.current = controller;
+// Line 634: fetchSignals(watchlist, true, controllerRef.current?.signal)
 ```
 
-**Test:** Add 3 tickers rapidly — verify only the final watchlist's data renders, no console errors.
+**Test:** 
+1. Add 5+ tickers, click Refresh, immediately remove a ticker
+2. Verify the response doesn't re-add the removed ticker's card
+3. Check console: no fetch errors or stale state writes
+
+**Bonus (1-line):** Also remove duplicate `SignalStrengthBar` at line 185 (BUG-2 from QA report) — leftover from the C1 StrengthRing refactor.

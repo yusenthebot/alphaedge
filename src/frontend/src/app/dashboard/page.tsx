@@ -192,7 +192,6 @@ function SignalCard({ signal, onRemove }: { signal: SignalWithHistory; onRemove:
 
           {/* ── RSI + MACD row ── */}
           <div className="mb-3 flex items-center gap-3">
-            <SignalStrengthBar value={signal.strength || 50} signal={signal.signal} />
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <span className="pixel-label">RSI</span>
@@ -377,6 +376,7 @@ export default function DashboardPage() {
   const [hasHighAlerts, setHasHighAlerts] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const addInputRef = useRef<HTMLInputElement>(null);
+  const manualRefreshRef = useRef<AbortController | null>(null);
 
   // Load watchlist from localStorage on mount
   useEffect(() => {
@@ -463,6 +463,7 @@ export default function DashboardPage() {
     const iv = setInterval(() => fetchSignals(watchlist, false, controller.signal), POLL_INTERVAL);
     return () => {
       controller.abort();
+      manualRefreshRef.current?.abort();
       clearInterval(iv);
     };
   }, [watchlist, fetchSignals]);
@@ -631,7 +632,12 @@ export default function DashboardPage() {
               </span>
             )}
             <button
-              onClick={() => fetchSignals(watchlist, true)}
+              onClick={() => {
+                manualRefreshRef.current?.abort();
+                const controller = new AbortController();
+                manualRefreshRef.current = controller;
+                fetchSignals(watchlist, true, controller.signal);
+              }}
               disabled={refreshing}
               className="flex items-center gap-1.5 border-2 border-[var(--pixel-border-dim)] bg-[var(--pixel-surface)] px-3 py-1.5 font-mono text-[0.55rem] uppercase tracking-wider text-[var(--pixel-text-off)] transition hover:border-[var(--pixel-border)] hover:text-[var(--pixel-text)] disabled:opacity-30"
             >
