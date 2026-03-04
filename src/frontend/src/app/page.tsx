@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Newspaper, BarChart3, Bell, Zap, Check, TrendingUp } from "lucide-react";
+import { Newspaper, BarChart3, Bell, Zap, TrendingUp } from "lucide-react";
 import { LivePreview } from "@/components/LivePreview";
 import { MarketStatus } from "@/components/MarketStatus";
 
@@ -152,54 +152,11 @@ const FEATURES = [
   },
 ];
 
-const PLANS = [
-  {
-    name: "Free",
-    price: "$0",
-    period: "forever",
-    tag: "STARTER",
-    color: "var(--pixel-text-off)",
-    features: [
-      "5 stock watchlist",
-      "1-hour delayed signals",
-      "Daily signal of the day",
-      "Basic technical indicators",
-    ],
-    cta: "Get Started",
-    highlight: false,
-  },
-  {
-    name: "Pro",
-    price: "$29",
-    period: "/month",
-    tag: "RECOMMENDED",
-    color: "var(--pixel-buy)",
-    features: [
-      "Unlimited watchlist",
-      "Real-time signals",
-      "Jin10 + Reddit sentiment",
-      "Advanced technical analysis",
-      "Email & push alerts",
-    ],
-    cta: "Start Free Trial",
-    highlight: true,
-  },
-  {
-    name: "Elite",
-    price: "$79",
-    period: "/month",
-    tag: "POWER USER",
-    color: "var(--pixel-accent)",
-    features: [
-      "Everything in Pro",
-      "API access",
-      "Custom signal weights",
-      "Priority data feed",
-      "1-on-1 onboarding",
-    ],
-    cta: "Contact Us",
-    highlight: false,
-  },
+const OPEN_SOURCE_FEATURES = [
+  { icon: "◆", label: "完全免费", desc: "永久免费，无付费计划，无广告" },
+  { icon: "◈", label: "MIT 开源", desc: "GitHub 完整源码，Fork / Star / PR 欢迎" },
+  { icon: "▲", label: "自托管", desc: "本地运行或部署到自己的服务器，数据完全自主" },
+  { icon: "░", label: "社区驱动", desc: "Issue / 讨论 / 贡献者共同打磨信号质量" },
 ];
 
 const STATS = [
@@ -398,65 +355,63 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Pricing ── */}
+      {/* ── Open Source ── */}
       <section className="scroll-fade border-t-2 border-[var(--pixel-border-dim)] px-6 py-20">
         <div className="mx-auto max-w-6xl">
           <div className="mb-4 flex items-center gap-3">
             <span className="text-[var(--pixel-border-mid)] font-mono text-[0.6rem]">══</span>
-            <h2 className="pixel-title text-[0.5rem]">Pricing</h2>
+            <h2 className="pixel-title text-[0.5rem]" style={{ color: "var(--pixel-buy)" }}>100% Free &amp; Open Source</h2>
             <div className="flex-1 h-px bg-[var(--pixel-border-dim)]" />
           </div>
-          <p className="mb-12 pixel-label text-center">Start free. Upgrade when ready.</p>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {PLANS.map((plan) => (
+          <p className="mb-10 pixel-label text-center" style={{ color: "var(--pixel-text-off)" }}>
+            无付费计划 · 无广告 · 无数据收集 · 永久免费
+          </p>
+
+          {/* Feature grid */}
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 mb-12">
+            {OPEN_SOURCE_FEATURES.map((f) => (
               <div
-                key={plan.name}
-                className="border-2 bg-[var(--pixel-surface)] p-6 flex flex-col transition-all"
-                style={{
-                  borderColor: plan.highlight ? plan.color + "88" : "var(--pixel-border-dim)",
-                  boxShadow: plan.highlight ? `0 0 16px ${plan.color}22, 0 0 32px ${plan.color}0A` : "none",
-                }}
+                key={f.label}
+                className="border-2 bg-[var(--pixel-surface)] p-5 flex flex-col gap-2 transition-all hover:border-[var(--pixel-border)]"
+                style={{ borderColor: "var(--pixel-border-dim)" }}
               >
-                <div className="mb-6">
-                  <span
-                    className="border px-1.5 py-0.5 font-mono text-[0.45rem] uppercase tracking-widest"
-                    style={{ borderColor: plan.color + "66", color: plan.color }}
-                  >
-                    {plan.tag}
-                  </span>
-                  <h3 className="mt-3 pixel-title text-[0.55rem]" style={{ color: plan.color }}>{plan.name}</h3>
-                  <div className="mt-2 flex items-baseline gap-1">
-                    <span
-                      className="font-[var(--font-pixel)] text-2xl"
-                      style={{ color: plan.color, textShadow: `0 0 8px ${plan.color}66` }}
-                    >
-                      {plan.price}
-                    </span>
-                    <span className="pixel-label">{plan.period}</span>
-                  </div>
-                </div>
-                <ul className="mb-8 flex-1 space-y-3">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2 font-mono text-[0.6rem] text-[var(--pixel-text-off)]">
-                      <Check className="mt-0.5 h-3 w-3 shrink-0" style={{ color: plan.color }} />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/dashboard" className="block">
-                  <div
-                    className="w-full border-2 py-2.5 text-center font-mono text-[0.55rem] uppercase tracking-widest transition-all cursor-pointer"
-                    style={
-                      plan.highlight
-                        ? { borderColor: plan.color, background: plan.color + "14", color: plan.color, boxShadow: `0 0 8px ${plan.color}44` }
-                        : { borderColor: "var(--pixel-border-dim)", background: "transparent", color: "var(--pixel-text-off)" }
-                    }
-                  >
-                    {plan.cta}
-                  </div>
-                </Link>
+                <span className="font-mono text-lg" style={{ color: "var(--pixel-buy)", textShadow: "0 0 8px var(--pixel-buy)" }}>
+                  {f.icon}
+                </span>
+                <span className="pixel-label" style={{ color: "var(--pixel-text)" }}>{f.label}</span>
+                <span className="font-mono text-[0.5rem] leading-relaxed" style={{ color: "var(--pixel-text-off)" }}>{f.desc}</span>
               </div>
             ))}
+          </div>
+
+          {/* GitHub CTA */}
+          <div
+            className="border-2 p-8 text-center"
+            style={{
+              borderColor: "var(--pixel-buy)",
+              background: "rgba(0,255,65,0.03)",
+              boxShadow: "0 0 24px rgba(0,255,65,0.08)",
+            }}
+          >
+            <p className="pixel-title text-[0.5rem] mb-2" style={{ color: "var(--pixel-buy)" }}>
+              ★ Star on GitHub
+            </p>
+            <p className="font-mono text-[0.55rem] mb-6" style={{ color: "var(--pixel-text-off)" }}>
+              Clone · Fork · Self-host · Contribute
+            </p>
+            <a
+              href="https://github.com/yusenthebot/alphaedge"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block border-2 px-8 py-3 font-mono text-[0.55rem] uppercase tracking-widest transition-all hover:bg-[rgba(0,255,65,0.08)]"
+              style={{
+                borderColor: "var(--pixel-buy)",
+                color: "var(--pixel-buy)",
+                boxShadow: "0 0 8px rgba(0,255,65,0.3)",
+              }}
+            >
+              github.com/yusenthebot/alphaedge →
+            </a>
           </div>
         </div>
       </section>

@@ -213,7 +213,7 @@ def get_news():
     except ImportError as e:
         raise HTTPException(status_code=500, detail=f"jin10 module not available: {e}")
 
-    raw_items = fetch_flash_news(max_items=50)
+    raw_items = fetch_flash_news(max_items=200)
     parsed = []
     for item in raw_items:
         p = parse_flash(item)
@@ -225,9 +225,9 @@ def get_news():
                 "is_important": p["important"],
             })
 
-    # Sort newest first, limit to 30
+    # Sort newest first, return up to 80 items
     parsed.sort(key=lambda x: x["created_at"], reverse=True)
-    return {"news": parsed[:30], "count": min(len(parsed), 30)}
+    return {"news": parsed[:80], "count": min(len(parsed), 80)}
 
 
 @app.get("/api/alerts")

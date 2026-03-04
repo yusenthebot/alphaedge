@@ -1,44 +1,50 @@
-# QA Report — Cycle 8 [21:19:12]
+# QA Report — Cycle 9 [21:24:13]
 
 ## Automated
 - Build: ✓ PASS
 - TypeScript: ✓ PASS
-- Commits: 730be9b feat(c8): sprint tasks - Replace rounded-md → rounded-none on signal badges (desktop + mobile) - Replace rounded → rounded-none on trash buttons (desktop + mobile) - All portfolio page elements now render with sharp 0px corners
+- Commits: a89ef13 feat(c9): sprint tasks - skeleton rounded-md→rounded-none, AbortController on LivePreview fetch
+730be9b feat(c8): sprint tasks - Replace rounded-md → rounded-none on signal badges (desktop + mobile) - Replace rounded → rounded-none on trash buttons (desktop + mobile) - All portfolio page elements now render with sharp 0px corners
 7b77707 feat: CRT visual polish - subtle flicker, SVG noise, parallax stars, scroll fade-in
 ff487cc feat(c7): sprint tasks - Replace PieChart with pixel-art stacked bar on Accuracy page - Remove PieChart/Pie/Cell imports and pieData useMemo - Fix rounded corners (radius, borderRadius, rounded-md → rounded-none) Build: 0 TypeScript errors, 13+ pages
 c43f190 fix: heatmap per-ticker fallback - show colored tiles for all 8 MARKET_TICKERS even without API data
-335ae03 fix: heatmap always show fallback tiles when no API data (was waiting on loading flag)
 
 ## Analysis
-All four target lines verified. Zero remaining `rounded` (non-`rounded-none`) classes in the entire `src/app` directory. Here's the report:
+Here's the QA report:
 
 ---
 
-# QA Report — Cycle 8
+# QA Report — Cycle 9
 
 ## 1. Sprint Completion
 
 | Task | Status |
 |------|--------|
-| Task 1: Kill rounded corners on portfolio signal badges & buttons | **DONE** |
-| Task 2: (CTO timed out) | N/A |
+| skeleton.tsx `rounded-md` → `rounded-none` | **Done** |
+| LivePreview.tsx AbortController | **Done** |
 
-**1/1 tasks complete.** All four replacements verified at lines 532, 541, 554, 562 in `portfolio/page.tsx`. Commit `730be9b` matches spec exactly.
+Both sprint tasks shipped in `a89ef13`. Build and TypeScript pass.
 
 ## 2. Bugs Found
 
-**None.** Grep for any `rounded` class (excluding `rounded-none`) across `src/app/` returns zero hits. The portfolio page is clean.
+**BUG-1: `rounded-md` survives in `SearchBar.tsx:197`** — signal badge in search preview still uses `rounded-md`. Should be `rounded-none`.
+
+**BUG-2: Bare `rounded` classes (9 instances)** — not `rounded-none`:
+- `SearchBar.tsx` lines 168, 173, 185, 186 (close btn, kbd badge, skeletons)
+- `LivePreview.tsx` line 67 (signal badge)
+- `NewsFeed.tsx` lines 62–63 (loading skeletons)
+- `[ticker]/page.tsx` line 92 (loading skeleton)
+
+These render with default 4px radius, breaking the 0px pixel-art rule.
 
 ## 3. UI Quality
 
-- **Pixel art consistency:** Strong. Every element in the portfolio page now uses `rounded-none` (sharp 0px corners), consistent with the retro/CRT aesthetic established in prior cycles.
-- **Visual regressions:** None detected from code inspection. Signal badges and trash buttons retain all other styling (colors, opacity transitions, hover states).
-- **Codebase-wide:** No stray `rounded-md`, `rounded-lg`, or bare `rounded` classes remain in the app directory — the sharp-corner pass appears complete across all pages.
+Skeleton base component is correct — all `<Skeleton>` instances inherit sharp corners. However, **inline skeletons** (hand-rolled `animate-pulse` divs) and several badges still have soft corners. The pixel-art system is ~90% consistent; the remaining rounded elements are visually noticeable on search and live preview.
 
-## 4. Next Cycle Priority
+## 4. Next Cycle Top Priority
 
-Conduct a full visual audit of component-level files (outside `src/app/`) for any remaining rounded corners or other styling inconsistencies with the pixel-art design system.
+Sweep all remaining `rounded-md` and bare `rounded` classes across the frontend to reach 100% sharp-corner compliance.
 
-## 5. Score: 9/10
+## 5. Score: 7/10
 
-Clean, surgical sprint — spec followed precisely, build passing, zero regressions. Docked one point only because the cycle had a single trivial task (CTO timeout limited scope).
+Core tasks executed cleanly; AbortController is textbook correct. Docked points for 11 leftover rounded-corner violations that should have been caught in the same pass.

@@ -9,8 +9,8 @@ interface NewsItem {
   is_important: boolean;
 }
 
-const POLL_INTERVAL = 120_000; // 2 minutes
-const MAX_VISIBLE = 15;
+const POLL_INTERVAL = 60_000; // 1 minute — faster refresh
+const MAX_VISIBLE = 50;       // show up to 50 items
 
 export default function NewsFeed() {
   const [news, setNews] = useState<NewsItem[]>([]);
