@@ -1,6 +1,6 @@
 # AlphaEdge
 
-Trade US stocks with Chinese market intelligence.
+Trade stocks with Chinese market intelligence.
 
 AI-powered signal dashboard combining Jin10 (金十数据) Chinese financial news, sentiment analysis, and technical indicators into actionable BUY/HOLD/SELL signals for US stocks.
 
